@@ -7,7 +7,7 @@ using namespace std;
 
 int main(void)
 {
-	int i, j, k;
+	int i, j;
 	int N;
 	cin >> N;
 	vector<long> a(N);
@@ -31,7 +31,7 @@ int main(void)
 	 * https://qiita.com/drken/items/a14e9af0ca2d857dad23
 	 */
 
-	int answer = 0;
+	long answer = 0;
 	// iで全探索
 	for(i = 0; i < N; i++)
 	{
@@ -53,11 +53,11 @@ int main(void)
 			}
 		}
 
-		for(int j=0; j<divisor.size(); j++)
+		for(int j=0; j<(int)divisor.size(); j++)
 		{
 			// Aj:divisor[j]
 			// Ak:A[i]/Aj
-			int b, c;
+			long b, c;
 			b = count[divisor[j]];
 			c = count[a[i]/divisor[j]];
 			answer += b*c;
