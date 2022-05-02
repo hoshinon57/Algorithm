@@ -34,6 +34,7 @@ void func(vector<int> &a)
 			distSum += sqrt(tmp1*tmp1 + tmp2*tmp2);
 		}
 		distCount++;
+		return;
 	}
 
 	// まだa[]に積んでいないものを探す
