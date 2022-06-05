@@ -239,6 +239,7 @@ void _priority_queue_(void)
 	priority_queue<int, vector<int>, greater<int>> queue;
 	// 大きい方が優先度を高くするには以下。
 	// priority_queue<int, vector<int>, less<int>> queue;
+	// priority_queue<int> queue;  // もしくはこっち
 
 	// push:要素を追加する
 	queue.push(5);
@@ -268,6 +269,26 @@ void _priority_queue_(void)
 	else
 	{
 		cout << "4:empty:false" << endl;
+	}
+
+	// pairと組み合わせる場合
+	// この場合、firstの値が小さい方が優先度が高く、
+	// firstが同じ値ならsecondの値が小さい方が優先度が高い。
+	priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> queue_pair;
+	pair<int,int> tmpPair;
+	tmpPair.first = 10;
+	tmpPair.second = 20;
+	queue_pair.push(tmpPair);
+	queue_pair.push(pair<int,int>(20,30));  // これでも良い模様 emplace()との違いは理解できていない
+	queue_pair.push(pair<int,int>(10,5));
+	queue_pair.push(pair<int,int>(20,35));
+	// queue_pair={(10,5), (10,20), (20,30), (20,35)}
+	cout << "5:queue/pair" << endl;
+	while(!queue_pair.empty())
+	{
+		tmpPair = queue_pair.top();
+		cout << tmpPair.first << " " << tmpPair.second << endl;
+		queue_pair.pop();
 	}
 }
 
