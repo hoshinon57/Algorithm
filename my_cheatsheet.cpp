@@ -40,6 +40,14 @@ int main(void)
 	
 	}
 	*/
+
+	/*
+	等差数列
+	初項a, 末項l, 公差d, 項数nの等差数列の和は、
+	  n*(a+l)/2
+	  n*(a + (a+(n-1)*d) )/2      ※末項l=a+(n-1)*d
+	https://www.kwansei.ac.jp/hs/z90010/sugakua/suuretu/tousasum/tousasum.htm
+	*/
 	return 0;
 }
 
