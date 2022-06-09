@@ -1,11 +1,13 @@
 #include <iostream>
 #include <set>
 #include <cmath>
+#include <list>
 #include <queue>
 using namespace std;
 
 void _set_multiset_(void);
 void _priority_queue_(void);
+void _list_(void);
 void _pow_(void);
 
 int main(void)
@@ -13,6 +15,7 @@ int main(void)
 	_priority_queue_();
 	_set_multiset_();
 	_pow_();
+	_list_();
 
 	/*
 	数値型の範囲
@@ -298,6 +301,79 @@ void _priority_queue_(void)
 		cout << tmpPair.first << " " << tmpPair.second << endl;
 		queue_pair.pop();
 	}
+}
+
+// 双方向リスト
+// ランダムアクセスがO(N), 任意位置への挿入と削除がO(1)で可能
+// #include <list> が必要
+// 
+// 参考：http://vivi.dyndns.org/tech/cpp/list0.html
+void _list_(void)
+{
+	list<int> lst;
+
+	// push_back();末尾に追加
+	// push_front():先頭に追加
+	lst.push_back(100);
+	lst.push_front(50);
+	// lst={50,100}
+
+	// insert(itr, value):itrの"手前"に値を挿入
+	// 戻り値は挿入した場所へのイテレータ
+	auto itr = lst.begin();
+	itr++;  // 100
+	itr = lst.insert(itr, 75);
+	itr = lst.insert(itr, 60);
+	cout << "1:*itr=" << *itr << endl;
+	// lst={50,60,75,100}
+
+	cout << "2:lst  ";
+	for(itr = lst.begin(); itr != lst.end(); itr++)
+	{
+		cout << *itr << " ";
+	}
+	cout << endl;
+
+	// pop_front:最初の要素を削除
+	// pop_back:最後の要素を削除
+	lst.pop_front();
+	lst.pop_back();
+	// lst={60,75}
+	cout << "3:pop  ";
+	for(auto &e : lst)
+	{
+		cout << e << " ";
+	}
+	cout << endl;
+
+	cout << "4:size  ";
+	if(lst.empty())
+	{
+		cout << "list enmty." << endl;
+	}
+	else
+	{
+		cout << "size:" << lst.size() << endl;
+	}
+
+	// erase(itr):itrの要素を削除
+	// 戻り値は削除した要素の次の要素
+	lst.push_back(80);
+	lst.push_back(90);
+	lst.push_back(99);
+	// lst={60,75,80,90,99}
+	itr = lst.begin();
+	itr++;
+	itr++;  // 80
+	itr = lst.erase(itr);  // 90
+	cout << "5:erase  *itr=" << *itr << endl;
+
+	cout << "6:lst  ";
+	for(auto &e : lst)
+	{
+		cout << e << " ";
+	}
+	cout << endl;
 }
 
 void _mod_(void)
