@@ -16,6 +16,9 @@ const int INF32 = 1 << 30;
  * 初項A, 公差D, 項数Nのとき、
  * 末項L = A+(N-1)*D
  * 
+ * 処理を簡易にするため、D<0であればDの符号を反転し、A,Lを交換しておく。
+ * つまり負方向の数列を正方向に置き換えるイメージ。
+ * 
  * (1)
  * X<=A、つまり数列の範囲外のとき、A-Xが答え。
  * 
@@ -41,8 +44,12 @@ int main(void)
 	cin >> x >> a >> d >> n;
 	l = a+(n-1)*d;  //末項
 
-	// 後の処理を簡易にするため、a<lにしておく
-	if(a > l) swap(a, l);
+	// 後の処理を簡易にするため、D<0であれば反転しておく
+	if(d < 0)
+	{
+		swap(a, l);
+		d = -d;
+	}
 
 	if(x <= a)
 	{
@@ -56,7 +63,7 @@ int main(void)
 	{
 		ll tmp1, tmp2;
 		tmp1 = (x-a)%d;
-		tmp2 = abs(d) - tmp1;
+		tmp2 = d - tmp1;
 		cout << min(tmp1, tmp2) << endl;
 	}
 
