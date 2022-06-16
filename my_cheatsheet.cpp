@@ -2,12 +2,14 @@
 #include <set>
 #include <cmath>
 #include <list>
+#include <map>
 #include <queue>
 using namespace std;
 
 void _set_multiset_(void);
 void _priority_queue_(void);
 void _list_(void);
+void _map_(void);
 void _pow_(void);
 
 int main(void)
@@ -16,6 +18,7 @@ int main(void)
 	_set_multiset_();
 	_pow_();
 	_list_();
+	_map_();
 
 	/*
 	数値型の範囲
@@ -374,6 +377,94 @@ void _list_(void)
 		cout << e << " ";
 	}
 	cout << endl;
+}
+
+// 連想配列
+// 検索可能なキーと、キーに対応する値のペアを要素とする。
+// キーを指定して値を取り出すことができる。
+// (2分木にて実装されており、値の取り出しは O(logN) で可能)
+// 
+// 内部で要素がソートされている。
+// ソートの必要が無い場合、ハッシュを用いた unordered_map もある。
+//
+// #include <map> が必要
+// 参考：
+// http://vivi.dyndns.org/tech/cpp/map.html
+// https://qiita.com/_EnumHack/items/f462042ec99a31881a81
+void _map_(void)
+{
+	cout << "*** map ***" << endl;
+
+	map<string, int> mp;
+	mp["aaa"] = 100;
+	mp["bbb"] = 200;
+	mp["ccc"] = 150;
+	// mp={aaa,bbb,ccc}
+	cout << "1:" << endl;
+	cout << "size:" << mp.size() << " bbb:" << mp["bbb"] << " ccc:" << mp["ccc"] << endl;
+
+	// begin(),end()で各要素にアクセスできる
+	// first, second
+	cout << "2:" << endl;
+	for(auto itr = mp.begin(); itr != mp.end(); itr++)
+	{
+		cout << "first:" << itr->first << " second:" << itr->second << endl;
+	}
+
+	// 範囲for
+	cout << "3:" << endl;
+	for(auto &e : mp)
+	{
+		cout << e.second << " ";
+	}
+	cout << endl;
+
+	// []にて存在しない要素にアクセスすると、自動的に追加されてしまう
+	cout << "4:" << endl;
+	cout << "size:" << mp.size() << endl;
+	cout << mp["ddd"] << endl;  // 存在しない要素にアクセス
+	cout << "size:" << mp.size() << endl;  // sizeが1増えている
+	// mp={aaa,bbb,ccc,ddd}
+	// 自動追加をさせたくない場合、find()やcount()を使う
+	auto itr = mp.find("eee");
+	if(itr != mp.end())
+	{
+		cout << "eee is found" << endl;
+	}
+	else
+	{
+		cout << "eee is not found" << endl;
+	}
+
+	// erase:要素の削除
+	cout << "4:" << endl;
+	mp.erase("aaa");  // erase(キー)での削除
+	itr = mp.find("bbb");
+	if(itr != mp.end())
+	{
+		mp.erase(itr);  // erase(イテレータ)での削除
+	}
+	// mp={ccc,ddd}
+	for(auto itr = mp.begin(); itr != mp.end(); itr++)
+	{
+		cout << "first:" << itr->first << " second:" << itr->second << endl;
+	}
+	// イテレータ指定でerase(first, last)とすると、[first, last) の範囲の要素をまとめて削除できる。
+	// "[)"の範囲指定になるため、key_1からkey_2まで削除したい場合は
+	// erase(lower_bound(key_1), upper_bound(key_2))  にするのが良い。
+
+	// size():要素数
+	// empty():要素数が0ならtrue
+
+	// 自作の構造体を扱うには、"<"の実装が必要。
+	/*
+	struct Person
+	{
+		bool operator<(const Person& a) const {
+        return y < a.y;
+	    }
+	};
+	*/
 }
 
 void _mod_(void)
