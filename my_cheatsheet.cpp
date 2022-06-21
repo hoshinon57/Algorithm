@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <set>
 #include <cmath>
 #include <list>
@@ -10,6 +11,7 @@ void _set_multiset_(void);
 void _priority_queue_(void);
 void _list_(void);
 void _map_(void);
+void _pair_(void);
 void _pow_(void);
 
 int main(void)
@@ -19,6 +21,7 @@ int main(void)
 	_pow_();
 	_list_();
 	_map_();
+	_pair_();
 
 	/*
 	数値型の範囲
@@ -53,6 +56,13 @@ int main(void)
 	  n*(a+l)/2
 	  n*(a + (a+(n-1)*d) )/2      ※末項l=a+(n-1)*d
 	https://www.kwansei.ac.jp/hs/z90010/sugakua/suuretu/tousasum/tousasum.htm
+	*/
+
+	/*
+	いもす法
+	記録のフェーズとシミュレートのフェーズ、そして解の算出のフェーズに分ける。
+	ABC256-D-2.cppを参照。
+	https://imoz.jp/algorithms/imos_method.html
 	*/
 	return 0;
 }
@@ -99,7 +109,7 @@ void _vector_(void)
 	*/
 	/*
 	vectorのソート
-	#include <vector> が必要
+	#include <algorithm> が必要
 	sort(a.begin(), a.end());  // 昇順
 	sort(a.begin(), a.end(), greater<int>());  // 降順
 
@@ -465,6 +475,65 @@ void _map_(void)
 	    }
 	};
 	*/
+}
+
+// pair
+// 2つの要素を持てる型
+// 
+// 追加のincludeは不要らしい。
+// 参考：
+// https://qiita.com/e869120/items/518297c6816adb67f9a5#3-18-pair
+// https://atcoder.jp/contests/apg4b/tasks/APG4b_z
+void _pair_(void)
+{
+	cout << "*** pair ***" << endl;
+
+	pair<int,int> p;
+	// first, secondでそれぞれ1つ目、2つ目の要素にアクセス
+	p.first = 10;
+	p.second = 20;
+	cout << "1:" << endl;
+	cout << "p.first:" << p.first << " p.second" << p.second << endl;
+
+	pair<string, int> p2;
+	pair<string, string> p3;
+	pair<int, int> p4;
+	// make_pairでpairの生成が可能
+	p2 = make_pair("test", 100);
+	// = {first, second} でも良いらしい
+	p3 = {"hoge", "hage"};
+	// pair<型1, 型2>(値1, 値2) という方法もある
+	p4 = pair<int, int>(10, 30);
+	cout << "2:" << endl;
+	cout << p2.first << " " << p2.second << endl;
+	cout << p3.first << " " << p3.second << endl;
+	cout << p4.first << " " << p4.second << endl;
+	
+	// vectorとの組み合わせ
+	vector<pair<int, int>> LR;
+	// 値の指定方法は、前述の3通りいずれも使える
+	LR.push_back(make_pair(10,20));
+	LR.push_back({1,2});
+	LR.push_back(pair<int,int>(10,5));
+	// LR={10,20},{1,2},{10,5}
+	cout << "3:" << endl;
+	for(auto &e : LR)
+	{
+		cout << e.first << " " << e.second << endl;
+	}
+
+	// 大小比較は以下。
+	// ＞2つの pair 型要素の大小比較は、以下のように決められます。
+	// ＞1つ目の要素が小さい方を小さいとみなす。
+	// ＞1つ目の要素が同じである場合、2つ目の要素が小さい方を小さいとみなす。
+	// よってvector<pair<>>のソートは、まず1番目の要素でソートし、同じ値なら2番目の要素でソートされる。
+	cout << "4:" << endl;
+	sort(LR.begin(), LR.end());
+	// LR={1,2},{10,5},{10,20}
+	for(auto &e : LR)
+	{
+		cout << e.first << " " << e.second << endl;
+	}
 }
 
 void _mod_(void)
