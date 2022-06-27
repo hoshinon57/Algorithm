@@ -9,6 +9,10 @@ using namespace std;
  *   https://atcoder.jp/contests/abc256/editorial/4121   (ABC256-D)
  *   https://qiita.com/pata_/items/e7cfdbbb4414cf13e715
  * 
+ * [関連する問題]
+ * ABC256-D https://atcoder.jp/contests/abc256/tasks/abc256_d
+ * ABC257-C https://atcoder.jp/contests/abc257/tasks/abc257_c
+ * 
  * [問題設定]
  * N人のユーザがいて、i番目のユーザは時刻Lにログインし、時刻Rにログアウトしました。
  * 1人以上がログインしていた時刻の区間を求めなさい。
