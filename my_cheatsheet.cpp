@@ -38,6 +38,13 @@ int main(void)
 	*/
 
 	/*
+	0埋めの出力
+	#include <iomanip> が必要
+	cout << std::setfill('0') << std::setw(4);  // 4桁の0埋め
+	cout << 12 << endl;  // "0012"
+	*/
+
+	/*
 	N個の中から好きな数だけ選ぶ → bit全探索
 	for( i = 0; i < (1<<N); i++ )  // iについて、bitが1になっているものを選ぶ
 	{
