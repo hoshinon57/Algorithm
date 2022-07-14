@@ -7,6 +7,11 @@ using namespace std;
 // 参考 https://drken1215.hatenablog.com/entry/2020/05/04/190252
 //      https://qiita.com/drken/items/872ebc3a2b5caaa4a0d0  の順列全探索
 
+/*
+ * [関連する問題]
+ * ABC232-C https://atcoder.jp/contests/abc232/tasks/abc232_c
+ */
+
 const int NUM = 3;
 const int DIGIT = 5;
 /*

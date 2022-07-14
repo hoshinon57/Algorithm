@@ -9,6 +9,11 @@ using namespace std;
 //      https://qiita.com/Nikkely/items/0ddca51b3c0e60afbaab
 
 /*
+ * [関連する問題]
+ * ABC232-C https://atcoder.jp/contests/abc232/tasks/abc232_c
+ */
+
+/*
  * [memo]
  * {1,2,3}という順列だと、
  * {1,2,3},{1,3,2},{2,1,3},{2,3,1},{3,1,2},{3,2,1} の順で6つ生成される。
