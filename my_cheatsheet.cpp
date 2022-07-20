@@ -5,6 +5,7 @@
 #include <list>
 #include <map>
 #include <queue>
+#include <unordered_set>
 using namespace std;
 
 void _set_multiset_(void);
@@ -13,6 +14,7 @@ void _list_(void);
 void _map_(void);
 void _pair_(void);
 void _pow_(void);
+void _unordered_set_(void);
 
 int main(void)
 {
@@ -22,6 +24,7 @@ int main(void)
 	_list_();
 	_map_();
 	_pair_();
+	_unordered_set_();
 
 	/*
 	数値型の範囲
@@ -575,4 +578,61 @@ void _pow_(void)
 	// pow() :戻り値はdouble型        64bit
 	// powl():戻り値はlong double型   環境依存だが、128bitとか何とか
 	// 参考：https://qiita.com/mod_poppo/items/8860505f38e2997cd021
+}
+
+// ハッシュテーブルを用いた集合
+// 同一要素を複数格納できず、格納順が規定されていない
+// 挿入、削除、検索などの操作が、平均的にO(1)で可能
+// 
+// #include <unordered_set>  が必要
+// 
+// 参考：
+// https://cpprefjp.github.io/reference/unordered_set/unordered_set.html
+// https://zenn.dev/reputeless/books/standard-cpp-for-competitive-programming/viewer/library-unordered_set
+void _unordered_set_(void)
+{
+	unordered_set<int> us;
+	cout << "-----unordered_set-----" << endl;
+
+	// insert:要素を挿入
+	us.insert(10);
+	us.insert(50);
+	us.insert(200);
+	us.insert(110);
+	// us={10,50,110,200}  ただし格納順は規定されていない
+
+	// erase:要素を削除
+	us.erase(50);
+	auto it = us.find(110);
+	if(it != us.end())  us.erase(it);  // イテレータによる削除も可能
+	// us={10,200}
+
+	// count/find:要素の検索
+	if(us.count(10) == 1)
+	{
+		cout << "10 exists." << endl;
+	}
+	else
+	{
+		cout << "10 does not exist." << endl;
+	}
+	it = us.find(150);
+	if(it != us.end())
+	{
+		cout << "150 exists." << endl;
+	}
+	else
+	{
+		cout << "150 does not exist." << endl;
+	}
+
+	// size:要素数
+	cout << "size:" << us.size() << endl;
+	
+	// 要素一覧の出力
+	for(auto &e : us)
+	{
+		cout << e << ",";
+	}
+	cout << endl;
 }
