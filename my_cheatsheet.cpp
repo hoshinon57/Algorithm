@@ -6,6 +6,7 @@
 #include <map>
 #include <queue>
 #include <unordered_set>
+#include <unordered_map>
 using namespace std;
 
 void _set_multiset_(void);
@@ -15,6 +16,7 @@ void _map_(void);
 void _pair_(void);
 void _pow_(void);
 void _unordered_set_(void);
+void _unordered_map_(void);
 
 int main(void)
 {
@@ -25,6 +27,7 @@ int main(void)
 	_map_();
 	_pair_();
 	_unordered_set_();
+	_unordered_map_();
 
 	/*
 	数値型の範囲
@@ -406,6 +409,7 @@ void _list_(void)
 // 
 // 内部で要素がソートされている。
 // ソートの必要が無い場合、ハッシュを用いた unordered_map もある。
+// (値の取り出しを平均的に O(1) で可能)
 //
 // #include <map> が必要
 // 参考：
@@ -635,4 +639,38 @@ void _unordered_set_(void)
 		cout << e << ",";
 	}
 	cout << endl;
+}
+
+// ハッシュテーブルを用いた連想配列
+// 要素へのアクセスを平均的にO(1)で可能な代わりに、内部で要素はソートされていない。
+// その他、_map_()側の説明を参照のこと。
+// 
+// #include <unordered_map> が必要
+// 参考：
+// http://vivi.dyndns.org/tech/cpp/unordered_map.html
+void _unordered_map_(void)
+{
+	unordered_map<string, int> um;
+	cout << "-----unordered_set-----" << endl;
+
+	um["aaa"] = 100;
+	um["bbb"] = 200;
+	um["ccc"] = 150;
+
+	// 要素はソートされていないため、先頭からたどっても順序はバラバラ
+	for(auto &e : um)
+	{
+		cout << e.first << ":" << e.second << endl;
+	}
+
+	// 要素の検索
+	// countの他、find()やeraseもmapと同様。
+	if(um.count("aaa") == 1)
+	{
+		cout << "aaa exists." << endl;
+	}
+	else
+	{
+		cout << "aaa does not exist." << endl;
+	}
 }
