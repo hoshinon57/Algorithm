@@ -6,6 +6,13 @@ using namespace std;
 // Union-Findのテンプレート
 // 「問題解決力を鍛える!アルゴリズムとデータ構造」のcode11.3を写経したもの
 
+/*
+ * [関連する問題]
+ * ABC075-C
+ * ABC120-D
+ * ABC049-D
+ */
+
 struct UnionFind
 {
 	vector<int> parent;  // parent[x]:xの親の番号 xが根であれば-1
