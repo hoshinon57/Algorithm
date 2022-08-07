@@ -14,6 +14,7 @@ void _priority_queue_(void);
 void _list_(void);
 void _map_(void);
 void _pair_(void);
+void _mod_(void);
 void _pow_(void);
 void _unordered_set_(void);
 void _unordered_map_(void);
@@ -28,6 +29,7 @@ int main(void)
 	_pair_();
 	_unordered_set_();
 	_unordered_map_();
+	_mod_();
 
 	/*
 	AtCoderにてWAが出た場合のチェックポイント(ABC262での反省点)
@@ -558,6 +560,22 @@ void _pair_(void)
 	}
 }
 
+// mod mの世界におけるaの逆元を返す
+// 以下URLのコードをそのまま持ってきている
+//   https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
+long long modinv(long long a, long long m)
+{
+	long long b = m, u = 1, v = 0;
+	while (b) {
+        long long t = a / b;
+        a -= t * b; swap(a, b);
+        u -= t * v; swap(u, v);
+    }
+    u %= m; 
+    if (u < 0) u += m;
+    return u;
+}
+
 void _mod_(void)
 {
 	// *, /, % は同じ優先順位
@@ -579,6 +597,22 @@ void _mod_(void)
 	「除算してからMOD」か、逆元をかける
 	参考：https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
 	*/
+
+	long long a, b;
+	long long mod = 998244353;
+	a = 10; b = 2;
+	cout << "a=" << a << ", b=" << b << ", a/b=" << a * modinv(b, mod)%mod << endl;
+	// a/b=5
+
+	a = 10; b = 3;
+	cout << "a=" << a << ", b=" << b << ", a/b=" << a * modinv(b, mod)%mod << endl;
+	// a/b=332748121
+	// 332748121*3 = 998244363 を998244353で割った余りは10(=a)
+	
+	a = 12345678900000; b = 100000;
+	cout << "a=" << a << ", b=" << b << ", a/b=" << (a%mod) * modinv(b, mod)%mod << endl;
+	// a/b=123456789
+	// aに事前に剰余計算忘れずに
 }
 
 void _pow_(void)
