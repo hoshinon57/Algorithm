@@ -7,11 +7,15 @@ using namespace std;
 // 「問題解決力を鍛える!アルゴリズムとデータ構造」のcode11.3を写経したもの
 
 /*
+ * ＞辺の追加と連結性の判定を得意とするデータ構造は Union Find である. 
+ * https://kazun-kyopro.hatenablog.com/entry/ABC/264/E
+ * 
  * [関連する問題]
  * ABC075-C
  * ABC120-D
  * ABC049-D
  * ABC259-D
+ * ABC264-E
  */
 
 struct UnionFind
