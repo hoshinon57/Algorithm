@@ -69,8 +69,24 @@ int main(void)
 			if( ((i>>j)&1) == 0 ) continue;  // 演算子の優先順位注意 &1を()で囲む必要あり
 			// 以降、j番目について選んだ場合の処理
 		}
-	
 	}
+	[関連する問題]
+	ABC264-C
+	*/
+
+	/*
+	__builtin_popcount(x) : xを2進数で表したときに、bitが1になる個数を返す
+	追加のincludeは不要とのこと。
+	----
+	cout << "7:" << __builtin_popcount(7) << endl;  // 3
+	cout << "16:" << __builtin_popcount(16) << endl;  // 1
+	cout << "255:" << __builtin_popcount(255) << endl;  // 8
+	----
+	__builtin_popcountll(x) : 引数xがlong long型の場合
+
+	＞この関数は gcc で利用可能ですが、Visual Studio 2019 などでは使えません。
+	とのこと。
+	https://qiita.com/e869120/items/518297c6816adb67f9a5
 	*/
 
 	/*
@@ -121,6 +137,11 @@ void _vector_(void)
 
 	a[X][Y]  0で初期化
 	vector<vector<int>> a(X, vector<int>(Y, 0));
+
+	定義後に、要素数をa[X][Y]に設定
+	vector<vector<int>> a;
+	a.assign(X, vector<int>(Y, 0));  // 0で初期化
+	a.resize(X, vector<int>(Y));
 
 	a[X]
 	a[0], a[1], ... それぞれについてpush_back()していく
