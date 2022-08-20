@@ -9,6 +9,7 @@ const ll INF64 = 1LL << 60;
 const int INF32 = 1 << 30;
 
 // 章末問題15.2
+// https://atcoder.jp/contests/jag2012autumn
 
 /*
  * クラスカル法で解く。
