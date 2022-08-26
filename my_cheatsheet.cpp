@@ -40,6 +40,18 @@ int main(void)
 	*/
 
 	/*
+	ABC265-E問題(https://atcoder.jp/contests/abc265/tasks/abc265_e)にて
+	配るDPでの自分の実装(ABC265-E.cpp)では
+	---------
+	300 0
+	0 0 1 0 0 1
+	---------
+	の入力例がローカル環境では10秒弱かかったのが、AtCoderでは1.6秒程度と大きく差があった。
+	自分の立てた方針や実装に自信があれば、いちど提出しても良いかも。
+	(連想配列で大量の要素を追加するケースとか？)
+	*/
+
+	/*
 	数値型の範囲
 	int	-2147483648～2147483647  およそ-2*10^9～+2*10^9   2^32(1<<32)
 	long long  -9223372036854775808～9223372036854775807  およそ-9*10^18～+9*10^18  2^64(1<<64)
@@ -107,7 +119,16 @@ int main(void)
 	ABC263-Eを「前から、配るDP」で解こうとしたら、どうしても上手くいかなかった。
 	参考問題：
 	  https://atcoder.jp/contests/dp/tasks/dp_j
-	  https://atcoder.jp/contests/abc263/tasks/abc263_e	
+	  https://atcoder.jp/contests/abc263/tasks/abc263_e
+	
+	ABC265-E問題(https://atcoder.jp/contests/abc265/tasks/abc265_e)のように
+	各フェーズの結果を配列ではなく連想配列で持つ場合にて、
+	  vector<map<pair<ll, ll>, ll>> dp;
+	のようにvectorで全フェーズの結果を持たせると、TLEになるテストケースがあった。
+	  map<pair<ll, ll>, ll> dp, new_dp;
+	2フェーズだけ持ち、毎回swap(dp, new_dp)させると、TLEは解消した。
+	原因は不明だが、前者だとメモリを300MBほど使っており、
+	vector<map<...>>で大量のメモリを消費する解法は、AtCoderでは避けた方が良いのかもしれない。
 	*/
 
 	/*
