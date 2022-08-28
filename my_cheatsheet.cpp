@@ -664,18 +664,35 @@ void _mod_(void)
 	long long a, b;
 	long long mod = 998244353;
 	a = 10; b = 2;
-	cout << "a=" << a << ", b=" << b << ", a/b=" << a * modinv(b, mod)%mod << endl;
+	cout << "a=" << a << ", b=" << b << ", a/b=" << a * modinv(b, mod) % mod << endl;
 	// a/b=5
 
 	a = 10; b = 3;
-	cout << "a=" << a << ", b=" << b << ", a/b=" << a * modinv(b, mod)%mod << endl;
+	cout << "a=" << a << ", b=" << b << ", a/b=" << a * modinv(b, mod) % mod << endl;
 	// a/b=332748121
 	// 332748121*3 = 998244363 を998244353で割った余りは10(=a)
 	
 	a = 12345678900000; b = 100000;
-	cout << "a=" << a << ", b=" << b << ", a/b=" << (a%mod) * modinv(b, mod)%mod << endl;
+	cout << "a=" << a << ", b=" << b << ", a/b=" << (a%mod) * modinv(b, mod) % mod << endl;
 	// a/b=123456789
 	// aに事前に剰余計算忘れずに
+
+	// 負の数に対してMOD計算した結果は、負になる(※)
+	a = -10; b = 3;
+	cout << "a=" << a << ", b=" << b << ", a%b=" << a%b << endl;  // -10%3 = -1
+	// -10%3=-1
+	// 
+	// 0～2(=3-1)の範囲にしたい場合は、MOD計算結果が負になった場合に3を足すようにする
+	if(a%b < 0)  // 判定はa<0ではダメで、a%b<0でないと、a%b=0のときに+3が出力されてしまう(a=-3のようなケース)
+	{
+		cout << "a=" << a << ", b=" << b << ", a%b=" << (a%b)+b << endl;  // (-10%3)+3 = 2
+	}
+	else
+	{
+		cout << "a=" << a << ", b=" << b << ", a%b=" << a%b << endl;  // -3%3 = 0
+	}
+	// (※)言語によって仕様が異なる。Pythonでは同様の計算結果は正になる
+	//    参考：https://atcoder.jp/contests/abc266/editorial/4665
 }
 
 void _pow_(void)
