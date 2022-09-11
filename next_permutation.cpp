@@ -11,6 +11,7 @@ using namespace std;
 /*
  * [関連する問題]
  * ABC232-C https://atcoder.jp/contests/abc232/tasks/abc232_c
+ * ABC268-D https://atcoder.jp/contests/abc268/tasks/abc268_d (D問題にしては難易度高めだが、良問だった)
  */
 
 /*
