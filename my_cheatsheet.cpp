@@ -40,6 +40,12 @@ int main(void)
 	*/
 
 	/*
+	ABCのC,D辺りの問題で、実装が重めの問題リスト。実装の練習に。
+	ABC268-D
+	ABC260-D
+	*/
+
+	/*
 	ABC265-E問題(https://atcoder.jp/contests/abc265/tasks/abc265_e)にて
 	配るDPでの自分の実装(ABC265-E.cpp)では
 	---------
