@@ -37,6 +37,12 @@ int main(void)
 		graph[a].push_back(Edge(b, w));  // 辺を持つ
 	}
 
+	// [memo]
+	// ダイクストラ部分を関数化するならば、ここからwhile()の終端までが良さそう。
+	//   vector<ll> dist(N);
+	//   Dijkstra(dist, s);
+	// ダイクストラで何を求めるか、によって引数は変える。
+
 	// ヒープを用いたダイクストラ法で解く
 	vector<ll> dist(N, INF64);  // 始点から各頂点への距離
 	dist[s] = 0;  // 始点は0に
