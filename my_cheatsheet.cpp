@@ -90,6 +90,7 @@ int main(void)
 	}
 	[関連する問題]
 	ABC264-C
+	ABC269-C
 	*/
 
 	/*
