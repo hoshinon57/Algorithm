@@ -150,6 +150,13 @@ int main(void)
 	記録のフェーズとシミュレートのフェーズ、そして解の算出のフェーズに分ける。
 	ABC256-D-2.cppを参照。
 	https://imoz.jp/algorithms/imos_method.html
+	[関連する問題]
+	ABC268-E
+	*/
+
+	/*
+	インタラクティブ問題
+	ABC269-E
 	*/
 	return 0;
 }
