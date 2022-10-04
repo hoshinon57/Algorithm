@@ -256,7 +256,7 @@ void multisettest(multiset<int> &s, string &&prev)
 
 // set:集合を管理できるデータ構造
 // 要素は昇順に並んでいる
-// 各操作の計算量は、要素数NのときにおおよそO(√N)
+// 各操作の計算量は、要素数NのときにおおよそO(logN)
 // setは重複した要素を持てないが、multisetなら重複した要素も独立して持てる
 // 
 // find()などで得られるイテレータは、s.find()-s.begin()のような加減算は不可能。
