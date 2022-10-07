@@ -13,6 +13,11 @@ const int INF32 = 1 << 30;
 //   https://www.slideshare.net/hcpc_hokudai/max-flow
 //   競プロにおけるライブラリ化の話もある
 
+// 注意：
+// 容量をint型にしているため、32bitの範囲を超える場合は修正が必要。
+// メンバ変数だけでなく、関数の戻り値や引数、関数内のローカル変数、INF64など直す箇所が多い点に注意。
+// AtCoderフォルダのARC085-E.cppでは64bit型に変更したので、そちらからコピペするのもあり。
+
 // グラフを表す構造体
 struct Graph
 {
