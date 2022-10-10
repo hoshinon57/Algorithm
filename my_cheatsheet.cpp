@@ -730,6 +730,8 @@ void _pow_(void)
 // 
 // #include <unordered_set>  が必要
 // 
+// pairとの組み合わせ方法は、本関数の後半にあるコメントを参照のこと。
+// 
 // 参考：
 // https://cpprefjp.github.io/reference/unordered_set/unordered_set.html
 // https://zenn.dev/reputeless/books/standard-cpp-for-competitive-programming/viewer/library-unordered_set
@@ -779,6 +781,28 @@ void _unordered_set_(void)
 		cout << e << ",";
 	}
 	cout << endl;
+
+	/*
+	pairにはハッシュ関数が定義されていないため、そのままでは
+	  unordered_set<pair<int,int>> us;
+	のように定義できない。
+	使うにはpairのハッシュ関数を定義する必要がある。
+
+	https://qiita.com/tqk/items/7c4df1eeb5ebaedcf714  を参考に、以下のphashを追加する。
+struct phash{
+	inline size_t operator()(const pair<int,int> & p) const{
+		const auto h1 = hash<int>()(p.first);
+		const auto h2 = hash<int>()(p.second);
+		return h1 ^ (h2 << 1);
+	}
+};
+	そして
+	  unordered_set<pair<int,int>, phash> us;
+	と定義する。
+
+	h1 ^ (h2 << 1) の部分はサイトによって色んな手法があるようだが、
+	単に h1^h2 だと {a,b}と{b,a}で同じハッシュ値になってしまう、という記載が上記サイトにてされていた。
+	*/
 }
 
 // ハッシュテーブルを用いた連想配列
