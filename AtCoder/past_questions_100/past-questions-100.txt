@@ -12,7 +12,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 全探索：工夫して通り数を減らす全列挙
 5：未
 6：未
-7：未
+7：past-questions-7.cppにて
 8：未
 9：未
 
