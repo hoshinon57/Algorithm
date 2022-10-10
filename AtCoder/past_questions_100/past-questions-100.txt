@@ -7,7 +7,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 1：past-questions-1.cpp, past-questions-1-2.cppにて
 2：未
 3：未
-4：未
+4：past-questions-4.cppにて
 
 全探索：工夫して通り数を減らす全列挙
 5：未
