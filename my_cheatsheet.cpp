@@ -167,6 +167,28 @@ int main(void)
 	return 0;
 }
 
+void _lambda_(void)
+{
+	/*
+	ラムダ式の書き方メモ
+	参考：
+	https://rinatz.github.io/cpp-book/ch02-09-lambda-expressions/
+	*/
+
+	// -> int は戻り値の型
+	// 型推論に任せるならば省略可能
+	auto func = [](int a, int b) -> int
+	{
+		return a + b;
+	};
+	// 最後に ; が必要
+	
+	// ラムダ式の外にある変数を使いたい場合、コピーキャプチャか参照キャプチャを使う
+	// 前者は[=], 後者は[&]
+	// また特定の変数のみを使いたい場合は[&num1, num2]など。
+	// 基本的には[&]を使うことになりそう
+}
+
 void _vector_(void)
 {
 	// vector<int> a = {3, 1, 4, 1, 5};  // 定義時に要素を指定
