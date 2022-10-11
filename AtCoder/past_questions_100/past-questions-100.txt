@@ -19,7 +19,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 全探索：ビット全探索
 10：未
 11：未
-12：未
+12：ABC002-D.cppにて
 13：未
 14：未
 
