@@ -65,7 +65,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 45：未
 
 動的計画法：区間 DP
-46：未
+46：past-questions-46.cppにて
 47：未
 48：未
 
