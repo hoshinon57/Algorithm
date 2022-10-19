@@ -66,7 +66,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 
 動的計画法：区間 DP
 46：past-questions-46.cppにて
-47：未
+47：past-questions-47.cppにて
 48：未
 
 動的計画法：bit DP
