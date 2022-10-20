@@ -72,5 +72,5 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 動的計画法：bit DP
 49：past-questions-49.cppにて
 50：past-questions-50.cppにて
-51：未
+51：past-questions-51.cppにて
 52：past-questions-52.cppにて
