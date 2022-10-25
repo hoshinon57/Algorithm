@@ -74,3 +74,14 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 50：past-questions-50.cpp, past-questions-50-2.cppにて
 51：past-questions-51.cppにて
 52：past-questions-52.cppにて
+
+動的計画法：その他
+53：未
+54：未
+55：未
+
+最短経路問題：ダイクストラ法
+56：past-questions-56.cppにて
+57：未
+58：未
+59：未
