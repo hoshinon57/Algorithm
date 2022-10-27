@@ -83,5 +83,11 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 最短経路問題：ダイクストラ法
 56：past-questions-56.cppにて
 57：past-questions-57.cppにて
-58：未
+58：past-questions-58.cppにて
 59：未
+
+最短経路問題：ワーシャルフロイド法
+60：未
+61：未
+62：未
+63：未
