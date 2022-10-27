@@ -24,8 +24,8 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 14：未
 
 全探索：順列全探索
-15：未
-16：未
+15：親フォルダより、ABC145-C.cppにて
+16：親フォルダより、ABC145-C.cppにて
 17：未
 
 二分探索
