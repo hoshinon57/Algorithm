@@ -25,7 +25,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 
 全探索：順列全探索
 15：親フォルダより、ABC145-C.cppにて
-16：親フォルダより、ABC145-C.cppにて
+16：親フォルダより、ABC150-C.cppにて
 17：未
 
 二分探索
@@ -87,7 +87,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 59：未
 
 最短経路問題：ワーシャルフロイド法
-60：未
+60：past-questions-60.cppにて
 61：未
 62：未
 63：未
