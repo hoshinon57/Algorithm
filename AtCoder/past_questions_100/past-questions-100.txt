@@ -88,6 +88,6 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 
 最短経路問題：ワーシャルフロイド法
 60：past-questions-60.cppにて
-61：未
+61：past-questions-61.cppにて
 62：未
 63：未
