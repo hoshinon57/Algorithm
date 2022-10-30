@@ -48,7 +48,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 30：未
 31：未
 32：未
-33：未
+33：親フォルダより、ABC088-D.cppにて
 
 動的計画法：ナップザック DP
 34：未
