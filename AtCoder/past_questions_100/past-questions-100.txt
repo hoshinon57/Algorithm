@@ -82,7 +82,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 
 最短経路問題：ダイクストラ法
 56：past-questions-56.cppにて
-57：past-questions-57.cppにて
+57：past-questions-57.cpp, past-questions-57-2.cppにて
 58：past-questions-58.cppにて
 59：未
 
