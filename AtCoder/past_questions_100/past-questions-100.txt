@@ -40,7 +40,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 24：未
 25：未
 26：未
-27：未
+27：past-questions-27.cppにて
 
 幅優先探索
 28：未
