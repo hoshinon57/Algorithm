@@ -21,7 +21,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 11：未
 12：ABC002-D.cppにて
 13：未
-14：未
+14：past-questions-14.cppにて
 
 全探索：順列全探索
 15：親フォルダより、ABC145-C.cppにて
