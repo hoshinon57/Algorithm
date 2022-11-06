@@ -185,11 +185,22 @@ void _lambda_(void)
 		return a + b;
 	};
 	// 最後に ; が必要
+
+	cout << func(10,20) << endl;
 	
 	// ラムダ式の外にある変数を使いたい場合、コピーキャプチャか参照キャプチャを使う
 	// 前者は[=], 後者は[&]
 	// また特定の変数のみを使いたい場合は[&num1, num2]など。
 	// 基本的には[&]を使うことになりそう
+}
+
+// a,bの最大公約数を返す
+// C++17から標準ライブラリに搭載されているとのこと
+// 参考：https://cpprefjp.github.io/reference/numeric/gcd.html
+long long gcd(long long a, long long b)
+{
+	if(b == 0) return a;
+	else return gcd(b, a%b);
 }
 
 void _vector_(void)
