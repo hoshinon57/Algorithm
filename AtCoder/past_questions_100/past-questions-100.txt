@@ -26,7 +26,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 全探索：順列全探索
 15：親フォルダより、ABC145-C.cppにて
 16：親フォルダより、ABC150-C.cppにて
-17：未
+17：past-questions-17.cppにて
 
 二分探索
 18：未
