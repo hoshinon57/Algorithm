@@ -58,7 +58,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 38：未
 39：past-questions-39.cpp, past-questions-39-2.cppにて
 40：past-questions-40.cppにて
-41：past-questions-41.cppにて
+41：past-questions-41.cpp, past-questions-41-2.cppにて
 42：未
 43：未
 44：未
