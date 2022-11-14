@@ -8,6 +8,7 @@ using namespace std;
 
 /*
  * [関連する問題]
+ * ABC277-E ダイクストラ、0-1BFS
  * ABC259-D
  * ABC257-D
  * ABC252-E
@@ -18,7 +19,7 @@ using namespace std;
 
 /*
  * ベルマン・フォード法、ダイクストラ法、ワーシャルフロイド法などは
- * フォルダ /book_drken/chapter14 のソースコード、およびchapter14-memo.txtを参照。
+ * フォルダ /book_drken/chapter14 のソースコード(code14-4.cpp)、およびchapter14-memo.txtを参照。
  */
 
 /*
