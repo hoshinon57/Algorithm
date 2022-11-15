@@ -31,7 +31,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 二分探索
 18：未
 19：past-questions-19.cppにて
-20：未
+20：親フォルダより、ABC077-C.cppにて
 21：未
 22：未
 23：未
