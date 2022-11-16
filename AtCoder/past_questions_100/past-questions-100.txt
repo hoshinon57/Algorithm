@@ -99,7 +99,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 67：未
 
 高速な素数判定法
-68：未
+68：past-questions-68.cppにて
 69：未
 
 高速なべき乗計算
