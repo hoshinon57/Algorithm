@@ -76,7 +76,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 52：past-questions-52.cppにて
 
 動的計画法：その他
-53：未
+53：past-questions-53.cppにて
 54：未
 55：未
 
