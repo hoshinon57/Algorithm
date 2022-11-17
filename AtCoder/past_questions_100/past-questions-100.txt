@@ -103,7 +103,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 69：未
 
 高速なべき乗計算
-70：未
+70：past-questions-70.cppにて
 71：未
 
 逆元を使う問題
