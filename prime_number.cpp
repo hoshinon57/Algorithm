@@ -42,6 +42,8 @@ void make_prime_list(long long N, vector<long long> &prime_list)
 // Nを素因数分解し、{素因数, 指数}のpairの形でprime_listに入れる
 // 以下URLをほぼそのまま持ってきている
 // https://qiita.com/drken/items/a14e9af0ca2d857dad23
+// その他、参考URL：
+//   https://algo-method.com/descriptions/119
 void prime_factorize(long long N, vector<pair<long long, long long>> &prime_list)
 {
 	long long i;
