@@ -104,7 +104,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 
 高速なべき乗計算
 70：past-questions-70.cppにて
-71：未
+71：past-questions-71.cppにて
 
 逆元を使う問題
 72：未
