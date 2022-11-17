@@ -750,6 +750,23 @@ void _mod_(void)
 	//    参考：https://atcoder.jp/contests/abc266/editorial/4665
 }
 
+// a^n (mod) を計算する
+// 例えば3^5=3^1*3^4であり、5をビットごとに見ていって最下位ビットが1のときに積算する
+// 以下URLのコードをほぼそのまま持ってきている
+//   https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
+long long modpow(long long a, long long n, long long mod)
+{
+	long long ans = 1;
+	while(n > 0)
+	{
+		if((n&1) != 0)  // nの最下位ビットが立っているなら、答に掛ける
+			ans = (ans * a) % mod;
+		a = (a * a) % mod;
+		n >>= 1;
+	}
+	return ans;
+}
+
 void _pow_(void)
 {
 	// #include <cmath>  が必要
@@ -759,6 +776,11 @@ void _pow_(void)
 	// pow() :戻り値はdouble型        64bit
 	// powl():戻り値はlong double型   環境依存だが、128bitとか何とか
 	// 参考：https://qiita.com/mod_poppo/items/8860505f38e2997cd021
+
+	cout << "2^3 (mod 1000000007)=8 : " << modpow(2, 3, 1000000007) << endl;
+	cout << "5^8 (mod 1000000007)=390625 : " << modpow(5, 8, 1000000007) << endl;
+	cout << "93^200023 (mod 1000000007)=415192366 : " << modpow(93, 200023, 1000000007) << endl;
+	cout << "83^999999570 (mod 1000000007)=642657703 : " << modpow(83, 999999570, 1000000007) << endl;
 }
 
 // ハッシュテーブルを用いた集合
