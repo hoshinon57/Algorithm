@@ -100,7 +100,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 
 高速な素数判定法
 68：past-questions-68.cppにて
-69：未
+69：past-questions-69.cppにて
 
 高速なべき乗計算
 70：past-questions-70.cppにて
