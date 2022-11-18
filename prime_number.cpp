@@ -21,6 +21,9 @@ bool isPrime(long long N)
 
 // 素数列挙(エラトステネスの篩)
 // N以下の素数を列挙してprime_listに入れる
+// 計算量はO(NloglogN)とのこと。以下2つの記事を参考。
+//   https://algo-method.com/descriptions/64
+//   https://manabitimes.jp/math/992
 void make_prime_list(long long N, vector<long long> &prime_list)
 {
 	vector<bool> isPrime(N+1, true);
