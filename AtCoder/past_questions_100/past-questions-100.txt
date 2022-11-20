@@ -77,7 +77,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 
 動的計画法：その他
 53：past-questions-53.cppにて
-54：未
+54：親フォルダより、ABC006-D.cppにて
 55：未
 
 最短経路問題：ダイクストラ法
