@@ -10,6 +10,12 @@ using namespace std;
  * ＞辺の追加と連結性の判定を得意とするデータ構造は Union Find である. 
  * https://kazun-kyopro.hatenablog.com/entry/ABC/264/E
  * 
+ * グラフの連結成分数を求める場合、大事なのは「頂点からUnion-Findの番号を取得する手段」と考える。
+ * 一般的なグラフであれば頂点番号＝Union-Findの番号、とみなせる。
+ *   参考：book_drken/chapter11 のcode11-4.cpp
+ * グリッドグラフであれば、マス{y,x}に対してuf_id[y][x]にUnion-Findの番号を保持しておく手段が考えられる。
+ *   参考：AtCoder/past_questions_100 のpast-questions-25-4(uf).cpp
+ * 
  * [関連する問題]
  * ABC075-C
  * ABC120-D
@@ -17,6 +23,7 @@ using namespace std;
  * ABC259-D
  * ABC264-E
  * ABC269-D
+ * AOJ 1160 https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1160&lang=jp
  */
 
 struct UnionFind
