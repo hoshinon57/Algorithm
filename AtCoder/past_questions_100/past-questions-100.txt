@@ -114,7 +114,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 
 累積和
 76：past-questions-76.cpp, past-questions-76-2.cppにて
-77：未
+77：past-questions-77.cppにて
 78：未
 79：未
 80：未
