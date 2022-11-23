@@ -39,7 +39,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 深さ優先探索
 24：past-questions-24.cppにて
 25：past-questions-25.cpp, past-questions-25-2(dfs).cpp, past-questions-25-3(bfs).cpp, past-questions-25-4(uf).cppにて
-26：未
+26：親フォルダより、ABC138-D.cppにて
 27：past-questions-27.cppにて
 
 幅優先探索
