@@ -107,7 +107,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 71：past-questions-71.cppにて
 
 逆元を使う問題
-72：未
+72：親フォルダより、ABC034-C.cppにて
 73：未
 74：未
 75：未
