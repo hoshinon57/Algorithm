@@ -118,7 +118,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 78：past-questions-78.cppにて
 79：未
 80：未
-81：past-questions-81.cppにて
+81：past-questions-81.cpp, past-questions-81-2(eventsort).cppにて
 82：未
 83：未
 84：未
