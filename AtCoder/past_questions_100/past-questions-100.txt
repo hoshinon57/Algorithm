@@ -125,7 +125,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 
 Union-Find
 85：未
-86：未
+86：親フォルダより、ABC075-C.cppにて
 87：未
 
 その他のテクニック
