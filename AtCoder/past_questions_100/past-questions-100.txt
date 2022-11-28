@@ -131,7 +131,7 @@ Union-Find
 その他のテクニック
 88：past-questions-88.cppにて
 89：未
-90：未
+90：past-questions-90.cppにて
 91：未
 
 実装問題
