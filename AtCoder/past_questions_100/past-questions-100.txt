@@ -20,7 +20,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 10：未
 11：未
 12：ABC002-D.cppにて
-13：未
+13：past-questions-13.cppにて
 14：past-questions-14.cppにて
 
 全探索：順列全探索
