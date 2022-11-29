@@ -46,7 +46,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 28：未
 29：未
 30：past-questions-30.cppにて
-31：未
+31：past-questions-31.cppにて
 32：未
 33：親フォルダより、ABC088-D.cppにて
 
