@@ -93,7 +93,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 63：未
 
 最小全域木問題
-64：未
+64：past-questions-64.cppにて
 65：未
 66：未
 67：未
