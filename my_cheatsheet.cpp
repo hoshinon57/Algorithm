@@ -308,6 +308,12 @@ void _vector_(void)
 	bool myCompare(int left, int right) { return left < right; }
 	のように用意しておいて、
 	sort(a.begin(), a.end(), myCompare);
+
+	自作のクラスをソートしたい場合、
+	bool myCompare(const Edge &a, const Edge &b){ return a.w < b.w; }
+	のように用意しておいて(引数は値渡しでも良い模様)、
+	sort(graph.begin(), graph.end(), myCompare);
+	参考：https://arcslab.hatenablog.jp/entry/2020/03/26/011321
 	*/
 	/*
 	lower_bound(), upper_bound()はstd::を使う
