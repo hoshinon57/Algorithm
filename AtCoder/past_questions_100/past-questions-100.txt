@@ -94,7 +94,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 
 最小全域木問題
 64：past-questions-64.cppにて
-65：未
+65：past-questions-65.cppにて
 66：未
 67：未
 
