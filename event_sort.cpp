@@ -12,6 +12,8 @@ using namespace std;
  * [関連する問題]
  * ABC256-D https://atcoder.jp/contests/abc256/tasks/abc256_d
  * ABC257-C https://atcoder.jp/contests/abc257/tasks/abc257_c
+ * 精選100 No.81 https://atcoder.jp/contests/abc014/tasks/abc014_3
+ * 精選100 No.82 https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2013
  * 
  * [問題設定]
  * N人のユーザがいて、i番目のユーザは時刻Lにログインし、時刻Rにログアウトしました。
@@ -38,11 +40,9 @@ using namespace std;
  * 問題設定が、「同時にログインしていた人数の最大値を求めなさい」の場合、
  * 上記では正しく処理できない。
  * 同時刻に別ユーザがログアウト＆ログインした場合、
- * ログインが先に処理されるため想定より1人多くなってしまう。
- * {L,1},{R,0}のようにRを優先して処理すれば、正しく求められる…はず。
- * (Lが来たときのカウンタの最大値を保持しておけばよい)
- * 
- * 最大値を求めるなら、いもす法の方が良いかも。
+ * ログインが先に処理されるため想定より1人多くなってしまうため。
+ * この場合は、「前回/今回のイベントの時刻が変化した場合に、最大値の変数をカウンタで更新する」とすればよい。
+ * AtCoder\past_questions_100 フォルダの past-questions-82-2(eventsort).cpp の実装を参考。
  */
 int main(void)
 {
