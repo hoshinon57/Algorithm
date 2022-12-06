@@ -116,7 +116,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 76：past-questions-76.cpp, past-questions-76-2.cppにて
 77：past-questions-77.cppにて
 78：past-questions-78.cppにて
-79：未
+79：親フォルダより、ABC106-D.cppにて
 80：未
 81：past-questions-81.cpp, past-questions-81-2(eventsort).cppにて
 82：past-questions-82.cpp, past-questions-82-2(eventsort).cppにて
