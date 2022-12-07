@@ -109,7 +109,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 逆元を使う問題
 72：親フォルダより、ABC034-C.cppにて
 73：親フォルダより、ABC145-D.cppにて
-74：未
+74：親フォルダより、ABC021-D.cppにて
 75：未
 
 累積和
