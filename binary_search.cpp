@@ -19,6 +19,7 @@ const int INF32 = 1 << 30;
  * ABC270-E 答ではないものを二分探索する問題
  * ABC271-C パッと思いつくのはシミュレーションだが、二分探索でも解ける
  * ABC279-D 三分探索
+ * ARC054-B 三分探索、二分探索 良問
  */
 
 // 二分探索の実装練習
@@ -154,6 +155,9 @@ int my_upper_bound(vector<int> &a, int num)
 // 参考：
 //   https://qiita.com/ganyariya/items/1553ff2bf8d6d7789127
 //   AtCoderフォルダのABC279-D.cpp
+// 与えられた式のグラフがどんなものか感覚を掴むには、
+//   https://www.geogebra.org/graphing?lang=ja
+// などのサイトを使うのが良さそう。
 void ternary_search(void)
 {
 	// 以下、いずれも「最小値を求めたい場合」とする
