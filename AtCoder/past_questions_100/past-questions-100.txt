@@ -33,7 +33,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 19：past-questions-19.cppにて
 20：親フォルダより、ABC077-C.cppにて
 21：親フォルダより、ABC023-D.cppにて
-22：未
+22：親フォルダより、ARC054-B.cppにて
 23：未
 
 深さ優先探索
