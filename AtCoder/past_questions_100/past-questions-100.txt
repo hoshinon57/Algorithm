@@ -96,7 +96,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 64：past-questions-64.cppにて
 65：past-questions-65.cppにて
 66：未
-67：未
+67：親フォルダより、ABC065-D.cppにて
 
 高速な素数判定法
 68：past-questions-68.cppにて
