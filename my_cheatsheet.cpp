@@ -275,6 +275,13 @@ void _vector_(void)
 	vector<vector<int>> a(X);
 	*/
 	/*
+	vectorの三次元配列
+	a[X][Y][Z]  -1で初期化
+	vector<vector<vector<int>>> a(X, vector<vector<int>>(Y, vector<int>(Z, -1)));
+	以下の形式でいけるらしい
+	vector dp(X, vector(Y, vector<ll>(Z, -1)));
+	*/
+	/*
 	vectorの要素数変更
 	要素数をN個に変更
 	a.resize(N);
