@@ -130,7 +130,7 @@ Union-Find
 
 その他のテクニック
 88：past-questions-88.cppにて
-89：未
+89：past-questions-89.cppにて
 90：past-questions-90.cppにて
 91：未
 
