@@ -60,7 +60,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 40：past-questions-40.cppにて
 41：past-questions-41.cpp, past-questions-41-2.cppにて
 42：past-questions-42.cppにて
-43：未
+43：past-questions-43.cppにて
 44：未
 45：未
 
