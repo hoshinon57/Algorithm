@@ -90,7 +90,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 60：past-questions-60.cppにて
 61：past-questions-61.cppにて
 62：親フォルダより、ABC079-D.cppにて
-63：未
+63：親フォルダより、ABC074-D.cppにて
 
 最小全域木問題
 64：past-questions-64.cppにて
