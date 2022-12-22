@@ -47,7 +47,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 29：未
 30：past-questions-30.cppにて
 31：past-questions-31.cppにて
-32：未
+32：past-questions-32.cppにて
 33：親フォルダより、ABC088-D.cppにて
 
 動的計画法：ナップザック DP
