@@ -18,7 +18,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 
 全探索：ビット全探索
 10：未
-11：未
+11：親フォルダより、ABC128-C.cppにて
 12：ABC002-D.cppにて
 13：past-questions-13.cpp, past-questions-13-2(bit-xor).cppにて
 14：past-questions-14.cppにて
