@@ -13,7 +13,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 5：未
 6：未
 7：past-questions-7.cppにて
-8：未
+8：past-questions-8.cppにて
 9：past-questions-9.cppにて
 
 全探索：ビット全探索
