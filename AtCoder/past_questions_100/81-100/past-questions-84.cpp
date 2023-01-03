@@ -112,9 +112,8 @@ int main(void)
 	ll answer = 0;
 	for(i = 1; i <= N; i++)  // y
 	{
-		for(j = 1; j <= N; j++)  // x
+		for(j = 1; j <= i; j++)  // x
 		{
-			if(i < j) continue;  // y<x(三角形の範囲外)なら次へ
 			if(imos_table[i][j] > 0) answer++;
 		}
 	}
