@@ -121,7 +121,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 81：past-questions-81.cpp, past-questions-81-2(eventsort).cppにて
 82：past-questions-82.cpp, past-questions-82-2(eventsort).cppにて
 83：past-questions-83.cppにて
-84：未
+84：past-questions-84.cppにて
 
 Union-Find
 85：未
