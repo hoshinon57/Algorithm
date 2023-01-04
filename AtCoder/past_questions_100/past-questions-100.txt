@@ -142,7 +142,7 @@ Union-Find
 数学的な問題
 95：親フォルダより、ABC149-B.cppにて
 96：親フォルダより、ABC139-D.cppにて
-97：未
+97：親フォルダより、ABC150-D.cppにて
 98：past-questions-98.cppにて
 99：past-questions-99.cppにて
 100：past-questions-100.cppにて
