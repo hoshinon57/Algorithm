@@ -110,7 +110,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 72：親フォルダより、ABC034-C.cppにて
 73：親フォルダより、ABC145-D.cppにて
 74：親フォルダより、ABC021-D.cppにて
-75：未
+75：親フォルダより、ABC149-F.cppにて
 
 累積和
 76：past-questions-76.cpp, past-questions-76-2.cppにて
