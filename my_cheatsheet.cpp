@@ -846,6 +846,16 @@ void _pow_(void)
 	cout << "83^999999570 (mod 1000000007)=642657703 : " << modpow(83, 999999570, 1000000007) << endl;
 }
 
+void _sqrt_(void)
+{
+	// sqrt() :引数と戻り値はdouble型        64bit
+	// sqrtl():引数と戻り値はlong double型   環境依存だが、128bitとか何とか
+	// 参考：https://qiita.com/mod_poppo/items/8860505f38e2997cd021
+	// よってlong long型の大きな値をsqrt()に入れると、引数にて long long->double への変換で誤差が生じる可能性がある
+	// (64bitだが、仮数部は53bitのため)
+	// 参考：https://rsk0315.hatenablog.com/entry/2022/06/04/190255
+}
+
 // ハッシュテーブルを用いた集合
 // 同一要素を複数格納できず、格納順が規定されていない
 // 挿入、削除、検索などの操作が、平均的にO(1)で可能
