@@ -53,7 +53,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 動的計画法：ナップザック DP
 34：past-questions-34.cppにて
 35：past-questions-35.cpp, past-questions-35-2.cppにて
-36：未
+36：past-questions-36.cppにて
 37：未
 38：未
 39：past-questions-39.cpp, past-questions-39-2.cppにて
