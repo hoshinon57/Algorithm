@@ -856,6 +856,21 @@ void _sqrt_(void)
 	// 参考：https://rsk0315.hatenablog.com/entry/2022/06/04/190255
 }
 
+// limitを上限として、a*bを返す
+// 乗算でオーバーフローを防ぐ用途で用いる
+// -> min(a*b, limit)  a,b,u>=0
+// hamamuさんの以下コードをほぼそのまま持ってきている
+//   https://twitter.com/hamamu_kyopro/status/1612015305110454274/
+long long limitmul(long long a, long long b, long long limit)
+{
+	if(b == 0) return 0;  // a*b=0
+
+	if(a <= limit / b)
+		return a*b;
+	else
+		return limit;
+}
+
 // ハッシュテーブルを用いた集合
 // 同一要素を複数格納できず、格納順が規定されていない
 // 挿入、削除、検索などの操作が、平均的にO(1)で可能
