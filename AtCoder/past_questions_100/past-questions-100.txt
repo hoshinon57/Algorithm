@@ -135,7 +135,7 @@ Union-Find
 91：親フォルダより、ABC144-D.cppにて
 
 実装問題
-92：未
+92：past-questions-92.cppにて
 93：未
 94：未
 
