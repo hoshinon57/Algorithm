@@ -985,3 +985,17 @@ void _unordered_map_(void)
 		cout << "aaa does not exist." << endl;
 	}
 }
+
+// STL(コンテナ含む)に関するメモ
+void _stl_(void)
+{
+	/*
+	コンテナ使用時、要素の追加や削除操作には要注意。「イテレータ破壊」が発生する可能性がある。
+	例：
+	  vectorに対する範囲for内で、push_back()操作など。
+	  範囲forでなくとも、itr = a.begin() などのイテレータ操作時も同様。
+	参考：
+	  https://qiita.com/izmktr/items/0c95aff5ba7554afcaa7
+	  https://dixq.net/forum/viewtopic.php?t=11823
+	*/
+}
