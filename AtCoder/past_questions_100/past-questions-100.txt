@@ -137,7 +137,7 @@ Union-Find
 実装問題
 92：past-questions-92.cppにて
 93：past-questions-93.cppにて
-94：未
+94：past-questions-94.cppにて
 
 数学的な問題
 95：親フォルダより、ABC149-B.cppにて
