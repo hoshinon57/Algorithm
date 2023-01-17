@@ -6,6 +6,7 @@ using namespace std;
 // 約数列挙
 
 // Nの約数を列挙してdivisor[]に入れる
+// 参考：https://qiita.com/drken/items/a14e9af0ca2d857dad23
 void func_divisor(long long N, vector<long long> &divisor)
 {
 	for(long long i = 1; i*i <= N; i++)
