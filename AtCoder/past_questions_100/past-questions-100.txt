@@ -6,7 +6,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 全探索：全列挙
 1：past-questions-1.cpp, past-questions-1-2.cppにて
 2：親フォルダより、ABC106-B.cppにて
-3：未
+3：親フォルダより、ABC122-B.cppにて
 4：past-questions-4.cppにて
 
 全探索：工夫して通り数を減らす全列挙
