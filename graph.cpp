@@ -46,9 +46,32 @@ using Graph = vector<vector<int>>;
 // Graph graph(N);
 // で定義する
 
+/*
+ * グラフを Graph = vector<vector<int>> で表現できない場合：
+ * 例：文字列や、数値であっても10^9などメモリが足りないケース
+ * 
+ * 連想配列を使って
+ *   map<string, vector<string>> mp;
+ *   map<int, vector<int>> mp;
+ * のように管理すれば、int型のケースとほぼ同じ実装で可能。 (vector<map<... のようにvectorでくくる必要は無い)
+ * 探索済みを表すseen[]も、
+ *   map<int, bool> seen;
+ * の形で。
+ * 
+ * この場合、入力時（グラフ構築時）のタイミングで
+ *   seen[a] = false;  // 未探索
+ * として明示的にmapの要素を作成しておくと、探索時にfind()やcount()で要素の存在判定が不要になるので楽。
+ * 
+ * もしくは連想配列ではなく、座標圧縮して頂点番号を0から順に振っていく方法もありそう。
+ * 
+ * 参考：
+ * ABC277-C https://atcoder.jp/contests/abc277/tasks/abc277_c
+ * ABC285-D https://atcoder.jp/contests/abc285/tasks/abc285_d
+ */
+
 void cycle(int N, Graph &graph);
 
-// 基本パターン
+// 基本パターン(無向グラフ)
 int main(void)
 {
 	// 以下、0-indexed
@@ -69,7 +92,7 @@ int main(void)
 	}
 
 #if 0
-	// サイクルを検出したい場合の処理
+	// 無向グラフでのサイクルを検出したい場合の処理
 	cycle(N, graph);
 	return 0;
 #endif
@@ -110,7 +133,7 @@ int main(void)
 	return 0;
 }
 
-// サイクルを検出したいパターン
+// 無向グラフでのサイクルを検出したいパターン
 // seen[]とは別に、キュー積み時に頂点の親を設定する
 void cycle(int N, Graph &graph)
 {
