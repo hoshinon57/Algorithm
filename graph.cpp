@@ -57,6 +57,9 @@ using Graph = vector<vector<int>>;
  * 探索済みを表すseen[]も、
  *   map<int, bool> seen;
  * の形で。
+ * ※各頂点に対して範囲forでアクセスしたい場合は、以下のようにe.firstでアクセスする点が異なる。
+ *   for(auto &e : mp)
+ *     if(seen[e.first]) continue;
  * 
  * この場合、入力時（グラフ構築時）のタイミングで
  *   seen[a] = false;  // 未探索
