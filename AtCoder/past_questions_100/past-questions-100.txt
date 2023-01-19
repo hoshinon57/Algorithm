@@ -10,7 +10,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 4：past-questions-4.cppにて
 
 全探索：工夫して通り数を減らす全列挙
-5：未
+5：親フォルダより、ABC095-C.cppにて
 6：未
 7：past-questions-7.cppにて
 8：past-questions-8.cppにて
