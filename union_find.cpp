@@ -23,6 +23,7 @@ using namespace std;
  * ABC259-D
  * ABC264-E
  * ABC269-D
+ * ABC292-D
  * AOJ 1160 https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1160&lang=jp
  */
 
