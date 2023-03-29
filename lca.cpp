@@ -52,7 +52,7 @@ struct LCA
 		depth.resize(n);
 		
 		// 頂点0を根としたときの、各頂点の深さを事前計算
-		dfs(g, 0, -1, 0);
+		dfs(g, root, -1, 0);
 
 		// ダブリング事前計算
 		// parent[0][*]はdfs()にて計算済み
