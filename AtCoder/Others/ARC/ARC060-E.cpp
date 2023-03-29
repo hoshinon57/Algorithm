@@ -57,6 +57,20 @@ int main(void)
 	{
 		db[0][i] = upper_bound(x.begin(), x.end(), x[i]+L) - x.begin() - 1;
 	}
+/*
+	尺取り法で求める場合のコードは以下。
+	実行時間が300ms -> 270msほどに変化した。
+	int r = 0;
+	for(i = 0; i < N; i++)
+	{
+		while(x[i] + L >= x[r])
+		{
+			if(++r == N) break;
+		}
+		r--;
+		db[0][i] = r;
+	}
+*/
 	// db[k][*]を求める
 	for(k = 1; k <= LOG_N; k++)
 	{
