@@ -5,6 +5,6 @@ https://qiita.com/e869120/items/acba3dd8649d913102b5
 
 ダブリング（最長共通祖先 [LCA] を含む）
 111：past-questions-111.cppにて
-112：未
+112：親フォルダより、ABC014-D.cppにて
 113：未
 114：未

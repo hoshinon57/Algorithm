@@ -1,18 +1,33 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <iomanip>
 using namespace std;
+typedef long long ll;
+const ll INF64 = 1LL << 60;
+const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// ダブリングによりLCA(Lowest Common Ancestor)を解くテンプレート
+// 「分野別 初中級者が解くべき過去問精選 100問」の問題112より
+// https://qiita.com/e869120/items/acba3dd8649d913102b5
+// 
+// https://atcoder.jp/contests/abc014/tasks/abc014_4
 
 /*
- * 参考サイト
- * https://algo-logic.info/lca/
- * https://ikatakos.com/pot/programming_algorithm/graph_theory/lowest_common_ancestor
+ * LCAを用いて解く。
  * 
- * [関連する問題]
- * AOJ GRL_5_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_5_C&lang=ja
- * ABC014-D
+ * a,bのLCAをlとすると、求める値は
+ *   (aの深さ) + (bの深さ) - 2*(lの深さ) + 1
+ * となる。(+1はLCAの頂点部分)
+ * 
+ * よって各頂点の深さをDFSで、LCAをダブリングにて求めればよい。
+ * これはライブラリとして整備しているので、それを使う。
+ * 
+ * 計算量は、
+ *   前処理：DFSがO(N), ダブリングがO(NlogN), よって全体でO(NlogN)
+ *   各クエリ：O(logN)
+ * より、全体でO(NlogN + QlogN) かなと。
  */
 
 using Graph = vector<vector<int>>;
@@ -120,34 +135,34 @@ struct LCA
 
 int main(void)
 {
-	// 以下、AOJ GRL_5_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_5_C&lang=ja
-	// を入力としたときのコード
-	
-	int i, k;
-	int n;
-	cin >> n;
-	Graph g(n);
-	for(i = 0; i < n; i++)
+	// 0-indexd
+	int i;
+	int N;
+	cin >> N;
+	Graph g(N);
+	for(i = 0; i < N-1; i++)
 	{
-		cin >> k;
-		for(; k > 0; k--)
-		{
-			int c;
-			cin >> c;
-			// 入力によらず頂点0を根にできるように、双方向に辺をはる
-			g[i].push_back(c);
-			g[c].push_back(i);
-		}
+		int x, y;
+		cin >> x >> y;
+		x--;
+		y--;
+		g[x].push_back(y);
+		g[y].push_back(x);
 	}
-	LCA lca(n, g, 0);
-	int q;
-	cin >> q;
-	while(q > 0)
+	LCA lca(N, g, 0);
+
+	int Q;
+	cin >> Q;
+	while(Q > 0)
 	{
-		int u, v;
-		cin >> u >> v;
-		cout << lca.Query(u, v) << endl;
-		q--;
+		int a, b;
+		cin >> a >> b;
+		a--;
+		b--;
+		int l = lca.Query(a, b);
+		// +1はLCAとなる頂点の分
+		cout << lca.depth[a] + lca.depth[b] - 2*lca.depth[l] + 1 << endl;
+		Q--;
 	}
 
 	return 0;
