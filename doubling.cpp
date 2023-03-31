@@ -1,5 +1,9 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
 
 // ダブリングのメモ
+// 周期性を用いた考え方についても記載する
 
 /*
  * [参考資料]
@@ -67,4 +71,55 @@ void doubling(void)
 		Q >>= 1;
 	}
 */
+}
+
+// 周期性を用いた考え方
+// 参考：https://algo-logic.info/abc167d/
+// ABC167-Dの入力を前提としたコード
+void solution_loop(void)
+{
+	using ll = long long;
+	using namespace std;
+
+	// 0-indexed
+	ll i;
+	ll N, K;
+	cin >> N >> K;
+	vector<ll> a(N);
+	for(i = 0; i < N; i++)
+	{
+		cin >> a[i];
+		a[i]--;
+	}
+
+	// まずは先頭から1つずつ探索していき、ループを見つける
+	vector<bool> used(N, false);  // 探索済みか
+	vector<int> path;  // スタートから辿る町を順に格納する
+	int cur = 0;  // 町1スタート
+	while(!used[cur])
+	{
+		path.push_back(cur);
+		// 探索済みにして次の町へ
+		used[cur] = true;
+		cur = a[cur];
+	}
+	// curにはループの最初の町が入っている
+	// 0 -> 1 -> 2 -> 3 -> 4 -> (2) という経路であれば、
+	// path[]には0～4までの5要素が、curには2が入っている
+
+	ll bef_loop = find(path.begin(), path.end(), cur) - path.begin();  // ループに入るまでに辿る町の数
+	ll loop_num = path.size() - bef_loop;  // ループの周期
+	ll answer;
+	if(K < bef_loop)  // ループに入る前
+	{
+		answer = path[K];
+	}
+	else
+	{
+		// ループに入る前の余分な要素を引いて、それを周期で割った余り -> ループ中の何番目か
+		// それとbef_loopを加算すれば、何番目の要素かが分かる (<N)
+		ll tmp = ((K - bef_loop) % loop_num) + bef_loop;
+		answer = path[tmp];
+	}
+	cout << answer+1 << endl;  // 1-indexedに戻すために+1
 }
