@@ -75,7 +75,7 @@ void doubling(void)
 
 // 周期性を用いた考え方
 // 参考：https://algo-logic.info/abc167d/
-// ABC167-Dの入力を前提としたコード
+// ABC167-Dの入力を前提としたコード (https://atcoder.jp/contests/abc167/tasks/abc167_d)
 void solution_loop(void)
 {
 	using ll = long long;
@@ -93,6 +93,8 @@ void solution_loop(void)
 	}
 
 	// まずは先頭から1つずつ探索していき、ループを見つける
+	// path[]には要素番号を入れていくのが良さそう
+	// ->例えば、追加するアメの数(ABC241-E)や箱に入れるじゃがいもの数(ABC258-E)では、うまく行かない気がする
 	vector<bool> used(N, false);  // 探索済みか
 	vector<int> path;  // スタートから辿る町を順に格納する
 	int cur = 0;  // 町1スタート
