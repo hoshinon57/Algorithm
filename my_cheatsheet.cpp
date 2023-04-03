@@ -7,8 +7,10 @@
 #include <queue>
 #include <unordered_set>
 #include <unordered_map>
+#include <cassert>
 using namespace std;
 
+void _string_(void);
 void _set_multiset_(void);
 void _priority_queue_(void);
 void _list_(void);
@@ -30,6 +32,8 @@ int main(void)
 	_unordered_set_();
 	_unordered_map_();
 	_mod_();
+	_string_();
+
 
 	/*
 	AtCoderにてWAが出た場合のチェックポイント(ABC262での反省点)
@@ -333,6 +337,17 @@ void _vector_(void)
 	auto itr = std::find(a.begin(), a.end(), 4);
 	cout << itr - a.begin() << endl;
 	*/
+}
+
+void _string_(void)
+{
+	cout << "-----string-----" << endl;
+	string str = "012345";
+	
+	// 文字列の切り出し:substr()
+	assert(str.substr(2, 3) == "234");  // str[2]から3文字
+	assert(str.substr(3) == "345");  // str[3]以降の文字列
+	assert(str.substr(str.size() - 4) == "2345");  // 末尾から4文字取り出したい場合
 }
 
 void settest(set<int> &s, string &&prev)
