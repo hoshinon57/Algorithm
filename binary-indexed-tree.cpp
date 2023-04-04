@@ -43,7 +43,7 @@ struct BIT
 		while(i > 0)
 		{
 			s += array[i];
-			i = i & (-i);  // LSBを減算
+			i -= i & (-i);  // LSBを減算
 		}
 		return s;
 	}
