@@ -20,6 +20,7 @@ void _mod_(void);
 void _pow_(void);
 void _unordered_set_(void);
 void _unordered_map_(void);
+void _stl_(void);
 
 int main(void)
 {
@@ -33,7 +34,7 @@ int main(void)
 	_unordered_map_();
 	_mod_();
 	_string_();
-
+	_stl_();
 
 	/*
 	AtCoderにてWAが出た場合のチェックポイント(ABC262での反省点)
@@ -1005,6 +1006,8 @@ void _unordered_map_(void)
 // STL(コンテナ含む)に関するメモ
 void _stl_(void)
 {
+	cout << "-----stl-----" << endl;
+
 	/*
 	コンテナ使用時、要素の追加や削除操作には要注意。「イテレータ破壊」が発生する可能性がある。
 	例：
@@ -1014,4 +1017,21 @@ void _stl_(void)
 	  https://qiita.com/izmktr/items/0c95aff5ba7554afcaa7
 	  https://dixq.net/forum/viewtopic.php?t=11823
 	*/
+
+	// 要素の並びを反転する:std::reverse
+	// stringやvector, 通常の配列などにも使える
+	// #include <algorithm> が必要
+	// 計算量は要素数をNとしてO(N).
+	int a[5] = {0, 1, 2, 3, 4};
+	reverse(a+1, a+4);  // [1,4) を反転する -> {0,3,2,1,4}
+	for(int i = 0; i < 5; i++) {cout << a[i] << " ";} cout << endl;
+
+	string str = "abcde";
+	reverse(str.begin(), str.end());
+	assert(str == "edcba");
+	
+	vector<int> a_v = {10, 11, 12, 13, 14};
+	// reverse(a_v.begin(), a_v.end());  // 使うのはこのケースが大半だと思う
+	reverse(a_v.begin()+1, a_v.begin()+3);  // [1,3) を反転する -> {10,12,11,13,14}
+	for(auto &e : a_v) {cout << e << " ";} cout << endl;
 }
