@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cassert>
 using namespace std;
 
 // Binary Indexed Tree(BIT)のメモ
@@ -32,8 +33,8 @@ using namespace std;
 template <typename T>
 struct BIT
 {
-	const int n;  // 1-indexedでA1～Anまでの数列を扱う
 	vector<T> array;  
+	const int n;  // 1-indexedでA1～Anまでの数列を扱う
 
 	BIT(int n_) : array(n_+1, 0), n(n_) {}  // 1-indxedのため配列の要素数は+1して確保
 	
@@ -67,3 +68,17 @@ struct BIT
 		}
 	}
 };
+
+int main(void)
+{
+	BIT<int> b(7);  // 要素数は2のべき乗でなくても良い
+	b.Add(1, 3);  // 1-indxed
+	b.Add(3, 10);
+	assert(b.Sum(1, 3) == 13);
+	assert(b.Sum(1, 7) == 13);
+	b.Add(7, 10);  // b(7)で定義したので、A7まで使える
+	b.Add(7, 10);
+	assert(b.Sum(2, 7) == 30);
+
+	return 0;
+}
