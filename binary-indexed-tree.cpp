@@ -17,24 +17,25 @@ using namespace std;
  * https://algo-logic.info/binary-indexed-tree/
  * 
  * [関連する問題]
- * 
- * 
+ * AOJ DSL_2_B https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B&lang=ja
  */
 
-// 書き書けの項目
-// 1-indexed
-// 閉区間
-// 要素数nは2のべき乗でなくても良い
-
+// Binary Indexed Treeを用いて以下(1)(2)をO(logN)で計算する
+//   (1)iが与えられたとき、累積和A1+A2+...+Aiを計算
+//   (2)iとxが与えられたとき、Aiにxを加算する
+// [注意]
+//   1-indxed
+//   Sum()は閉区間で処理する
+//   要素数nは2のべき乗でなくても良い
 // 以下URLをほぼそのまま持ってきている
 // https://www.slideshare.net/hcpc_hokudai/binary-indexed-tree
 template <typename T>
 struct BIT
 {
+	const int n;  // 1-indexedでA1～Anまでの数列を扱う
 	vector<T> array;  
-	const int n;  // 配列の要素数(数列の要素数+1)
 
-	BIT(int n_) : array(n_+1, 0), n(n_) {}
+	BIT(int n_) : array(n_+1, 0), n(n_) {}  // 1-indxedのため配列の要素数は+1して確保
 	
 	// 1番目からi番目までの累積和を求める
 	T Sum(int i)
