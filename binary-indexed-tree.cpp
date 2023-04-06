@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
+#include <random>  // ランダムテスト用
 using namespace std;
 
 // Binary Indexed Tree(BIT)のメモ
@@ -159,6 +160,74 @@ public:
 	}
 };
 
+// ランダムテストにて、BIT_RAQの計算結果と、愚直に計算した結果が一致するかテストする
+void RAQ_random_test(void)
+{
+	int i, j;
+	std::random_device rd;
+	std::mt19937 rng(rd());
+
+	cout << "random test:start" << endl;
+	for(i = 0; i < 100; i++)
+	{
+		int n = std::uniform_int_distribution<int>(1, 100000)(rng);
+		BIT_RAQ<long long> br(n);
+		vector<long long> a(n+1);
+		for(j = 0; j < 100; j++)
+		{
+			int query = std::uniform_int_distribution<int>(0, 3)(rng);
+			if(query == 0)
+			{
+				int idx = std::uniform_int_distribution<int>(1, n)(rng);
+				int x = std::uniform_int_distribution<int>(-100, 100)(rng);
+				br.Add(idx, x);
+				a[idx] += x;
+//				cout << "query == 0  " << "idx=" << idx << ", x=" << x << endl;
+			}
+			else if(query == 1)
+			{
+				int l = std::uniform_int_distribution<int>(1, n)(rng);
+				int r = std::uniform_int_distribution<int>(1, n)(rng);
+				int x = std::uniform_int_distribution<int>(-100, 100)(rng);
+				if(l > r) swap(l, r);
+				br.Add_Range(l, r, x);
+				for(int k = l; k <= r; k++)
+				{
+					a[k] += x;
+				}
+//				cout << "query == 1  " << "l=" << l << ", r=" << r << ", x=" << x << endl;
+			}
+			else if(query == 2)
+			{
+				long long s1 = 0, s2 = 0;
+				int idx = std::uniform_int_distribution<int>(1, n)(rng);		
+				s1 = br.Sum(idx);
+				for(int k = 1; k <= idx; k++)
+				{
+					s2 += a[k];
+				}
+//				cout << "query == 2  " << "s1=" << s1 << ", s2=" << s2 << endl;
+				assert(s1 == s2);
+			}
+			else
+			{
+				long long s1 = 0, s2 = 0;
+				int l = std::uniform_int_distribution<int>(1, n)(rng);
+				int r = std::uniform_int_distribution<int>(1, n)(rng);
+				if(l > r) swap(l, r);
+				s1 = br.Sum(l, r);
+				for(int k = l; k <= r; k++)
+				{
+					s2 += a[k];
+				}
+//				cout << "query == 3  " << "l=" << l << ", r=" << r << ", s1=" << s1 << ", s2=" << s2 << endl;
+				assert(s1 == s2);
+			}
+		}
+	}
+	cout << "random test:OK!" << endl;
+}
+
 int main(void)
 {
 	BIT<int> b(7);  // 要素数は2のべき乗でなくても良い
@@ -169,6 +238,22 @@ int main(void)
 	b.Add(7, 10);  // b(7)で定義したので、A7まで使える
 	b.Add(7, 10);
 	assert(b.Sum(2, 7) == 30);
+
+	BIT_RAQ<int> br(13);
+	br.Add(1, 2);
+	br.Add(13, -2);
+	assert(br.Sum(13) == 0);
+	assert(br.Sum(5) == 2);
+	assert(br.Sum(10, 13) == -2);
+	br.Add_Range(2, 8, 1);
+	br.Add_Range(7, 13, 2);
+	assert(br.Sum(1, 6) == 7);
+	assert(br.Sum(10, 13) == 6);
+	assert(br.Sum(1, 13) == 21);
+	assert(br.Sum(1) == 2);
+	assert(br.Sum(5) == 6);
+
+	RAQ_random_test();
 
 	return 0;
 }
