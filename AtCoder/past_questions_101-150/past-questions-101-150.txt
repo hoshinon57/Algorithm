@@ -12,7 +12,7 @@ https://qiita.com/e869120/items/acba3dd8649d913102b5
 Binary Indexed Tree (BIT) を使う問題
 132：past-questions-132.cppにて
 133：past-questions-133.cppにて
-134：未
+134：past-questions-134.cppにて
 135：未
 136：未
 137：未
