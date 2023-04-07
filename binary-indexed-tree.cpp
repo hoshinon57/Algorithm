@@ -24,14 +24,15 @@ using namespace std;
  * 
  * [関連する問題]
  * AOJ DSL_2_B https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B&lang=ja
- * AOJ DSL_2_E https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_E&lang=ja
+ * AOJ DSL_2_E https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_E&lang=ja  Range Add Query
+ * AOJ ALDS1_5_D https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_5_D&lang=ja  反転数(転倒数)
  */
 
 // Binary Indexed Treeを用いて以下(1)(2)をO(logN)で計算する
 //   (1)iが与えられたとき、累積和A1+A2+...+Aiを計算
 //   (2)iとxが与えられたとき、Aiにxを加算する
 // [注意]
-//   1-indxed
+//   1-indexed
 //   Sum()は閉区間で処理する
 //   要素数nは2のべき乗でなくても良い
 // 以下URLをほぼそのまま持ってきている
@@ -81,7 +82,7 @@ struct BIT
 //   (2)Add : iとxが与えられたとき、Aiにxを加算する
 //   (3)Add_Range : l,rが与えられたとき、Al～Arにxを加算する (Range Add Query)
 // [注意]
-//   1-indxed
+//   1-indexed
 //   Sum(),Add_Range()は閉区間で処理する
 //   要素数nは2のべき乗でなくても良い
 // 以下URLをほぼそのまま持ってきている
