@@ -229,6 +229,28 @@ void RAQ_random_test(void)
 	cout << "random test:OK!" << endl;
 }
 
+// 転倒数(反転数)の求め方メモ
+void Inversion(void)
+{
+	/*
+	配列a[i]が与えられたとき、転倒数は以下のアルゴリズムで求められる。
+
+	Bit<int> bit;
+	for(i = 0; i < n; i++)
+	{
+ 		answer += i - bit.Sum(a[i]);
+		bit.Add(a[i], 1);
+	}
+
+	例えばa[i]=3のとき、a[]が昇順に並んでいればa[0]～a[i-1]に3以下の値がi個あることになる。
+	つまり i-bit.Sum(3) にて、転倒数が求められる。
+	BITの各操作がO(logN)なので、計算量は全体でO(NlogN).
+
+	ただしBITは1-indexedのため、a[i]の値も1以上にする必要がある。
+	またa[i]の値が大きくなる場合、座標圧縮する必要がある。
+	*/
+}
+
 int main(void)
 {
 	BIT<int> b(7);  // 要素数は2のべき乗でなくても良い
