@@ -19,6 +19,9 @@ using namespace std;
  * BIT_RAQ構造体：(1),(2),(3)に対応
  * 要素数Nに対し、サイズNの配列で実装可能。
  * 
+ * 転倒数(反転数)の求め方：Inversion()に記載
+ * x番目に小さい要素の求め方：main()に記載
+ * 
  * [参考資料]
  * https://www.slideshare.net/hcpc_hokudai/binary-indexed-tree
  * https://algo-logic.info/binary-indexed-tree/
@@ -370,6 +373,17 @@ int main(void)
 	assert(br.Sum(5) == 6);
 
 	RAQ_random_test();
+
+	/*
+	ある集合を考えたときに、x番目に小さい要素は以下の手順で求めることができる。
+
+	集合に含まれる値の最大値をNとして、BIT<int> b(N); で定義する。
+	  b.Add(a, 1);	// 集合にaを追加
+	  b.Add(a, -1);	// 集合からaを削除
+	  b.Sum(a);		// aが何番目に小さいか
+	  b.lower_bound(x);	// x番目に小さい要素は何か
+	集合に含まれる値に1を立てていくイメージ。
+	*/
 
 	return 0;
 }
