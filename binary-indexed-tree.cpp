@@ -14,7 +14,8 @@ using namespace std;
  *            [i,j]の区間の累積和を求めるSumもある
  *   (2)Add : iとxが与えられたとき、Aiにxを加算する
  *   (3)Add_Range : l,rが与えられたとき、Al～Arにxを加算する (Range Add Query)
- * BIT構造体：(1),(2)に対応
+ *   (4)lower_bound : a1+a2+...+ax>=w となるような最小のxを返す (各aiが0以上であることが条件)
+ * BIT構造体：(1),(2),(4)に対応
  * BIT_RAQ構造体：(1),(2),(3)に対応
  * 要素数Nに対し、サイズNの配列で実装可能。
  * 
@@ -29,15 +30,17 @@ using namespace std;
  * AOJ 0365 https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0365&lang=ja
  */
 
-// Binary Indexed Treeを用いて以下(1)(2)をO(logN)で計算する
-//   (1)iが与えられたとき、累積和A1+A2+...+Aiを計算
-//   (2)iとxが与えられたとき、Aiにxを加算する
+// Binary Indexed Treeを用いて以下(1)(2)(4)をO(logN)で計算する
+//   (1)Sum : iが与えられたとき、累積和A1+A2+...+Aiを計算
+//   (2)Add : iとxが与えられたとき、Aiにxを加算する
+//   (4)lower_bound : a1+a2+...+ax>=w となるような最小のxを返す (各aiが0以上であることが条件)
 // [注意]
 //   1-indexed
 //   Sum()は閉区間で処理する
 //   要素数nは2のべき乗でなくても良い
 // 以下URLをほぼそのまま持ってきている
 // https://www.slideshare.net/hcpc_hokudai/binary-indexed-tree
+// https://algo-logic.info/binary-indexed-tree/
 template <typename T>
 struct BIT
 {
@@ -74,6 +77,32 @@ struct BIT
 			array[i] += x;
 			i += i & (-i);  // LSBを加算
 		}
+	}
+
+	// a1 + a2 + ... + ax >= w となるような最小のxを返す
+	// 二分探索を用いるので、
+	//   a1
+	//   a1+a2
+	//   a1+a2+a3 ...
+	// が狭義単調増加になっている必要がある
+	// ⇒各aiが0以上であること、が条件
+	int lower_bound(T w)
+	{
+		// a[i]>=0 の条件があるので、wが0以下なら"a1"と打ち切ってよい
+		if(w <= 0) return 1;
+
+		int l = 0, r = 1;
+		while(r <= n) r <<= 1;  // n以下の、最小の2のべき乗
+		for(int len = r; len > 0; len >>= 1)  // len:長さ 1段下るごとに1/2になっていく
+		{
+			// w以上にならないギリギリで探索していく
+			if(l+len <= n && array[l+len] < w)  // [l+1, len]を採用するとき
+			{
+				w -= array[l+len];
+				l += len;  // 右側の子に行くイメージ
+			}
+		}
+		return l+1;  // 「w以上にならないギリギリ」なので、+1したものが答
 	}
 };
 
@@ -162,6 +191,61 @@ public:
 	}
 };
 
+// ランダムテストにて、BITのlower_bound()の計算結果と、愚直に計算した結果が一致するかテストする
+void BIT_random_test(void)
+{
+	int i, j;
+	std::random_device rd;
+	std::mt19937 rng(rd());
+
+	cout << "(BIT)random test:start" << endl;
+	for(i = 0; i < 100; i++)
+	{
+		int n = std::uniform_int_distribution<int>(1, 100000)(rng);
+		BIT<long long> bit(n);
+		vector<long long> a(n+1);
+		for(j = 0; j < 200; j++)
+		{
+			int query = std::uniform_int_distribution<int>(0, 3)(rng);
+			if(query == 0)  // Add
+			{
+				int idx = std::uniform_int_distribution<int>(1, n)(rng);
+				int x = std::uniform_int_distribution<int>(0, 100)(rng);
+				bit.Add(idx, x);
+				a[idx] += x;
+//				cout << "query==0, " << "idx=" << idx << ", x=" << x << endl;
+			}
+			else if(query == 1)  // [1,x]の累積和
+			{
+				long long s1 = 0, s2 = 0;
+				int idx = std::uniform_int_distribution<int>(1, n)(rng);
+				s1 = bit.Sum(idx);
+				for(int k = 1; k <= idx; k++)
+				{
+					s2 += a[k];
+				}
+				assert(s1 == s2);
+//				cout << "query==1, " << "idx=" << idx << endl;
+			}
+			else if(query == 2)  // 先頭からの累積和がxを超えるindexを求める
+			{
+				int idx1, idx2;
+				long long sum = std::uniform_int_distribution<int>(1, 1000)(rng);
+				idx1 = bit.lower_bound(sum);
+				long long tmp = 0;
+				for(idx2 = 1; idx2 <= n; idx2++)
+				{
+					tmp += a[idx2];
+					if(tmp >= sum) break;
+				}
+				assert(idx1 == idx2);
+//				cout << "query==2, " << "sum=" << sum << endl;
+			}
+		}
+	}
+	cout << "(BIT)random test:OK!" << endl;
+}
+
 // ランダムテストにて、BIT_RAQの計算結果と、愚直に計算した結果が一致するかテストする
 void RAQ_random_test(void)
 {
@@ -169,7 +253,7 @@ void RAQ_random_test(void)
 	std::random_device rd;
 	std::mt19937 rng(rd());
 
-	cout << "random test:start" << endl;
+	cout << "(RAQ)random test:start" << endl;
 	for(i = 0; i < 100; i++)
 	{
 		int n = std::uniform_int_distribution<int>(1, 100000)(rng);
@@ -202,7 +286,7 @@ void RAQ_random_test(void)
 			else if(query == 2)
 			{
 				long long s1 = 0, s2 = 0;
-				int idx = std::uniform_int_distribution<int>(1, n)(rng);		
+				int idx = std::uniform_int_distribution<int>(1, n)(rng);
 				s1 = br.Sum(idx);
 				for(int k = 1; k <= idx; k++)
 				{
@@ -227,7 +311,7 @@ void RAQ_random_test(void)
 			}
 		}
 	}
-	cout << "random test:OK!" << endl;
+	cout << "(RAQ)random test:OK!" << endl;
 }
 
 // 転倒数(反転数)の求め方メモ
@@ -259,9 +343,17 @@ int main(void)
 	b.Add(3, 10);
 	assert(b.Sum(1, 3) == 13);
 	assert(b.Sum(1, 7) == 13);
+	assert(b.lower_bound(3) == 1);
+	assert(b.lower_bound(4) == 3);
 	b.Add(7, 10);  // b(7)で定義したので、A7まで使える
 	b.Add(7, 10);
 	assert(b.Sum(2, 7) == 30);
+	assert(b.lower_bound(0) == 1);  // lower_bound()を使う場合、各要素は0以上の前提
+	assert(b.lower_bound(14) == 7);
+	assert(b.lower_bound(33) == 7);
+	assert(b.lower_bound(34) == 8);  // 末尾の次
+
+	BIT_random_test();
 
 	BIT_RAQ<int> br(13);
 	br.Add(1, 2);
