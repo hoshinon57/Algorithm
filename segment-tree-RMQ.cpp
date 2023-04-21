@@ -1,12 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <limits>  // numeric_limits
 #include <cassert>
 using namespace std;
 typedef long long ll;
 const ll INF64 = 1LL << 60;
-// const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
-const int INF32 = (int)((1UL<<31)-1);
+const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
 // セグメント木のメモや実装
@@ -24,6 +24,14 @@ const int INF32 = (int)((1UL<<31)-1);
  *   (2)GetMin(a, b) : 区間[a,b)にある要素の最小値を返す
  *   0-indexed, および半開区間で処理する。
  * 
+ * [Tips]
+ * ・木の最下段のノード数は、問題文にて指定されるsize以上の2のべき乗。
+ *   これをNとすると、最下段のノード数はN, それより上の段のノードは全部でN-1.
+ *   よって木全体で必要なノード数は 2N-1 となる。
+ * ・要素xをnode[]の添字番号に変換する場合：N-1を加算する
+ * ・親から子へ行く場合、 k -> 2k+1, 2k+2
+ * ・子から親へ行く場合、 k -> (k-1)/2  (切り捨て)
+ * 
  * [参考資料]
  *   https://tsutaj.hatenablog.com/entry/2017/03/29/204841
  *   https://algo-logic.info/segment-tree/
@@ -39,38 +47,28 @@ const int INF32 = (int)((1UL<<31)-1);
 //   0-indexed, および半開区間で処理する。
 // 以下URLをほぼそのまま持ってきている
 // https://tsutaj.hatenablog.com/entry/2017/03/29/204841
+// https://algo-logic.info/segment-tree/
+template <typename T>
 struct SegmentTree_RMQ
 {
 private:
-	int n;
-	vector<int> node;
+	int n;   // 木の最下段の要素数 (コンストラクタで指定したsize以上の、2のべき乗)
+	vector<T> node;
+	const T INF = numeric_limits<T>::max();
 
 public:
-	// 元配列vをセグメント木で表現する
-	SegmentTree_RMQ(vector<int> v)
+	// 要素数で初期化
+	SegmentTree_RMQ(int size)
 	{
-		int i;
-		int size = v.size();
 		// 最下段のノード数は、size以上の2のべき乗 -> nとする
-		// セグメント木全体で必要なノード数は 2*n-1 となる
+		// するとセグメント木全体で必要なノード数は 2*n-1 となる
 		n = 1;
 		while(n < size) n *= 2;
-		node.resize(2*n-1, INF32);
-
-		// 最下段を設定
-		for(i = 0; i < size; i++)
-		{
-			node[n-1+i] = v[i];
-		}
-		// それより上は、自分の子を参照  下から順に
-		for(i = n-2; i >= 0; i--)
-		{
-			node[i] = min(node[2*i+1], node[2*i+2]);
-		}
+		node.resize(2*n-1, INF);
 	}
 
 	// 要素xをvalで更新する
-	void Update(int x, int val)
+	void Update(int x, T val)
 	{
 		x += n-1;  // node[]の要素番号に変換
 		// 最下段のnodeを更新したら、あとは親へ上って更新していく
@@ -85,20 +83,20 @@ public:
 	// 区間[a,b)にある要素の最小値を返す
 	// k:自分がいるnodeのindex
 	// nodeの[l,r)を対象とする
-	int GetMin(int a, int b, int k = 0, int l = 0, int r = -1)
+	T GetMin(int a, int b, int k = 0, int l = 0, int r = -1)
 	{
 		// r=-1 なら最初の呼び出し
 		if(r < 0) r = n;  // [0,n)を対象とする
 
 		// クエリ[a,b)と対象[l,r)が交わらないので、答に影響しない値を返す
-		if(r <= a || b <= l) return INF32;
+		if(r <= a || b <= l) return INF;
 
 		// クエリが対象を完全に被覆する
 		if(a <= l && r <= b) return node[k];
 
 		// 左右の子について再帰的に探索
-		int vl = GetMin(a, b, 2*k+1, l, (l+r)/2);  // 左側
-		int vr = GetMin(a, b, 2*k+2, (l+r)/2, r);  // 右側
+		T vl = GetMin(a, b, 2*k+1, l, (l+r)/2);  // 左側
+		T vr = GetMin(a, b, 2*k+2, (l+r)/2, r);  // 右側
 		return min(vl, vr);
 	}
 };
@@ -106,7 +104,11 @@ public:
 void Test(void)
 {
 	vector<int> v = {3, 1, 4, 1, 5, 9};
-	SegmentTree_RMQ rmq(v);
+	SegmentTree_RMQ<int> rmq(v.size());
+	for(int i = 0; i < (int)v.size(); i++)
+	{
+		rmq.Update(i, v[i]);
+	}
 
 	assert(rmq.GetMin(0, 6) == 1);
 	assert(rmq.GetMin(0, 3) == 1);
@@ -126,8 +128,8 @@ int main(void)
 	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
 	int n, q;
 	cin >> n >> q;
-	vector<int> v(n, INF32);
-	SegmentTree_RMQ rmq(v);
+	SegmentTree_RMQ<int> rmq(n);
+	for(int i = 0; i < n; i++) rmq.Update(i, (int)((1UL<<31)-1));
 
 	int c, x, y;
 	while(q > 0)
