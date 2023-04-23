@@ -1050,4 +1050,17 @@ void _stl_(void)
 	// reverse(a_v.begin(), a_v.end());  // 使うのはこのケースが大半だと思う
 	reverse(a_v.begin()+1, a_v.begin()+3);  // [1,3) を反転する -> {10,12,11,13,14}
 	for(auto &e : a_v) {cout << e << " ";} cout << endl;
+
+	// 要素の中にある値xが含まれるか検索する:std::find
+	// 配列やvectorで使える
+	// 計算量は要素数をNとしてO(N).
+	// (stringはこれではなく、メンバ関数のfindを使う感じか)
+	a_v = {1, 2, 3, 4, 5, 4, 3};
+	assert(find(a_v.begin(), a_v.end(), 4) - a_v.begin() == 3);  // 4はa_v[3]  [begin, end)の半開区間にて探す
+	assert(find(a_v.begin(), a_v.end(), 100) - a_v.begin() == (int)a_v.size());  // 見つからない場合
+	// 末尾から検索したい場合、string::rfind()のような関数は無いので、reverse_iteratorを使う
+	// a_v[*]の要素番号idxを求める式は以下の感じ (把握しきってないので、使う際は要注意かな…)
+	int idx = find(a_v.rbegin(), a_v.rend(), 4) - a_v.rbegin();
+	idx = a_v.size() - 1 - idx; // -1が必要
+	assert(idx == 5);  // 4が最後に登場するのはa_v[5]
 }
