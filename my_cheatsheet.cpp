@@ -228,6 +228,7 @@ int main(void)
 	/*
 	インタラクティブ問題
 	ABC269-E
+	ABC299-D
 	*/
 	return 0;
 }
@@ -355,6 +356,19 @@ void _string_(void)
 	assert(str.substr(2, 3) == "234");  // str[2]から3文字
 	assert(str.substr(3) == "345");  // str[3]以降の文字列
 	assert(str.substr(str.size() - 4) == "2345");  // 末尾から4文字取り出したい場合
+
+	// 文字列の検索:find()
+	/*
+		for(i = 0; i < 10; i++)
+	{
+		t += "oxx";
+	}
+
+	string s;
+	cin >> s;
+	return (t.find(s) != string::npos);
+
+	*/
 }
 
 void settest(set<int> &s, string &&prev)
