@@ -16,7 +16,7 @@ https://qiita.com/e869120/items/acba3dd8649d913102b5
 114：未
 
 Binary Indexed Tree (BIT) を使う問題
-132：past-questions-132.cppにて
+132：past-questions-132.cpp, past-questions-132-2.cppにて
 133：past-questions-133.cppにて
 134：past-questions-134.cppにて
 135：past-questions-135.cppにて
