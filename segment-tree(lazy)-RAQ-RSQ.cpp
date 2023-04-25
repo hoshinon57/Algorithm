@@ -18,7 +18,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * といった処理をO(logN)でできるデータ構造。
  * 
  * LazySegmentTree_RAQ_RSQ:
- * Range Sum Query(RSQ)をセグメント木で実装したもの。
+ * Range Add Query(RAQ)およびRange Sum Query(RSQ)をセグメント木で実装したもの。
  *   以下の操作をO(logN)で処理できる。
  *   (1)Add(a, b, x) : 区間[a,b)の要素にxを加算する
  *   (2)GetSum(a, b) : 区間[a,b)にある要素の総和を返す
