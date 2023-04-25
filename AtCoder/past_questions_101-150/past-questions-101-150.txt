@@ -30,7 +30,7 @@ Range Minimum Query (RMQ)
 
 遅延評価セグメント木
 141：past-questions-141.cppにて
-142：未
+142：past-questions-142.cppにて
 143：未
 144：未
 145：未
