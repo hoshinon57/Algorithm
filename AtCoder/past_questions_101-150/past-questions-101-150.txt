@@ -23,3 +23,15 @@ Binary Indexed Tree (BIT) を使う問題
 136：親フォルダより、ARC033-C.cppにて
 137：未
 138：未
+
+Range Minimum Query (RMQ)
+139：未
+140：未
+
+遅延評価セグメント木
+141：past-questions-141.cppにて
+142：未
+143：未
+144：未
+145：未
+146：未
