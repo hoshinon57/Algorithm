@@ -112,7 +112,7 @@ public:
 		// クエリが対象を完全に被覆する
 		if(a <= l && r <= b)
 		{
-			lazy[k] += (r-l) * x;  // 区間加算なので、kが担当する要素数のx倍を加算
+			lazy[k] += (r-l) * x;  // 区間和なので、kが担当する要素数のx倍を加算
 			lazyFlag[k] = true;
 			Evaluate(k, l, r);
 			return;
