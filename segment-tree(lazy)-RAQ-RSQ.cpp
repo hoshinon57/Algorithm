@@ -46,7 +46,8 @@ struct LazySegmentTree_RAQ_RSQ  // 区間加算、区間和
 private:
 	int n;   // 木の最下段の要素数 (コンストラクタで指定したsize以上の、2のべき乗)
 	vector<T> node;  // 値配列
-	vector<T> lazy;  // 遅延配列  ≠0なら設定されている
+	vector<T> lazy;  // 遅延配列
+	vector<bool> lazyFlag;  // 遅延配列に値が設定されたらtrue
 	const T INITIAL = (T)0;  // 初期値
 
 	// k番目のnodeについて遅延評価を行う
@@ -56,15 +57,17 @@ private:
 		//   自ノードの値配列に値を伝播させる
 		//   子ノードの遅延配列に値を伝播させる
 		//   自分のノードの遅延配列を空にする
-		if(lazy[k] != INITIAL)
+		if(lazyFlag[k])
 		{
 			node[k] += lazy[k];
 			if(r-l > 1)  // 最下段でなければ、子へ伝搬させる
 			{
 				lazy[2*k+1] += lazy[k]/2;
 				lazy[2*k+2] += lazy[k]/2;
+				lazyFlag[2*k+1] = lazyFlag[2*k+2] = true;
 			}
 			lazy[k] = INITIAL;
+			lazyFlag[k] = false;
 		}
 	}
 
@@ -78,6 +81,7 @@ public:
 		while(n < size) n *= 2;
 		node.resize(2*n-1, INITIAL);
 		lazy.resize(2*n-1, INITIAL);
+		lazyFlag.resize(2*n-1, false);
 	}
 
 	// 区間[a,b)の要素にxを加算する
@@ -101,6 +105,7 @@ public:
 		if(a <= l && r <= b)
 		{
 			lazy[k] += (r-l) * x;  // 区間加算なので、kが担当する要素数のx倍を加算
+			lazyFlag[k] = true;
 			Evaluate(k, l, r);
 			return;
 		}
