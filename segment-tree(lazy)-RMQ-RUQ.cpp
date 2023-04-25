@@ -40,6 +40,14 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * AOJ DSL_2_F https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_F&lang=ja
  */
 
+// Range Minimum Query(RMQ)およびRange Update Query(RUQ)の実装
+// (1)Update(a, b, x) : 区間[a,b)の要素をxに変更する
+// (2)GetMin(a, b) : 区間[a,b)にある要素の最小値を返す
+// [注意]
+//   0-indexed, および半開区間で処理する。
+// 以下URLをほぼそのまま持ってきている
+// https://tsutaj.hatenablog.com/entry/2017/03/30/224339
+// https://algo-logic.info/segment-tree/
 template <typename T>
 struct LazySegmentTree_RMQ_RUQ  // 区間最小、区間更新
 {

@@ -40,6 +40,14 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * AOJ DSL_2_G https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_G&lang=ja
  */
 
+// Range Add Query(RAQ)およびRange Sum Query(RSQ)の実装
+// (1)Add(a, b, x) : 区間[a,b)の要素にxを加算する
+// (2)GetSum(a, b) : 区間[a,b)にある要素の総和を返す
+// [注意]
+//   0-indexed, および半開区間で処理する。
+// 以下URLをほぼそのまま持ってきている
+// https://tsutaj.hatenablog.com/entry/2017/03/30/224339
+// https://algo-logic.info/segment-tree/
 template <typename T>
 struct LazySegmentTree_RAQ_RSQ  // 区間加算、区間和
 {
