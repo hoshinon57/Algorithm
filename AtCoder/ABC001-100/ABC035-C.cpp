@@ -1,44 +1,24 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <limits>  // numeric_limits
-#include <cassert>
+#include <cmath>
+#include <iomanip>
 using namespace std;
 typedef long long ll;
 const ll INF64 = 1LL << 60;
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// 遅延セグメント木のメモや実装
+// ABC035 https://atcoder.jp/contests/abc035
 
 /*
- * [ざっくり概要]
- * ・任意の区間の値を更新する(区間更新), 一律加算する(区間加算)
- * ・任意の区間における最小値や合計値を取得する
- * といった処理をO(logN)でできるデータ構造。
+ * 区間加算、区間和の遅延セグメント木で解く。
  * 
- * LazySegmentTree_RAQ_RSQ:
- * Range Add Query(RAQ)およびRange Sum Query(RSQ)をセグメント木で実装したもの。
- *   以下の操作をO(logN)で処理できる。
- *   (1)Add(a, b, x) : 区間[a,b)の要素にxを加算する
- *   (2)GetSum(a, b) : 区間[a,b)にある要素の総和を返す
- *   0-indexed, および半開区間で処理する。
+ * [l,r]のコマを裏返すことを、[l,r]の区間に1を加算することとして考えると、
+ * ある面の値が偶数なら黒、奇数なら白となる。
+ * これを遅延セグメント木で処理すればよい。
  * 
- * [Tips]
- * ・木の最下段のノード数は、問題文にて指定されるsize以上の2のべき乗。
- *   これをNとすると、最下段のノード数はN, それより上の段のノードは全部でN-1.
- *   よって木全体で必要なノード数は 2N-1 となる。
- * ・要素xをnode[]の添字番号に変換する場合：N-1を加算する
- * ・親から子へ行く場合、 k -> 2k+1, 2k+2
- * ・子から親へ行く場合、 k -> (k-1)/2  (切り捨て)
- * 
- * [参考資料]
- *   https://tsutaj.hatenablog.com/entry/2017/03/30/224339
- *   https://algo-logic.info/segment-tree/
- * 
- * [関連する問題]
- * AOJ DSL_2_G https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_G&lang=ja
- * ABC035-C
+ * ある面xの値は、GetSum(x, x+1)で取得できる。
  */
 
 // Range Add Query(RAQ)およびRange Sum Query(RSQ)の実装
@@ -148,49 +128,29 @@ public:
 	}
 };
 
-
-void Test(void)
-{
-	LazySegmentTree_RAQ_RSQ<int> seg(6);  // [0,6)
-	seg.Add(0, 2, 10);  // {10, 10,  0,  0, 0, 0}
-	seg.Add(1, 4, 20);  // {10, 30, 20, 20, 0, 0}
-	assert(seg.GetSum(0, 3) == 60);
-	assert(seg.GetSum(0, 6) == 80);
-	seg.Add(0, 6, 5);  //  {15, 35, 25, 25, 5, 5}
-	assert(seg.GetSum(4, 6) == 10);
-	assert(seg.GetSum(0, 6) == 110);
-}
-
 int main(void)
 {
-	Test();
+	int N, Q;
+	cin >> N >> Q;
+	LazySegmentTree_RAQ_RSQ<int> seg(N);
 
-	// 以下は AOJ DSL_2_G のもの
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_G&lang=ja
-	int n, q;
-	cin >> n >> q;
-	LazySegmentTree_RAQ_RSQ<ll> seg(n);
-
-	int c, s, t, x;
-	while(q > 0)
+	while(Q > 0)
 	{
-		cin >> c;
-		if(c == 0)  // add
-		{
-			cin >> s >> t >> x;
-			s--; t--;  // 0-indexedへの変換
-			t++;  // 閉区間から半開区間への変換
-			seg.Add(s, t, x);
-		}
-		else  // getSum
-		{
-			cin >> s >> t;
-			s--; t--;  // 0-indexedへの変換
-			t++;  // 閉区間から半開区間への変換
-			cout << seg.GetSum(s, t) << endl;
-		}
-		q--;
+		int l, r;
+		cin >> l >> r;
+		l--; r--;  // 0-indexedへの変換
+		r++;  // 半開区間への変換
+		seg.Add(l, r, 1);
+		Q--;
 	}
+
+	for(int i = 0; i < N; i++)
+	{
+		int s = seg.GetSum(i, i+1);
+		if(s%2 == 0) cout << "0";
+		else cout << "1";
+	}
+	cout << endl;
 
 	return 0;
 }
