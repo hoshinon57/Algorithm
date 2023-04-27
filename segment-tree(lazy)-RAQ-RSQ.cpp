@@ -40,6 +40,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * AOJ DSL_2_G https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_G&lang=ja
  * ABC035-C
  * square869120Contest#2-H https://atcoder.jp/contests/s8pc-2
+ * JOI 2008年春合宿 - Typhoon
  */
 
 // Range Add Query(RAQ)およびRange Sum Query(RSQ)の実装

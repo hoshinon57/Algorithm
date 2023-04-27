@@ -32,6 +32,6 @@ Range Minimum Query (RMQ)
 141：past-questions-141.cppにて
 142：past-questions-142.cppにて
 143：past-questions-143.cppにて
-144：未
+144：past-questions-144.cppにて
 145：未
 146：未
