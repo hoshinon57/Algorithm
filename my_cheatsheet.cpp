@@ -1024,6 +1024,9 @@ void _stl_(void)
 {
 	cout << "-----stl-----" << endl;
 
+	// 以下に記載している標準ライブラリ
+	// reverse, find, count
+
 	/*
 	コンテナ使用時、要素の追加や削除操作には要注意。「イテレータ破壊」が発生する可能性がある。
 	例：
@@ -1063,4 +1066,13 @@ void _stl_(void)
 	int idx = find(a_v.rbegin(), a_v.rend(), 4) - a_v.rbegin();
 	idx = a_v.size() - 1 - idx; // -1が必要
 	assert(idx == 5);  // 4が最後に登場するのはa_v[5]
+
+	// 要素に値xがいくつ含まれるかを返す:std::count
+	// stringやvector, 通常の配列などにも使える
+	// 計算量はO(r-l).
+	// (setやmap系はメンバ関数のcount()を使う)
+	str = "abcdeeef";
+	assert(count(str.begin(), str.end(), 'e') == 3);  // "e"だとエラー
+	a_v = {1, 2, 3, 4, 5, 4, 4, 3};
+	assert(count(a_v.begin(), a_v.end(), 4) == 3);
 }
