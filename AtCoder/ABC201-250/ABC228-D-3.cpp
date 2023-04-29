@@ -1,45 +1,24 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <limits>  // numeric_limits
-#include <cassert>
+#include <cmath>
+#include <iomanip>
 using namespace std;
 typedef long long ll;
 const ll INF64 = 1LL << 60;
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// セグメント木のメモや実装
+// ABC228 https://atcoder.jp/contests/abc228
 
 /*
- * [ざっくり概要]
- * ・区間上の値を更新する
- * ・任意の区間における最小値や合計値を取得する
- * といった処理をO(logN)でできるデータ構造。
+ * セグメント木で解く。
  * 
- * SegmentTree_RMQ:
- *   Range Minimum Query(RMQ)をセグメント木で実装したもの。
- *   以下の操作をO(logN)で処理できる。
- *   (1)Update(x, val) : 要素xをvalで更新する
- *   (2)GetMin(a, b) : 区間[a,b)にある要素の最小値を返す
- *   0-indexed, および半開区間で処理する。
- * 
- * [Tips]
- * ・木の最下段のノード数は、問題文にて指定されるsize以上の2のべき乗。
- *   これをNとすると、最下段のノード数はN, それより上の段のノードは全部でN-1.
- *   よって木全体で必要なノード数は 2N-1 となる。
- * ・要素xをnode[]の添字番号に変換する場合：N-1を加算する
- * ・親から子へ行く場合、 k -> 2k+1, 2k+2
- * ・子から親へ行く場合、 k -> (k-1)/2  (切り捨て)
- * 
- * [参考資料]
- *   https://tsutaj.hatenablog.com/entry/2017/03/29/204841
- *   https://algo-logic.info/segment-tree/
- * 
- * [関連する問題]
- * AOJ DSL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
- * ABC125-C
- * ABC228-D
+ * https://algo-logic.info/segment-tree/
+ * を参考に、「ある値x以下となる最も左側の要素番号を返す」関数を用意する。
+ * するとクエリt=1について、以下の手順で更新すべき要素を探せばよい。
+ *   (x%N)以降で-1以下となる要素を探す
+ *   見つからなかった場合、今度は先頭から探す
  */
 
 // Range Minimum Query(RMQ)の実装
@@ -103,6 +82,33 @@ public:
 		return min(vl, vr);
 	}
 
+	// [a,b)の範囲で、x以下となる最も左側の要素番号を返す
+	// 範囲内にx以下が見つからなければ、b(=範囲外)を返す
+	// k:自分がいるnodeのindex
+	// nodeの[l,r)を対象とする
+	int Find_Leftmost(int a, int b, T x, int k = 0, int l = 0, int r = -1)
+	{
+		// r=-1 なら最初の呼び出し
+		if(r < 0) r = n;  // [0,n)を対象とする
+
+		// 自分の値がxより大きい   もしくは
+		// クエリ[a,b)と対象[l,r)が交わらない
+		if(node[k] > x || (r <= a || b <= l)) return b;  // 自身の右隣を返す
+
+		if(k >= n-1) return k-(n-1);  // 自分が葉なら、その位置を返す
+		// これreturn l でもいけるのでは？
+
+		int vl = Find_Leftmost(a, b, x, 2*k+1, l, (l+r)/2);  // 左側
+		if(vl != b)  // 左側に答がある
+		{
+			return vl;
+		}
+		else
+		{
+			return Find_Leftmost(a, b, x, 2*k+2, (l+r)/2, r);  // 右側
+		}
+	}
+
 	// 要素xをvalで更新する
 	// Update()と違い、木全体の更新は行わない。Build()の呼び出しが必要。
 	// 用途：初期化時に全要素を設定し、Build()で木を構築する
@@ -124,50 +130,80 @@ public:
 	}
 };
 
+#include <cassert>
 void Test(void)
 {
-	vector<int> v = {3, 1, 4, 1, 5, 9};
-	SegmentTree_RMQ<int> rmq(v.size());
-	for(int i = 0; i < (int)v.size(); i++)
+	int i;
 	{
-		rmq.Set(i, v[i]);
+		vector<int> a = {3, 1, 4, 1, 5, 9, 2};
+		SegmentTree_RMQ<int> seg(a.size());
+		for(i = 0; i < (int)a.size(); i++)
+		{
+			seg.Set(i, a[i]);
+		}
+		seg.Build();
+		assert(seg.Find_Leftmost(0, 7, 1) == 1);
+		assert(seg.Find_Leftmost(1, 7, 1) == 1);
+		assert(seg.Find_Leftmost(2, 7, 1) == 3);
+		assert(seg.Find_Leftmost(0, 7, 0) == 7);
+		assert(seg.Find_Leftmost(2, 3, 4) == 2);
+		assert(seg.Find_Leftmost(2, 3, 1) == 3);
+		assert(seg.Find_Leftmost(0, 7, 10) == 0);
 	}
-	rmq.Build();
-
-	assert(rmq.GetMin(0, 6) == 1);
-	assert(rmq.GetMin(0, 3) == 1);
-	assert(rmq.GetMin(3, 4) == 1);
-	assert(rmq.GetMin(4, 5) == 5);
-	rmq.Update(6, -1);
-	rmq.Update(2, 0);
-	assert(rmq.GetMin(0, 7) == -1);
-	assert(rmq.GetMin(1, 4) == 0);
+	{
+		vector<int> a = {1, 1, 1};
+		SegmentTree_RMQ<int> seg(a.size());
+		for(i = 0; i < (int)a.size(); i++)
+		{
+			seg.Set(i, a[i]);
+		}
+		seg.Build();
+		assert(seg.Find_Leftmost(0, 3, 1) == 0);
+		assert(seg.Find_Leftmost(1, 3, 1) == 1);
+		assert(seg.Find_Leftmost(2, 3, 1) == 2);
+		assert(seg.Find_Leftmost(0, 2, 1) == 0);
+		assert(seg.Find_Leftmost(1, 3, 1) == 1);
+		assert(seg.Find_Leftmost(0, 3, -1) == 3);
+	}	
 }
 
 int main(void)
 {
-	Test();
+//	Test();
 
-	// 以下は AOJ DSL_2_A のもの
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
-	int n, q;
-	cin >> n >> q;
-	SegmentTree_RMQ<int> rmq(n);
-	for(int i = 0; i < n; i++) rmq.Update(i, (int)((1UL<<31)-1));
-
-	int c, x, y;
-	while(q > 0)
+	int i;
+	const int N = 1<<20;
+	SegmentTree_RMQ<ll> seg(N);
+	// 全要素を-1で初期化
+	for(i = 0; i < N; i++)
 	{
-		cin >> c >> x >> y;
-		if(c == 0)  // update
+		seg.Set(i, -1);
+	}
+	seg.Build();
+
+	int Q;
+	cin >> Q;
+	while(Q > 0)
+	{
+		ll t, x;
+		cin >> t >> x;
+		if(t == 1)
 		{
-			rmq.Update(x, y);
+			// x%N以降で、-1の要素を探す
+			int idx = seg.Find_Leftmost(x%N, N, -1);
+			if(idx == N)
+			{
+				// 見つからなかったので、先頭から再度探す
+				// 問題の制約より、今度は必ず見つかることは保証できる
+				idx = seg.Find_Leftmost(0, N, -1);
+			}
+			seg.Update(idx, x);
 		}
-		else  // find
+		else
 		{
-			cout << rmq.GetMin(x, y+1) << endl;  // 閉区間->半開区間への変換
+			cout << seg.GetMin(x%N, x%N+1) << endl;
 		}
-		q--;
+		Q--;
 	}
 
 	return 0;
