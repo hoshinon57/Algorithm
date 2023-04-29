@@ -46,6 +46,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 // (1)Update(x, val) : 要素xをvalで更新する
 // (2)GetMin(a, b) : 区間[a,b)にある要素の最小値を返す
 // (3)Set(i, val) & Build() : 木の更新を行わず要素iを更新し(Set), まとめて木の構築を行う(Build)
+// (4)Find_Leftmost(a, b, x) : 区間[a,b)の範囲で、x以下となる最も左側の要素番号を返す
 // [注意]
 //   0-indexed, および半開区間で処理する。
 // 以下URLをほぼそのまま持ってきている
@@ -103,6 +104,34 @@ public:
 		return min(vl, vr);
 	}
 
+	// [a,b)の範囲で、x以下となる最も左側の要素番号を返す
+	// 範囲内にx以下が見つからなければ、b(=範囲外)を返す
+	// k:自分がいるnodeのindex
+	// nodeの[l,r)を対象とする
+	int Find_Leftmost(int a, int b, T x, int k = 0, int l = 0, int r = -1)
+	{
+		// r=-1 なら最初の呼び出し
+		if(r < 0) r = n;  // [0,n)を対象とする
+
+		// 自分の値がxより大きい   もしくは
+		// クエリ[a,b)と対象[l,r)が交わらない
+		if(node[k] > x || (r <= a || b <= l)) return b;  // 自身の右隣を返す
+
+//		if(k >= n-1) return k-(n-1);  // 自分が葉なら、その位置を返す
+		if(k >= n-1) return l;  // 自分が葉なら、その位置を返す
+		// 葉なので、lが位置を表している
+
+		int vl = Find_Leftmost(a, b, x, 2*k+1, l, (l+r)/2);  // 左側
+		if(vl != b)  // 左側に答がある
+		{
+			return vl;
+		}
+		else
+		{
+			return Find_Leftmost(a, b, x, 2*k+2, (l+r)/2, r);  // 右側
+		}
+	}
+
 	// 要素xをvalで更新する
 	// Update()と違い、木全体の更新は行わない。Build()の呼び出しが必要。
 	// 用途：初期化時に全要素を設定し、Build()で木を構築する
@@ -142,6 +171,39 @@ void Test(void)
 	rmq.Update(2, 0);
 	assert(rmq.GetMin(0, 7) == -1);
 	assert(rmq.GetMin(1, 4) == 0);
+
+	// Find_Leftmost()のテスト
+	{
+		vector<int> a = {3, 1, 4, 1, 5, 9, 2};
+		SegmentTree_RMQ<int> seg(a.size());
+		for(int i = 0; i < (int)a.size(); i++)
+		{
+			seg.Set(i, a[i]);
+		}
+		seg.Build();
+		assert(seg.Find_Leftmost(0, 7, 1) == 1);
+		assert(seg.Find_Leftmost(1, 7, 1) == 1);
+		assert(seg.Find_Leftmost(2, 7, 1) == 3);
+		assert(seg.Find_Leftmost(0, 7, 0) == 7);
+		assert(seg.Find_Leftmost(2, 3, 4) == 2);
+		assert(seg.Find_Leftmost(2, 3, 1) == 3);
+		assert(seg.Find_Leftmost(0, 7, 10) == 0);
+	}
+	{
+		vector<int> a = {1, 1, 1};
+		SegmentTree_RMQ<int> seg(a.size());
+		for(int i = 0; i < (int)a.size(); i++)
+		{
+			seg.Set(i, a[i]);
+		}
+		seg.Build();
+		assert(seg.Find_Leftmost(0, 3, 1) == 0);
+		assert(seg.Find_Leftmost(1, 3, 1) == 1);
+		assert(seg.Find_Leftmost(2, 3, 1) == 2);
+		assert(seg.Find_Leftmost(0, 2, 1) == 0);
+		assert(seg.Find_Leftmost(1, 3, 1) == 1);
+		assert(seg.Find_Leftmost(0, 3, -1) == 3);
+	}	
 }
 
 int main(void)
