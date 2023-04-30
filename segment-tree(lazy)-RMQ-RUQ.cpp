@@ -43,6 +43,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 // Range Minimum Query(RMQ)およびRange Update Query(RUQ)の実装
 // (1)Update(a, b, x) : 区間[a,b)の要素をxに変更する
 // (2)GetMin(a, b) : 区間[a,b)にある要素の最小値を返す
+// (3)Find_Leftmost(a, b, x) : 区間[a,b)の範囲で、x以下となる最も左側の要素番号を返す
 // [注意]
 //   0-indexed, および半開区間で処理する。
 // 以下URLをほぼそのまま持ってきている
@@ -56,7 +57,7 @@ private:
 	vector<T> node;  // 値配列
 	vector<T> lazy;  // 遅延配列
 	vector<bool> lazyFlag;  // 遅延配列に値が設定されたらtrue
-	const T INITIAL = (T)((1LL<<31)-1);  // 初期値
+	const T INF = numeric_limits<T>::max();
 
 	// k番目のnodeについて遅延評価を行う
 	void Evaluate(int k, int l, int r)
@@ -74,7 +75,7 @@ private:
 				lazy[2*k+2] = lazy[k];
 				lazyFlag[2*k+1] = lazyFlag[2*k+2] = true;
 			}
-			lazy[k] = INITIAL;
+			lazy[k] = INF;
 			lazyFlag[k] = false;
 		}
 	}
@@ -87,8 +88,8 @@ public:
 		// するとセグメント木全体で必要なノード数は 2*n-1 となる
 		n = 1;
 		while(n < size) n *= 2;
-		node.resize(2*n-1, INITIAL);
-		lazy.resize(2*n-1, INITIAL);
+		node.resize(2*n-1, INF);
+		lazy.resize(2*n-1, INF);
 		lazyFlag.resize(2*n-1, false);
 	}
 
@@ -133,7 +134,7 @@ public:
 		if(r < 0) r = n;  // [0,n)を対象とする
 
 		// クエリ[a,b)と対象[l,r)が交わらないので、答に影響しない値を返す
-		if(r <= a || b <= l) return INITIAL;
+		if(r <= a || b <= l) return INF;
 
 		Evaluate(k, l, r);
 
@@ -145,6 +146,35 @@ public:
 		T vr = GetMin(a, b, 2*k+2, (l+r)/2, r);  // 右側
 		return min(vl, vr);
 	}
+
+	// [a,b)の範囲で、x以下となる最も左側の要素番号を返す
+	// 範囲内にx以下が見つからなければ、b(=範囲外)を返す
+	// k:自分がいるnodeのindex
+	// nodeの[l,r)を対象とする
+	int Find_Leftmost(int a, int b, T x, int k = 0, int l = 0, int r = -1)
+	{
+		// r=-1 なら最初の呼び出し
+		if(r < 0) r = n;  // [0,n)を対象とする
+
+		Evaluate(k, l, r);
+
+		// 自分の値がxより大きい   もしくは
+		// クエリ[a,b)と対象[l,r)が交わらない
+		if(node[k] > x || (r <= a || b <= l)) return b;  // 自身の右隣を返す
+
+		if(k >= n-1) return l;  // 自分が葉なら、その位置を返す
+		// 葉なので、lが位置を表している
+
+		int vl = Find_Leftmost(a, b, x, 2*k+1, l, (l+r)/2);  // 左側
+		if(vl != b)  // 左側に答がある
+		{
+			return vl;
+		}
+		else
+		{
+			return Find_Leftmost(a, b, x, 2*k+2, (l+r)/2, r);  // 右側
+		}
+	}
 };
 
 
@@ -153,10 +183,18 @@ void Test(void)
 	LazySegmentTree_RMQ_RUQ<int> seg(6);  // [0,6)
 	seg.Update(0, 2, 10);  // {10, 10, INF, INF, INF, INF}
 	seg.Update(1, 4, 20);  // {10, 20,  20,  20, INF, INF}
+	assert(seg.Find_Leftmost(0, 6, 10) == 0);
+	assert(seg.Find_Leftmost(1, 4, 10) == 4);
+	assert(seg.Find_Leftmost(0, 6, 9) == 6);
 	assert(seg.GetMin(0, 2) == 10);
 	assert(seg.GetMin(0, 6) == 10);
 	assert(seg.GetMin(4, 6) > INF32);
 	seg.Update(3, 6, 5);  //  {10, 20, 20, 5, 5, 5}
+	assert(seg.Find_Leftmost(0, 6, 5) == 3);
+	assert(seg.Find_Leftmost(0, 6, 4) == 6);
+	assert(seg.Find_Leftmost(0, 1, 10) == 0);
+	assert(seg.Find_Leftmost(5, 6, 5) == 5);
+	assert(seg.Find_Leftmost(0, 2, 9) == 2);
 	assert(seg.GetMin(3, 6) == 5);
 	assert(seg.GetMin(1, 3) == 20);
 	assert(seg.GetMin(0, 6) == 5);
@@ -171,6 +209,12 @@ int main(void)
 	int n, q;
 	cin >> n >> q;
 	LazySegmentTree_RMQ_RUQ<ll> seg(n);
+
+	// 初期化
+	for(int i = 0; i < n; i++)
+	{
+		seg.Update(0, n, (1LL<<31)-1);
+	}
 
 	int c, s, t, x;
 	while(q > 0)
