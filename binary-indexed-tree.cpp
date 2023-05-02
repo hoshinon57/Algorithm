@@ -32,6 +32,7 @@ using namespace std;
  * AOJ ALDS1_5_D https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_5_D&lang=ja  反転数(転倒数)
  * AOJ 0365 https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0365&lang=ja
  * ARC033-C https://atcoder.jp/contests/arc033/tasks/arc033_3
+ * ABC153-F https://atcoder.jp/contests/abc153/tasks/abc153_f
  */
 
 // Binary Indexed Treeを用いて以下(1)(2)(4)をO(logN)で計算する
