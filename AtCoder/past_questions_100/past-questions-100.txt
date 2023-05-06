@@ -43,7 +43,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 27：past-questions-27.cppにて
 
 幅優先探索
-28：未
+28：past-questions-28.cppにて
 29：未
 30：past-questions-30.cppにて
 31：past-questions-31.cppにて
