@@ -44,7 +44,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 
 幅優先探索
 28：past-questions-28.cppにて
-29：未
+29：親フォルダより、ABC007-C.cppにて
 30：past-questions-30.cppにて
 31：past-questions-31.cppにて
 32：past-questions-32.cppにて
