@@ -12,6 +12,7 @@ using namespace std;
  * [関連する問題]
  * ABC232-C https://atcoder.jp/contests/abc232/tasks/abc232_c
  * ABC268-D https://atcoder.jp/contests/abc268/tasks/abc268_d (D問題にしては難易度高めだが、良問だった)
+ * ABC302-C https://atcoder.jp/contests/abc302/tasks/abc302_c
  */
 
 /*
@@ -22,6 +23,11 @@ using namespace std;
  * {1,1,2},{1,2,1},{2,1,1} の3つが生成される。
  * 
  * 辞書順と逆方向で生成していく prev_permutation() という関数もあるらしい。
+ */
+/*
+ * vector<string>型でもnext_permutation()に渡すことができる。
+ * ただし事前に昇順ソートしておく必要がある。
+ * 参考：ABC302-C
  */
 int main(void)
 {
