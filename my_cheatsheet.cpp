@@ -1027,7 +1027,7 @@ void _stl_(void)
 	cout << "-----stl-----" << endl;
 
 	// 以下に記載している標準ライブラリ
-	// reverse, find, count
+	// reverse, find, count, max(min)
 
 	/*
 	コンテナ使用時、要素の追加や削除操作には要注意。「イテレータ破壊」が発生する可能性がある。
@@ -1077,4 +1077,9 @@ void _stl_(void)
 	assert(count(str.begin(), str.end(), 'e') == 3);  // "e"だとエラー
 	a_v = {1, 2, 3, 4, 5, 4, 4, 3};
 	assert(count(a_v.begin(), a_v.end(), 4) == 3);
+
+	// max,minは、以下の記述により3つ以上の要素を取ることができる(C++11より)
+	// initializer_list と呼ぶらしい
+	assert(max({1, 2, 3}) == 3);
+	assert(min({3, 2, 1}) == 1);
 }
