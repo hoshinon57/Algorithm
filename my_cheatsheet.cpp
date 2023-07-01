@@ -336,6 +336,10 @@ void _vector_(void)
 	のように用意しておいて(引数は値渡しでも良い模様)、
 	sort(graph.begin(), graph.end(), myCompare);
 	参考：https://arcslab.hatenablog.jp/entry/2020/03/26/011321
+	(第1引数)<(第2引数) だと昇順ソートとなる。先頭から < の順に並ぶ、と覚えると良いかな。
+	よって降順ソートなら > で比較する。
+	注意：<= での比較はNG. myCompare(a, a) == false を満たす必要がある。
+	参考：https://qiita.com/threecups/items/aa1923a9922dc0a7abfe
 	*/
 	/*
 	lower_bound(), upper_bound()はstd::を使う
