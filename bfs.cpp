@@ -27,6 +27,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * [関連する問題]
  * ABC308-D
  * ABC299-E
+ * ABC292-E
  * ABC292-D
  * ABC289-E 移動するものが2つ
  * ABC285-D サイクル検出, 連想配列
@@ -50,6 +51,30 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   https://drken1215.hatenablog.com/entry/2021/07/30/024800
  * 
  */
+
+using Graph = vector<vector<int>>;
+// 頂点数Nのグラフについて、頂点sを起点にBFS.
+// distは要素数Nで、未探索部分をINF32で埋めていること。
+// 探索結果として、distに頂点sを起点(=0)とした距離を格納する。
+void bfs_graph(Graph &G, int N, int s, vector<int> &dist)
+{
+	queue<int> que;
+	dist[s] = 0;
+	que.push(s);
+
+	while(!que.empty())
+	{
+		int v = que.front();
+		que.pop();
+		for(auto &e : G[v])
+		{
+			if(dist[e] != INF32) continue;
+			dist[e] = dist[v] + 1;
+			que.push(e);
+		}
+	}
+	return;
+}
 
 vector<string> mp;
 
