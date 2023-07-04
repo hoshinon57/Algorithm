@@ -215,6 +215,9 @@ int main(void)
 	a_sum[y2][x2] - sum[y2][x1] - sum[y1][x2] + sum[y1][x1]
 
 	[y1,y2] x [x1,x2]の閉区間のときは、y2,x2を+1すれば良い。
+	
+	[関連する問題]
+	ABC278-E
 	*/
 
 	/*
