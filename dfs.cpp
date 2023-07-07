@@ -70,6 +70,86 @@ void dfs(Graph &graph, int v)
 	}
 }
 
+// 有向グラフにて、頂点vを起点にDFS.
+// サイクルを見つけたらtrueを返す。その場合、vからサイクル終端までをhistoryに保持する。
+//   historyの例：0->1->2->3->4->2  サイクルは2-3-4の部分。末尾の2が2回出てくることに注意すること。
+// seen, finishedの要素数は頂点数で、falseで初期化しておくこと。
+// 
+// ★動作確認が甘いので使用時は注意。
+// 
+// このDFSにて、
+// (1)1つの連結成分に2つ以上のサイクルがある場合、
+//    サイクル有無の判定は可能。
+//    サイクル検出は何らか1つなら可能。全てのサイクル検出は不可能。
+// (2)Functional Graphなら連結成分ごとにサイクルは1個なので、
+//    呼び出し元で未探索の頂点からDFSすることで全てのサイクルを検出可能。
+bool dfs_cycle_detection_directed(Graph &g, int v, vector<bool> &seen, vector<bool> &finished, vector<int> &history)
+{
+	seen[v] = true;
+	history.push_back(v);  // vを行きがけ時に登録し、帰りがけ時に削除
+
+	for(auto &e : g[v])
+	{
+		if(finished[e]) continue;
+		if(seen[e] && !finished[e])
+		{
+			// サイクル検出した
+			finished[v] = true;  // 頂点vについて探索完了
+			history.push_back(e);  // サイクルの終端
+			return true;
+		}
+		if(dfs_cycle_detection_directed(g, e, seen, finished, history))  // サイクル検出してreturnしてきた場合は、再帰的にreturnしていく
+		{
+			finished[v] = true;  // この場合も、頂点vについて探索完了扱いとする
+			return true;
+		}
+	}
+
+	finished[v] = true;
+	history.pop_back();
+	return false;
+}
+
+// 無向グラフにて、頂点vを起点にDFS.
+// サイクルを見つけたらtrueを返す。その場合、vからサイクル終端までをhistoryに保持する。
+//   historyの例：0->1->2->3->4->2  サイクルは2-3-4の部分。末尾の2が2回出てくることに注意すること。
+// p:vの親で、逆流防止に使う。呼び出し元からは-1で指定すること。
+// seen, finishedの要素数は頂点数で、falseで初期化しておくこと。
+// 
+// ★動作確認が甘いので使用時は注意。
+// 
+// このDFSにて、
+// (1)1つの連結成分に2つ以上のサイクルがある場合、
+//    サイクル有無の判定は可能。
+//    サイクル検出は何らか1つなら可能。全てのサイクル検出は不可能。
+bool dfs_cycle_detection_undirected(Graph &g, int v, int p /* =-1 */, vector<bool> &seen, vector<bool> &finished, vector<int> &history)
+{
+	seen[v] = true;
+	history.push_back(v);  // vを行きがけ時に登録し、帰りがけ時に削除
+
+	for(auto &e : g[v])
+	{
+		if(e == p) continue;  // 親への逆流を禁止
+		if(finished[e]) continue;
+		if(seen[e] && !finished[e])
+		{
+			// サイクル検出した
+			finished[v] = true;  // 頂点vについて探索完了
+			history.push_back(e);  // サイクルの終端
+			return true;
+		}
+		if(dfs_cycle_detection_undirected(g, e, v, seen, finished, history))  // サイクル検出してreturnしてきた場合は、再帰的にreturnしていく
+		{
+			finished[v] = true;  // この場合も、頂点vについて探索完了扱いとする
+			return true;
+		}
+	}
+
+	finished[v] = true;
+	history.pop_back();
+	return false;
+}
+
 int main(void)
 {
 	int i;
