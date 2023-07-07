@@ -60,7 +60,7 @@ public:
 		}
 	}
 
-	// [y1,y2) x [x1,x2) の半開区間の累積和を返す
+	// nについて、[y1,y2) x [x1,x2) の半開区間の累積和を返す
 	T Sum(int y1, int y2, int x1, int x2)
 	{
 		return sum[y2][x2] - sum[y2][x1] - sum[y1][x2] + sum[y1][x1];
