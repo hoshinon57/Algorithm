@@ -21,6 +21,7 @@ void _pow_(void);
 void _unordered_set_(void);
 void _unordered_map_(void);
 void _stl_(void);
+void _mex_(void);
 
 int main(void)
 {
@@ -35,6 +36,7 @@ int main(void)
 	_mod_();
 	_string_();
 	_stl_();
+	_mex_();
 
 	/*
 	AtCoderにてWAが出た場合のチェックポイント(ABC262での反省点)
@@ -1089,4 +1091,69 @@ void _stl_(void)
 	// initializer_list と呼ぶらしい
 	assert(max({1, 2, 3}) == 3);
 	assert(min({3, 2, 1}) == 1);
+}
+
+// a[]の要素に含まれない最小の非負整数を返す
+// 呼び出し元で mex({0,2,3}); のようにinitializer_listを用いることを想定しているため、aは参照渡しにしていない
+// a[]の要素数をNとして、計算量はO(N^2).
+int mex(vector<int> a)
+{
+	int i, j;
+	int a_size = (int)a.size();
+	// iがMEXになるか判定
+	// 要素数を超える値はMEXになりえないため、上限は要素数未満まで
+	// (入力が {0,1,2} のような場合、i=3でループを抜けるため正しく判定される)
+	for(i = 0; i < a_size; i++)
+	{
+		bool check = false;
+		for(j = 0; j < a_size; j++)  // a[]にiが含まれているか
+		{
+			if(a[j] == i) check = true;
+		}
+		if(!check) break;
+	}
+	return i;
+}
+
+// a[]の要素に含まれない最小の非負整数を返す
+// 呼び出し元で mex({0,2,3}); のようにinitializer_listを用いることを想定しているため、aは参照渡しにしていない
+// 計算量はmex()と違いO(N)だが、Nが小さければmex()の方が早い (定数倍によるものと推測)
+int mex2(vector<int> a)
+{
+	int i;
+	int a_size = (int)a.size();
+	vector<bool> exist(a_size, false);  // [i]:a[]にiがあればtrue
+	for(i = 0; i < a_size; i++)
+	{
+		if(a[i] >= a_size) continue;
+		exist[a[i]] = true;
+	}
+	// exist[]がfalseになる最小の値を求める
+	// (入力が {0,1,2} のような場合、i=3でループを抜けるため正しく判定される)
+	for(i = 0; i < a_size; i++)
+	{
+		if(!exist[i]) break;
+	}
+	return i;
+}
+
+void _mex_(void)
+{
+	cout << "-----mex-----" << endl;
+
+	vector<int> a = {0, 1, 2, 4, 5};
+	assert(mex(a) == 3);
+	assert(mex2(a) == 3);
+
+	a = {2, 1, 0};
+	assert(mex(a) == 3);
+	assert(mex2(a) == 3);
+
+	a = {1};
+	assert(mex(a) == 0);
+	assert(mex2(a) == 0);
+
+	a = {};
+	assert(mex(a) == 0);
+	assert(mex2(a) == 0);
 }
