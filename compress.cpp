@@ -1,9 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cassert>
 using namespace std;
 
-// 座標圧縮(Coordinate Compression)のメモ
+// 座標圧縮(Coordinate Compression)のライブラリ
 
 /*
  * 1次元の座標圧縮の手順
@@ -21,13 +22,15 @@ using namespace std;
  * [関連する問題]
  * AOJ ALDS1_5_D https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_5_D&lang=ja
  * ABC113-C (座標圧縮ではないが、考え方は似ている)
+ * ABC309-F
  */
 
 // 1次元の座標圧縮
+// a：座標圧縮したい元データ 処理途中で要素が書き換えられる点に注意(保持したい場合は参照を外す)
+// 返り値：圧縮後のデータ
 // 計算量はO(NlogN)
-void compression_one(void)
+vector<int> compression_one(vector<int> &a)
 {
-	vector<int> a = {10, 100, 1000, 1, 5, 1, 1};  // 座標圧縮したい元データ
 	vector<int> a_comp = a;
 
 	// 元データをソートし、重複を削除する
@@ -39,12 +42,17 @@ void compression_one(void)
 	{
 		a_comp[i] = lower_bound(a.begin(), a.end(), a_comp[i]) - a.begin();
 	}
-	// a_comp = {2, 3, 4, 0, 1, 0, 0}
+
+	return a_comp;
 }
 
 int main(void)
 {
-	compression_one();
+	vector<int> a = {10, 100, 1000, 1, 5, 1, 1};  // 座標圧縮したい元データ
+	vector<int> a_comp = compression_one(a);
+
+	vector<int> a_test = {2, 3, 4, 0, 1, 0, 0};
+	assert(a_comp == a_test);
 
 	return 0;
 }
