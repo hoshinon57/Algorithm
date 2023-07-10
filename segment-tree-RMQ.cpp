@@ -41,6 +41,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC125-C
  * ABC157-E
  * ABC228-D
+ * ABC309-F
  */
 
 // Range Minimum Query(RMQ)の実装
