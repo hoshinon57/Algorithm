@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cassert>
 using namespace std;
 
 // 幾何に関する関数やまとめ
@@ -54,6 +55,16 @@ int cross_product(int ax, int ay, int bx, int by)
 	return ax*by-ay*bx;
 }
 
+// 3点が同一直線上にあるか調べる
+// 3点A,B,CのA->Bの変化量を(dx1,dy1), A->Cの変化量を(dx2,dy2)とする
+// 参考：https://qiita.com/tydesign/items/ab8a5ae52eb9c50ad26a
+bool IsColliniar(int dx1, int dy1, int dx2, int dy2)
+{
+	// dy1/dx1 = dy2/dx2
+	// となればよいので、dx1*dx2を両辺にかける
+	return dx1*dy2 == dx2*dy1;
+}
+
 int main(void)
 {
 	double x0, y0, x1, y1;
@@ -97,6 +108,10 @@ int main(void)
 	などを簡単に判定することができる。
 	https://imagingsolution.blog.fc2.com/blog-entry-51.html
 	*/
+
+	assert(IsColliniar(1, 2, 3, 6));
+	assert(!IsColliniar(1, 2, 3, 5));
+	assert(IsColliniar(1, 2, -5, -10));
 
 	return 0;
 }
