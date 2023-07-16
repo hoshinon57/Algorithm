@@ -161,6 +161,7 @@ int main(void)
 	  ABC298-E
 
 	[確率DP、参考問題]
+	ABC184-D
 	ABC275-E
 	ABC280-E
 	ABC298-E
