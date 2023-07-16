@@ -11,8 +11,8 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 
 /*
  * [関連する問題]
- * 
- * 
+ * ABC305-E
+ * ABC277-E ダイクストラ / 0-1BFS
  */
 
 // 頂点を結ぶ辺
@@ -29,7 +29,7 @@ using Graph = vector<vector<Edge>>;
 void dijkstra(Graph &G, int N, int s, vector<ll> &dist)
 {
 	dist[s] = 0;
-	using dist_v = pair<ll, int>;
+	using dist_v = pair<ll, int>;  // 距離とその頂点番号のpair
 	priority_queue<dist_v, vector<dist_v>, greater<dist_v>> que;
 	que.push({dist[s], s});
 
