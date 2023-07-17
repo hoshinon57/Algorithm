@@ -13,6 +13,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * [関連する問題]
  * ABC305-E
  * ABC277-E ダイクストラ / 0-1BFS
+ * ABC191-E
  */
 
 // 頂点を結ぶ辺
@@ -23,10 +24,10 @@ struct Edge
 	Edge(int to_, ll weight_) : to(to_), weight(weight_) {}
 };
 using Graph = vector<vector<Edge>>;
-// 頂点数Nのグラフについて、頂点sを起点にダイクストラ。
-// distは要素数Nで、未探索部分をINFで埋めていること。
+// 頂点sを起点にダイクストラ。
+// distは未探索部分をINFで埋めていること。
 // 探索結果として、distに頂点sを起点(=0)とした距離を格納する。
-void dijkstra(Graph &G, int N, int s, vector<ll> &dist)
+void dijkstra(Graph &G, int s, vector<ll> &dist)
 {
 	dist[s] = 0;
 	using dist_v = pair<ll, int>;  // 距離とその頂点番号のpair
@@ -68,7 +69,7 @@ int main(void)
 		g[s].push_back({t, d});
 	}
 	vector<ll> dist(N, INF64);
-	dijkstra(g, N, s, dist);
+	dijkstra(g, s, dist);
 
 	for(i = 0; i < N; i++)
 	{
