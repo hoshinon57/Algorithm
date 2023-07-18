@@ -20,7 +20,6 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * で0-1 BFSを行えばよい。
  */
 
-int H, W;
 vector<string> mp;
 
 void bfs_grid_graph(int H, int W, int sy, int sx, vector<vector<int>> &dist)
@@ -82,7 +81,7 @@ void bfs_grid_graph(int H, int W, int sy, int sx, vector<vector<int>> &dist)
 int main(void)
 {
 	int i;
-	cin >> H >> W;
+	int H, W; cin >> H >> W;
 	int sy, sx; cin >> sy >> sx;  // Ch, Cw
 	int gy, gx; cin >> gy >> gx;  // Dh, Dw
 	sy--; sx--;
