@@ -32,6 +32,7 @@ using namespace std;
  * AOJ ALDS1_5_D https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_5_D&lang=ja  反転数(転倒数)
  * AOJ 0365 https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0365&lang=ja
  * ARC033-C https://atcoder.jp/contests/arc033/tasks/arc033_3
+ * ABC244-D https://atcoder.jp/contests/abc244/tasks/abc244_d
  * ABC153-F https://atcoder.jp/contests/abc153/tasks/abc153_f
  */
 
@@ -322,6 +323,10 @@ void RAQ_random_test(void)
 // 転倒数(反転数)の求め方メモ
 void Inversion(void)
 {
+	/*
+	転倒数とバブルソートの交換回数は一致する。
+	要素(隣同士でなくてもよい)を交換すると、転倒数の偶奇が切り替わる。
+	*/
 	/*
 	配列a[i]が与えられたとき、転倒数は以下のアルゴリズムで求められる。
 
