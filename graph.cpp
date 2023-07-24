@@ -92,7 +92,9 @@ using Graph = vector<vector<int>>;
  * 
  * (3)無向/有向グラフ - サイクル検出(存在判定と、サイクルに含まれる頂点の列挙)
  *    seen/finished/historyを使ったDFS
- *    ⇒参考：dfs.cpp - dfs_cycle_detection_directed(), dfs_cycle_detection_undirected()
+ *    ⇒参考：
+ *     dfs.cpp - dfs_cycle_detection_directed(), dfs_cycle_detection_undirected()
+ *     https://drken1215.hatenablog.com/entry/2023/05/20/200517 
  *    ・1つの連結成分に2つ以上のサイクルがある場合、サイクルの存在判定は可能。
  *      サイクル検出は1つなら可能。
  *      全てのサイクル検出は不可能。
