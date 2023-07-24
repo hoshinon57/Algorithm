@@ -41,6 +41,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC232-D
  * ABC231-D サイクル検出
  * ABC226-E
+ * ABC223-D トポロジカルソート
  * ABC168-D
  * ABC132-E
  * ABC277-E 0-1 BFS
@@ -187,6 +188,7 @@ void bfs01_grid_graph(int H, int W, int sy, int sx, vector<vector<int>> &dist)
 
 // サイクルの無い有向グラフGについて、トポロジカルソートを行う。
 // ソートした結果の頂点をresultに格納する。
+// ※トポロジカルソートできない場合(サイクルがある場合)、G.size()とresult.size()が不一致かどうかで判断可能。
 // 参考：
 //   https://algo-logic.info/topological-sort/
 //   https://qiita.com/Morifolium/items/6c8f0a188af2f9620db2
