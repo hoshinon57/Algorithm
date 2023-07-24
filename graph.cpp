@@ -14,6 +14,10 @@ using namespace std;
  * BFS:最短距離の問題にて、辺の重みが複数あるようなグラフにて使うのは不適切。
  * 
  * [関連する問題]
+ * ABC299-E
+ * ABC292-E
+ * ABC292-D
+ * ABC289-E 移動するものが2つ
  * ABC277-E ダイクストラ、0-1BFS
  * ABC259-D
  * ABC257-D
@@ -26,6 +30,7 @@ using namespace std;
 /*
  * ベルマン・フォード法、ダイクストラ法、ワーシャルフロイド法などは
  * フォルダ /book_drken/chapter14 のソースコード(code14-4.cpp)、およびchapter14-memo.txtを参照。
+ * ダイクストラ法のライブラリはdijkstra.cppを参照。
  */
 
 /*
@@ -61,6 +66,10 @@ using Graph = vector<vector<int>>;
  *   for(auto &e : mp)
  *     if(seen[e.first]) continue;
  * 
+ * [注意]
+ * ただしmapだと計算量の定数倍部分が遅くなり、TLEになるケースもありそう。
+ * 参考：ABC289-E
+ * 
  * この場合、入力時（グラフ構築時）のタイミングで
  *   seen[a] = false;  // 未探索
  * として明示的にmapの要素を作成しておくと、探索時にfind()やcount()で要素の存在判定が不要になるので楽。
@@ -70,6 +79,30 @@ using Graph = vector<vector<int>>;
  * 参考：
  * ABC277-C https://atcoder.jp/contests/abc277/tasks/abc277_c
  * ABC285-D https://atcoder.jp/contests/abc285/tasks/abc285_d
+ */
+
+/*
+ * サイクルの存在判定や検出など メモ
+ * (1)無向グラフ - サイクルの存在判定
+ *    seenを使ったDFS
+ *    UnionFind (これが手っ取り早いかな)
+ * 
+ * (2)有向グラフ - サイクルの存在判定
+ *    seen/finishedを使ったDFS
+ * 
+ * (3)無向/有向グラフ - サイクル検出(存在判定と、サイクルに含まれる頂点の列挙)
+ *    seen/finished/historyを使ったDFS
+ *    ⇒参考：dfs.cpp - dfs_cycle_detection_directed(), dfs_cycle_detection_undirected()
+ *    ・1つの連結成分に2つ以上のサイクルがある場合、サイクルの存在判定は可能。
+ *      サイクル検出は1つなら可能。
+ *      全てのサイクル検出は不可能。
+ *    ・Functional Graphのように「連結成分ごとにサイクルは1つ」(もしくは1個以下)であれば、全てのサイクルを検出可能。
+ *      未探索の頂点からDFSしていけばよい。
+ *      参考：ABC256-E.cpp
+ *    ※「何らかのサイクルに含まれる頂点を全て列挙」なら強連結成分分解というやつ？
+ * 
+ * ※「サイクルが何個あるか？」は現実的な時間では解けないみたい。
+ *   参考：https://twitter.com/kyopro_friends/status/1668203146957709312
  */
 
 void cycle(int N, Graph &graph);
