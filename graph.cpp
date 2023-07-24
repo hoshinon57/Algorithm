@@ -107,6 +107,19 @@ using Graph = vector<vector<int>>;
  *   参考：https://twitter.com/kyopro_friends/status/1668203146957709312
  */
 
+/*
+ * トポロジカルソート：
+ * 与えられた有向グラフに対し、各頂点を辺の向きに沿うよう順序付けること。(けんちょん本 13.9章より)
+ * ・グラフGがトポロジカルソートできること
+ * ・グラフGに有向サイクルが無いこと   ※Directed Acyclic Graph(DAG)とよぶ
+ * 上記2つは同値関係となる。
+ * 
+ * BFSでトポロジカルソートを求めるライブラリはbfs.cppを参照。
+ * 
+ * 参考：
+ *   https://algo-logic.info/topological-sort/
+ */
+
 void cycle(int N, Graph &graph);
 
 // 基本パターン(無向グラフ)
