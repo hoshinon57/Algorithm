@@ -185,6 +185,40 @@ void bfs01_grid_graph(int H, int W, int sy, int sx, vector<vector<int>> &dist)
 	return;
 }
 
+// サイクルの無い有向グラフGについて、トポロジカルソートを行う。
+// ソートした結果の頂点をresultに格納する。
+// 参考：
+//   https://algo-logic.info/topological-sort/
+//   https://qiita.com/Morifolium/items/6c8f0a188af2f9620db2
+void bfs_topological_sort(Graph &G, vector<int> &result)
+{
+	int i;
+	int n = G.size();
+
+	vector<int> indegree(n);  // 入次数
+	for(i = 0; i < n; i++)
+	{
+		for(auto &e : G[i]) indegree[e]++;  // i->eへの辺
+	}
+	queue<int> que;
+	for(i = 0; i < n; i++)
+	{
+		if(indegree[i] == 0) que.push(i);
+	}
+
+	while(!que.empty())
+	{
+		int v = que.front();
+		que.pop();
+		result.push_back(v);
+		for(auto &e : G[v])  // 頂点vを消すイメージで、vから出た先の頂点の入次数を1減らす
+		{
+			indegree[e]--;
+			if(indegree[e] == 0) que.push(e);
+		}
+	}
+}
+
 int main(void)
 {
 	/*
