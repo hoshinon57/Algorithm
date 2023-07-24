@@ -116,6 +116,9 @@ using Graph = vector<vector<int>>;
  * 
  * BFSでトポロジカルソートを求めるライブラリはbfs.cppを参照。
  * 
+ * 関連問題：
+ *   AOJ GRL_4_B https://onlinejudge.u-aizu.ac.jp/problems/GRL_4_B
+ *   ABC223-D
  * 参考：
  *   https://algo-logic.info/topological-sort/
  */
