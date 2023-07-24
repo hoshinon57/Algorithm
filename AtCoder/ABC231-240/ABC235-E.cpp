@@ -9,17 +9,20 @@ const ll INF64 = 1LL << 60;
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// 最小全域木のメモ、ライブラリ
+// ABC235 https://atcoder.jp/contests/abc235
 
 /*
- * [使い方]
- * UnionFindを本ファイルまたはunion_find.cppからコピーする。
- * Edge構造体およびmain()の内容をコピーする。
- * 辺に辺番号など情報を追加したい場合は、メンバ変数およびコンストラクタ、"<"演算子に手を入れること。
+ * 自力で解けず、解説を見た。
+ * クエリ先読みの最小全域木で解く。
  * 
- * [関連する問題]
- * AOJ GRL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_2_A&lang=ja
- * ABC235-E
+ * グラフGの辺およびクエリの辺をまとめて持ち、クラスカル法を進めていく。
+ * 各クエリについて、
+ *   クエリの辺がMSTに採用されたら、Yes (※)
+ *   クエリの辺がMSTに採用されなかったら、No
+ * となる。
+ * (※)クエリがYesであっても、実際に木には追加しない点に注意。
+ * 
+ * クエリの辺か否かを判断できるよう、Edge構造体にその情報を持たせておく。
  */
 
 struct UnionFind
@@ -86,8 +89,9 @@ struct Edge
 {
 	int u, v;  // 頂点
 	int w;  // 辺の重み
+	int no;  // クエリの番号(0-indexed) 入力の辺なら-1
 	Edge(void) {}
-	Edge(int u_, int v_, int w_) : u(u_), v(v_), w(w_) {}
+	Edge(int u_, int v_, int w_, int no_) : u(u_), v(v_), w(w_), no(no_) {}
 	bool operator<( const Edge &right ) const
 	{
 		return this->w < right.w;
@@ -96,30 +100,47 @@ struct Edge
 
 int main(void)
 {
-	// 以下はAOJのGRL_2_Aを解く内容
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_2_A&lang=ja
 	int i;
-	int N, E; cin >> N >> E;
-	vector<Edge> edge(E);
-	for(i = 0; i < E; i++)
+	int N, M, Q; cin >> N >> M >> Q;
+	vector<Edge> edge(M+Q);
+	for(i = 0; i < M; i++)
 	{
 		int s, t, w; cin >> s >> t >> w;
-		// s--; t--;  // 必要に応じて
-		edge[i] = Edge(s, t, w);
+		s--; t--;
+		edge[i] = Edge(s, t, w, -1);
+	}
+	for(i = 0; i < Q; i++)
+	{
+		int s, t, w; cin >> s >> t >> w;
+		s--; t--;
+		edge[i+M] = Edge(s, t, w, i);
 	}
 	sort(edge.begin(), edge.end());  // "<"演算子を元にソート
 
-	ll ans = 0;
 	UnionFind uf(N);
-	for(i = 0; i < E; i++)
+	vector<int> ans(Q, false);
+	for(i = 0; i < M+Q; i++)
 	{
 		auto &e = edge[i];
 		if(uf.issame(e.u, e.v)) continue;
+		// 以下、edge[i]をMSTに採用する
 
-		ans += e.w;
-		uf.unite(e.u, e.v);
+		if(e.no >= 0)  // クエリの辺
+		{
+			ans[e.no] = true;
+			// MSTには追加しない
+		}
+		else  // グラフGの辺
+		{
+			uf.unite(e.u, e.v);
+		}
 	}
-	cout << ans << endl;
+	for(auto &e : ans)
+	{
+		string s = "No";
+		if(e) s = "Yes";
+		cout << s << endl;
+	}
 
 	return 0;
 }
