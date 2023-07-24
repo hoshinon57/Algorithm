@@ -124,7 +124,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 84：past-questions-84.cpp, past-questions-84-2.cppにて
 
 Union-Find
-85：未
+85：ast-questions-85.cppにて
 86：親フォルダより、ABC075-C.cppにて
 87：親フォルダより、ABC120-D.cppにて
 
