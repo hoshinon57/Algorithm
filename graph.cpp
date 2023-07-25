@@ -31,6 +31,7 @@ using namespace std;
  * ベルマン・フォード法、ダイクストラ法、ワーシャルフロイド法などは
  * フォルダ /book_drken/chapter14 のソースコード(code14-4.cpp)、およびchapter14-memo.txtを参照。
  * ダイクストラ法のライブラリはdijkstra.cppを参照。
+ * ワーシャルフロイド法のライブラリはwarshall-floyd.cppを参照。
  */
 
 /*
