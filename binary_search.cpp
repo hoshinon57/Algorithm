@@ -158,6 +158,12 @@ int my_upper_bound(vector<int> &a, int num)
 // 参考：
 //   https://qiita.com/ganyariya/items/1553ff2bf8d6d7789127
 //   AtCoderフォルダのABC279-D.cpp
+// 隣り合う評価値が等しくなるようなケースでは正しく求められない点に注意。
+// (狭義単調減少/増加である必要がある。広義単調減少/増加はダメ)
+// 参考：
+//   https://twitter.com/e869120/status/1401537322731020293
+//   https://ikatakos.com/pot/programming_algorithm/contest_history/atcoder/2021/0606_abc204
+// 
 // 与えられた式のグラフがどんなものか感覚を掴むには、
 //   https://www.geogebra.org/graphing?lang=ja
 // などのサイトを使うのが良さそう。
