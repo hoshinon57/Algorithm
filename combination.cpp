@@ -28,6 +28,9 @@ typedef long long ll;
  *   例えば nCk なら n! が出てくるので、fact[n]までのサイズが必要になる。
  * ・はじめに nCk_init() を呼び出しておく。
  * ・あとはnCk であれば nCk(n, k) を呼び出すことで、組み合わせの数をMODで割った余りを返す。
+ * 
+ * [関連する問題]
+ * ABC132-D
  */
 
 const ll MOD = 998244353;
