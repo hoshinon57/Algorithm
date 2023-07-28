@@ -1,48 +1,35 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <limits>  // numeric_limits
-#include <cassert>
+#include <cmath>
+#include <iomanip>
 using namespace std;
 typedef long long ll;
 const ll INF64 = 1LL << 60;
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// セグメント木のメモや実装
+// ABC146 https://atcoder.jp/contests/abc146
 
 /*
- * [ざっくり概要]
- * ・区間上の値を更新する
- * ・任意の区間における最小値や合計値を取得する
- * といった処理をO(logN)でできるデータ構造。
+ * セグメント木で解く。
+ * 以下の解説記事を参考にした。
+ *   https://betrue12.hateblo.jp/entry/2019/11/25/225556
+ *   https://kmjp.hatenablog.jp/entry/2019/11/24/0930
  * 
- * SegmentTree_RMQ:
- *   Range Minimum Query(RMQ)をセグメント木で実装したもの。
- *   以下の操作をO(logN)で処理できる。
- *   (1)Update(x, val) : 要素xをvalで更新する
- *   (2)GetMin(a, b) : 区間[a,b)にある要素の最小値を返す
- *   0-indexed, および半開区間で処理する。
+ * dp[i]:マスiからゴールまでの最小移動回数とすると、
+ *   dp[i] = min(dp[i+1] ～ dp[i+M]) + 1
+ * となる。
+ * よってセグメント木に各マスからの最小移動回数を保持しておき、
+ * 上記minの部分を区間最小で求めればよい。
+ * まずこれで各マスごとの最小移動回数が求められる。
  * 
- * [Tips]
- * ・木の最下段のノード数は、問題文にて指定されるsize以上の2のべき乗。
- *   これをNとすると、最下段のノード数はN, それより上の段のノードは全部でN-1.
- *   よって木全体で必要なノード数は 2N-1 となる。
- * ・要素xをnode[]の添字番号に変換する場合：N-1を加算する
- * ・親から子へ行く場合、 k -> 2k+1, 2k+2
- * ・子から親へ行く場合、 k -> (k-1)/2  (切り捨て)
+ * ※マスNを超えるような出目のときの処理が簡易になるよう、
+ * 　セグメント木の要素数をN+M+5とかに設定した。
  * 
- * [参考資料]
- *   https://tsutaj.hatenablog.com/entry/2017/03/29/204841
- *   https://algo-logic.info/segment-tree/
- * 
- * [関連する問題]
- * AOJ DSL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
- * ABC125-C
- * ABC146-F
- * ABC157-E
- * ABC228-D
- * ABC309-F
+ * あとは出目を復元する。
+ * これは各マスについて、出目の小さい方から順に見ていって、
+ * ゴールまでの回数が初めて減るマスに移動していけばよい。
  */
 
 // Range Minimum Query(RMQ)の実装
@@ -156,84 +143,50 @@ public:
 	}
 };
 
-void Test(void)
-{
-	vector<int> v = {3, 1, 4, 1, 5, 9};
-	SegmentTree_RMQ<int> rmq(v.size());
-	for(int i = 0; i < (int)v.size(); i++)
-	{
-		rmq.Set(i, v[i]);
-	}
-	rmq.Build();
-
-	assert(rmq.GetMin(0, 6) == 1);
-	assert(rmq.GetMin(0, 3) == 1);
-	assert(rmq.GetMin(3, 4) == 1);
-	assert(rmq.GetMin(4, 5) == 5);
-	rmq.Update(6, -1);
-	rmq.Update(2, 0);
-	assert(rmq.GetMin(0, 7) == -1);
-	assert(rmq.GetMin(1, 4) == 0);
-
-	// Find_Leftmost()のテスト
-	{
-		vector<int> a = {3, 1, 4, 1, 5, 9, 2};
-		SegmentTree_RMQ<int> seg(a.size());
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg.Set(i, a[i]);
-		}
-		seg.Build();
-		assert(seg.Find_Leftmost(0, 7, 1) == 1);
-		assert(seg.Find_Leftmost(1, 7, 1) == 1);
-		assert(seg.Find_Leftmost(2, 7, 1) == 3);
-		assert(seg.Find_Leftmost(0, 7, 0) == 7);
-		assert(seg.Find_Leftmost(2, 3, 4) == 2);
-		assert(seg.Find_Leftmost(2, 3, 1) == 3);
-		assert(seg.Find_Leftmost(0, 7, 10) == 0);
-	}
-	{
-		vector<int> a = {1, 1, 1};
-		SegmentTree_RMQ<int> seg(a.size());
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg.Set(i, a[i]);
-		}
-		seg.Build();
-		assert(seg.Find_Leftmost(0, 3, 1) == 0);
-		assert(seg.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg.Find_Leftmost(2, 3, 1) == 2);
-		assert(seg.Find_Leftmost(0, 2, 1) == 0);
-		assert(seg.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg.Find_Leftmost(0, 3, -1) == 3);
-	}	
-}
-
 int main(void)
 {
-	Test();
+	int i;
+	int N, M; cin >> N >> M;
+	string s; cin >> s;
 
-	// 以下は AOJ DSL_2_A のもの
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
-	int n, q;
-	cin >> n >> q;
-	SegmentTree_RMQ<int> rmq(n);
-	for(int i = 0; i < n; i++) rmq.Update(i, (int)((1UL<<31)-1));
-
-	int c, x, y;
-	while(q > 0)
+	// マスiからゴールまでの最小移動回数を記録する
+	SegmentTree_RMQ<int> seg(N+M+5);  // マスN-1から出目Mが出てもはみ出ないように
+	seg.Update(N, 0);  // マスNからは0回でゴール
+	for(i = N-1; i >= 0; i--)  // マスiから移動
 	{
-		cin >> c >> x >> y;
-		if(c == 0)  // update
+		if(s[i] == '1') continue;
+
+		// 「マス[i+1, i+M]のうち、そこからゴールまでの回数が最小のもの」
+		// に1を加えたものが、マスiからゴールまでの最小回数
+		int cnt = seg.GetMin(i+1, i+M+1);
+		// そこから先に進めないようなマスiがあれば、スタートから考えてもゴールにたどり着けない
+		// ここで終了させてしまう
+		if(cnt > INF32)
 		{
-			rmq.Update(x, y);
+			cout << -1 << endl;
+			return 0;
 		}
-		else  // find
-		{
-			cout << rmq.GetMin(x, y+1) << endl;  // 閉区間->半開区間への変換
-		}
-		q--;
+		seg.Update(i, cnt+1);
 	}
+
+	int cur = 0;
+	vector<int> ans;
+	while(cur < N)
+	{
+		int cur_cnt = seg.GetMin(cur, cur+1);
+		// 出目が小さい方から順に見ていって、ゴールまでの回数が初めて減るマスに移動する
+		for(i = 1; i <= M; i++)
+		{
+			if(seg.GetMin(cur+i, cur+i+1) < cur_cnt)
+			{
+				cur += i;
+				ans.push_back(i);
+				break;
+			}
+		}
+	}
+	for(auto &e : ans) cout << e << " ";
+	cout << endl;
 
 	return 0;
 }
