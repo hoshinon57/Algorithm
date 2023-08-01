@@ -47,9 +47,13 @@ void dijkstra(Graph &G, int s, vector<ll> &dist)
 		// 頂点vから出ている各辺について探索
 		for(auto &e : G[v])
 		{
-			if(dist[e.to] > dist[v] + e.weight)
+			ll d_next;
+			// 頂点vと辺eを用いた先の頂点について、距離を求める。
+			// 基本はdist[v]+e.weightで良いが、問題によっては＋αが必要。(ABC192-E,ABC204-E等)
+			d_next = dist[v] + e.weight;
+			if(dist[e.to] > d_next)
 			{
-				dist[e.to] = dist[v] + e.weight;
+				dist[e.to] = d_next;
 				que.push({dist[e.to], e.to});
 			}
 		}
