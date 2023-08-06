@@ -221,6 +221,7 @@ int main(void)
 	
 	[関連する問題]
 	ABC278-E
+	ABC313-E (別解)
 	*/
 
 	/*
