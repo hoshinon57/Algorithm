@@ -377,6 +377,9 @@ void _string_(void)
 	str = "01110";
 	assert(str.rfind("1") == 3);  // 基本はこれかな 末尾から先頭に向かって検索
 	assert(str.rfind("1", 2) == 2);  // str[2]から先頭に向かって検索
+
+	// 数値を文字列に変換:std::to_string()
+	assert(to_string(1234) == "1234");
 }
 
 void settest(set<int> &s, string &&prev)
