@@ -34,6 +34,7 @@ using namespace std;
  * ARC033-C https://atcoder.jp/contests/arc033/tasks/arc033_3
  * ABC244-D https://atcoder.jp/contests/abc244/tasks/abc244_d
  * ABC153-F https://atcoder.jp/contests/abc153/tasks/abc153_f
+ * ABC190-F https://atcoder.jp/contests/abc190/tasks/abc190_f  転倒数
  */
 
 // Binary Indexed Treeを用いて以下(1)(2)(4)をO(logN)で計算する
