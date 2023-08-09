@@ -22,6 +22,7 @@ void _unordered_set_(void);
 void _unordered_map_(void);
 void _stl_(void);
 void _mex_(void);
+void _math_(void);
 
 int main(void)
 {
@@ -37,6 +38,7 @@ int main(void)
 	_string_();
 	_stl_();
 	_mex_();
+	_math_();
 
 	/*
 	AtCoderにてWAが出た場合のチェックポイント(ABC262での反省点)
@@ -1162,4 +1164,25 @@ void _mex_(void)
 	a = {};
 	assert(mex(a) == 0);
 	assert(mex2(a) == 0);
+}
+
+// 数学関連のメモ
+// 現状はsqrt()などのライブラリというよりも、浮動小数点数の誤差に関する内容
+void _math_(void)
+{
+	cout << "-----math-----" << endl;
+
+	/*
+	浮動小数点数の誤差について：
+	誤差を避けたい場合、できるだけ整数の範囲で計算する。
+	例えば入力が "1.23" のように小数第2位まで与えられる場合、以下の手法がある。
+	  (1)文字列として受け取り、 s[0]*100 + s[2]*10 + s[3] とする。(正確には、s[0]-'0' )
+	  (2)double型で受け取り、 (int)(X*100+0.5) とする。
+	  ※double型で受け取って100倍する場合も誤差に注意。 X=2.51のとき、(int)(X*100)=250 になってしまう。
+	例：ABC169-C
+	    https://twitter.com/kyopro_friends/status/1267093871957164032
+	 */
+	double x = 2.51;
+	// assert((int)(x*100) == 251);  // 251にならない
+	assert((int)(x*100+0.5) == 251);  // これならOK
 }
