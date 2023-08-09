@@ -712,7 +712,7 @@ void _map_(void)
 		mp.erase(itr);  // erase(イテレータ)での削除
 	}
 	// mp={ccc,ddd}
-	for(auto itr = mp.begin(); itr != mp.end(); itr++)
+	for(itr = mp.begin(); itr != mp.end(); itr++)
 	{
 		cout << "first:" << itr->first << " second:" << itr->second << endl;
 	}
