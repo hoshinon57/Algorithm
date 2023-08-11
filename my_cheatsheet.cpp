@@ -21,6 +21,7 @@ void _pow_(void);
 void _unordered_set_(void);
 void _unordered_map_(void);
 void _stl_(void);
+void _tie_(void);
 void _mex_(void);
 void _math_(void);
 
@@ -37,6 +38,7 @@ int main(void)
 	_mod_();
 	_string_();
 	_stl_();
+	_tie_();
 	_mex_();
 	_math_();
 
@@ -1107,6 +1109,30 @@ void _stl_(void)
 	// initializer_list と呼ぶらしい
 	assert(max({1, 2, 3}) == 3);
 	assert(min({3, 2, 1}) == 1);
+}
+
+// pairやtupleの分解にはstd::tieを使える
+// 特にtupleで便利そう
+void _tie_(void)
+{
+	cout << "-----tie-----" << endl;
+
+	pair<int,string> data = {10, "Hello"};
+	int a;
+	string b;
+	tie(a, b) = data;
+	assert(a == 10);
+	assert(b == "Hello");
+
+	// 値コピーのため、tieで受けた先を書き換えても元データには影響しない(逆も同様)
+	a = 11;
+	b = "Hoge";
+	assert(data.first == 10);
+	assert(data.second == "Hello");
+
+	// 代入不要の要素がある場合、std::ignoreを指定する
+	tie(a, std::ignore) = data;
+	assert(b == "Hoge");
 }
 
 // a[]の要素に含まれない最小の非負整数を返す
