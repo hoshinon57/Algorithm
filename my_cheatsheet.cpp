@@ -242,6 +242,14 @@ int main(void)
 	ABC299-D
 	ABC313-D
 	*/
+
+	/*
+	主客転倒
+	「和の形の数え上げ」は主客転倒に置き換えると解けるケースがありそう。
+	  https://physics0523.hatenablog.com/entry/2020/01/12/052513
+	[関連する問題]
+	ABC151-E
+	*/
 	return 0;
 }
 
