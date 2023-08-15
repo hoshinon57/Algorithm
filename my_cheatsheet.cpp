@@ -1220,4 +1220,14 @@ void _math_(void)
 	double x = 2.51;
 	// assert((int)(x*100) == 251);  // 251にならない
 	assert((int)(x*100+0.5) == 251);  // これならOK
+
+	/*
+	double型の精度は53bitのため、正しく表現できる整数は2^53まで。
+	2^53≒9.01*10^15
+	参考：
+	  https://zenn.dev/mod_poppo/articles/atcoder-beginner-contest-284-d
+	  https://qiita.com/mod_poppo/items/910b5fb9303baf864bf7
+	 */
+	x = 36028797018963969;  // 2^55+1
+	// assert(36028797018963969 == (ll)x);  一致しない
 }
