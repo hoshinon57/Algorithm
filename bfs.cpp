@@ -41,6 +41,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC232-D
  * ABC231-D サイクル検出
  * ABC226-E
+ * ABC224-D 頂点を文字列で、距離をmapで管理
  * ABC223-D トポロジカルソート
  * ABC184-E 通常のBFSと0-1 BFS どちらでも解ける
  * ABC168-D
