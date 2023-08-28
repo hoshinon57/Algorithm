@@ -31,6 +31,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * 
  * [関連問題]
  * AOJ DPL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_2_A&lang=ja
+ * ABC190-E  スタートとゴールの考え方が、一般的な巡回セールスマン問題とは少し異なる
  * ABC274-E
  */
 
