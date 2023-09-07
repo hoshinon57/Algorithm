@@ -29,9 +29,10 @@ using namespace std;
 // a：座標圧縮したい元データ 処理途中で要素が書き換えられる点に注意(保持したい場合は参照を外す)
 // 返り値：圧縮後のデータ
 // 計算量はO(NlogN)
-vector<int> compression_one(vector<int> &a)
+template <typename T>
+vector<T> compression_one(vector<T> &a)
 {
-	vector<int> a_comp = a;
+	vector<T> a_comp = a;
 
 	// 元データをソートし、重複を削除する
 	sort(a.begin(), a.end());
@@ -49,10 +50,16 @@ vector<int> compression_one(vector<int> &a)
 int main(void)
 {
 	vector<int> a = {10, 100, 1000, 1, 5, 1, 1};  // 座標圧縮したい元データ
-	vector<int> a_comp = compression_one(a);
-
+	vector<int> a_comp = compression_one<int>(a);
 	vector<int> a_test = {2, 3, 4, 0, 1, 0, 0};
 	assert(a_comp == a_test);
+
+	using ll = long long;
+	ll p = 1LL<<60;
+	vector<ll> l = {p, p+5, p+7, p, p-1};  // 座標圧縮したい元データ
+	vector<ll> l_comp = compression_one<ll>(l);
+	vector<ll> l_test = {1, 2, 3, 1, 0};
+	assert(l_comp == l_test);
 
 	return 0;
 }
