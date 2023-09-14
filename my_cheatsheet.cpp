@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <cassert>
+#include <numeric>
 using namespace std;
 
 void _string_(void);
@@ -1085,7 +1086,7 @@ void _stl_(void)
 	cout << "-----stl-----" << endl;
 
 	// 以下に記載している標準ライブラリ
-	// reverse, find, count, max(min)
+	// reverse, find, count, max(min), max_element(min), reduce
 
 	/*
 	コンテナ使用時、要素の追加や削除操作には要注意。「イテレータ破壊」が発生する可能性がある。
@@ -1140,6 +1141,22 @@ void _stl_(void)
 	// initializer_list と呼ぶらしい
 	assert(max({1, 2, 3}) == 3);
 	assert(min({3, 2, 1}) == 1);
+
+	// 要素の最大/最小値のイテレータを返す:max_element(min_element)
+	// 計算量はO(r-l).
+	assert(*max_element(a_v.begin(), a_v.end()) == 5);
+	assert(*min_element(a_v.begin(), a_v.end()) == 1);
+	
+	// 要素の合計を求める:std::reduce(C++17より)
+	// #include <numeric> が必要
+	// C++17より前の環境ではstd::accumulate()を使う
+	// また、reduce()は並列計算を行うため、先頭から順に計算しないとNGなケースではaccumulate()を使う方が良さそう。
+	//   https://qiita.com/yumetodo/items/3712dbb26b11f282e0e7
+	a_v = {10, 100, 1000};
+	assert(reduce(a_v.begin(), a_v.end()) == 1110);
+	// 合計値を特定の型にしたい場合、第3引数にて指定する
+	reduce(a_v.begin(), a_v.end(), 0LL);  // long long型で計算
+	reduce(a_v.begin(), a_v.end(), 0.0);  // double型で計算
 }
 
 // pairやtupleの分解にはstd::tieを使える
