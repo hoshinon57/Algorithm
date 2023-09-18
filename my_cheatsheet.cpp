@@ -394,8 +394,10 @@ void _string_(void)
 	assert(str.substr(str.size() - 4) == "2345");  // 末尾から4文字取り出したい場合
 
 	// 文字列の検索:find()
+	str = "0123450";
 	assert(str.find("3") == 3);  // 3文字目(0-indexed)
 	assert(str.find("6") == string::npos);  // 見つからない場合は string::npos
+	assert(str.find("0", 1) == 6);  // 1文字目から検索
 
 	// 指定位置から先頭に向かって検索:rfind()
 	str = "01110";
