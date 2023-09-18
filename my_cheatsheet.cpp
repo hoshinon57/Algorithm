@@ -22,6 +22,7 @@ void _pow_(void);
 void _unordered_set_(void);
 void _unordered_map_(void);
 void _stl_(void);
+void _structured_bindings_(void);
 void _tie_(void);
 void _mex_(void);
 void _math_(void);
@@ -39,6 +40,7 @@ int main(void)
 	_mod_();
 	_string_();
 	_stl_();
+	_structured_bindings_();
 	_tie_();
 	_mex_();
 	_math_();
@@ -1157,6 +1159,45 @@ void _stl_(void)
 	// 合計値を特定の型にしたい場合、第3引数にて指定する
 	reduce(a_v.begin(), a_v.end(), 0LL);  // long long型で計算
 	reduce(a_v.begin(), a_v.end(), 0.0);  // double型で計算
+}
+
+// 構造化束縛に関するメモ
+// 参考：https://cpprefjp.github.io/lang/cpp17/structured_bindings.html
+void _structured_bindings_(void)
+{
+	// 構造化束縛にてpairや配列、mapなどを分解して要素を取り出すことができる
+	pair<int,int> data = {10, 20};
+	auto [v1, v2] = data;  // これが構造化束縛
+	assert(v1 == 10);
+	assert(v2 == 20);
+	
+	auto& [v3, v4] = data;  // auto& で参照で受け取る
+	v3 = 33;
+	assert(data.first == 33);  // dataが書き換わっている
+
+	// mapに使えるのは便利
+	map<string, int> mp;
+	mp["hoge"] = 10;
+	mp["tmp"]  = 20;
+	mp["foo"]  = 30;
+	// auto&で受け取る場合、keyはconstが付く。以下参照。
+	// https://cpprefjp.github.io/lang/cpp17/structured_bindings.html
+	for(auto& [key, value] : mp)
+	{
+		cout << "key:" << key << ", value:" << value << endl;
+	}
+
+	// 構造化束縛は変数宣言であり、以下はコンパイルエラーとなる
+	/*
+	int a, b;
+	auto [a, b] = data;  // 定義済みの変数には使えない
+	*/
+
+	// 要素数が確定しているものが対象であるため、vectorには使えない
+	/*
+	vector<int> a = {10,20,30};
+	auto [c1, c2, c3] = a;  // コンパイルエラー
+	*/
 }
 
 // pairやtupleの分解にはstd::tieを使える
