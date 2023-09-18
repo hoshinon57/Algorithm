@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <numeric>
 using namespace std;
 
 // next_permutationを用いた、辞書順での順列生成の練習
@@ -35,10 +36,14 @@ int main(void)
 	int N;
 	cin >> N;
 	vector<int> a(N);
+#if 0
 	for(i = 0; i < N; i++)  // 初期値設定 昇順に並べる
 	{
 		a[i] = i+1;
 	}
+#else
+	iota(a.begin(), a.end(), 0);  // 初期値設定  0から昇順に並べる  #include <numeric>が必要
+#endif
 	
 	int count = 0;  // 生成した順列の数
 	do
