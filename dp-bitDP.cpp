@@ -10,6 +10,9 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 // bitDPのメモ、ライブラリ
 
 /*
+ * ★順列を全探索すれば解ける問題にて、計算量を削減したいときにbitDPが使える。
+ *   https://atcoder.jp/contests/abc319/editorial/7117
+ * 
  * [参考記事]
  * https://algo-logic.info/bit-dp/
  * 
@@ -38,6 +41,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * [関連問題 / その他のbitDP]  ★再帰を使わない場合、もらうDPより配るDPの方が解きやすいかも？
  * ABC318-D
  * ABC215-E
+ * ABC199-E
  * ABC142-E
  */
 
