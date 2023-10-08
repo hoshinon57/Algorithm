@@ -9,18 +9,17 @@ const ll INF64 = 1LL << 60;
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// 最小全域木のメモ、ライブラリ
+// ABC218 https://atcoder.jp/contests/abc218
 
 /*
- * [使い方]
- * UnionFindを本ファイルまたはunion_find.cppからコピーする。
- * Edge構造体およびmain()の内容をコピーする。
- * 辺に辺番号など情報を追加したい場合は、メンバ変数およびコンストラクタ、"<"演算子に手を入れること。
+ * 最小全域木の考え方で解く。
  * 
- * [関連する問題]
- * AOJ GRL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_2_A&lang=ja
- * ABC218-E
- * ABC235-E
+ * いったん全ての辺を取り除いて報酬をもらっておき、
+ * 最小全域木の要領で、辺を追加しながら報酬を返していくイメージ。
+ * ただしC<=0, つまり辺を取り除いたら罰金の辺は、無条件で辺を追加していく。
+ * 
+ * [ACまでの思考の流れ]
+ * ・辺の削除は一般的に難しいので、逆方向(最後の状態から辺を追加していく)に考えてみる。
  */
 
 struct UnionFind
@@ -97,30 +96,31 @@ struct Edge
 
 int main(void)
 {
-	// 以下はAOJのGRL_2_Aを解く内容
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_2_A&lang=ja
-	int i;
-	int N, E; cin >> N >> E;
-	vector<Edge> edge(E);
-	for(i = 0; i < E; i++)
-	{
-		int s, t, w; cin >> s >> t >> w;
-		// s--; t--;  // 必要に応じて
-		edge[i] = Edge(s, t, w);
-	}
-	sort(edge.begin(), edge.end());  // "<"演算子を元にソート
-
+	ll i;
+	ll N, M; cin >> N >> M;
+	vector<Edge> edge(M);
 	ll ans = 0;
-	UnionFind uf(N);
-	for(i = 0; i < E; i++)
+	for(i = 0; i < M; i++)
 	{
-		auto &e = edge[i];
-		if(uf.issame(e.u, e.v)) continue;
+		ll a, b, c; cin >> a >> b >> c;
+		a--; b--;
+		edge[i] = Edge(a, b, c);
+		ans += c;
+	}
+	// この時点でのans：全ての辺を取り除いた場合の報酬(連結性は無視して考える)
+	sort(edge.begin(), edge.end());
 
-		ans += e.w;
-		uf.unite(e.u, e.v);
+	UnionFind uf(N);
+	for(auto &e : edge)
+	{
+		// MSTを構築していく
+		// ただし取り除いたら罰金の辺は、無条件で辺を繋いでおく
+		if(e.w <= 0 || !uf.issame(e.u, e.v))
+		{
+			uf.unite(e.u, e.v);
+			ans -= e.w;  // 「辺を取り除かない」という選択をしたので、報酬から引く
+		}
 	}
 	cout << ans << endl;
-
 	return 0;
 }
