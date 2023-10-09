@@ -1104,9 +1104,33 @@ void _stl_(void)
 	例：
 	  vectorに対する範囲for内で、push_back()操作など。
 	  範囲forでなくとも、itr = a.begin() などのイテレータ操作時も同様。
+	  map/setではイテレータ破壊は起きないかも？(後述 ※)
 	参考：
 	  https://qiita.com/izmktr/items/0c95aff5ba7554afcaa7
 	  https://dixq.net/forum/viewtopic.php?t=11823
+	(※)map/setについて：
+	  map/setでは以下のようなコードにてイテレータ破壊は起きなさそうだった。
+	  出力は"1 2 3 5"であった。
+	  途中で追加/削除されても、要素を昇順にイテレートされていく感じか。
+	  	------------------------
+		set<int> sa = {1,2,3,4};
+		for(auto &e : sa)
+		{
+			if(e == 1) sa.insert(5);
+			if(e == 2) sa.insert(0);
+			if(e == 3) sa.erase(4);
+			cout << e << endl;
+		}
+		------------------------
+	  ただし不安なときは、昇順に操作していくという前提で、以下のようなコードも良さそう。
+		------------------------
+		while(sa.size() > 0)
+		{
+			int n = *sa.begin();
+			sa.erase(sa.begin());
+			(nを使って計算)
+		}
+		------------------------
 	*/
 
 	// 要素の並びを反転する:std::reverse
