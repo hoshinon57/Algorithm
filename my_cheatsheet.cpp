@@ -508,6 +508,15 @@ void _set_multiset_(void)
 	};
 	*/
 
+	// リバースイテレータ(逆イテレータ)
+	// 参考：
+	//   https://rsk0315.hatenablog.com/entry/2020/07/06/004531
+	//   https://cpprefjp.github.io/reference/iterator/rbegin.html
+	// rbegin():要素の末尾を指すリバースイテレータ
+	// itr = s.end(); itr--; とかせず、末尾の要素にアクセスできて便利。
+	s = {1, 2, 3};
+	assert(*s.rbegin() == 3);
+
 	multiset<int> ms;
 	ms.insert(2);
 	ms.insert(5);
