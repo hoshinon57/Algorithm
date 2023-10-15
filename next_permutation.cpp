@@ -26,9 +26,9 @@ using namespace std;
  * 辞書順と逆方向で生成していく prev_permutation() という関数もあるらしい。
  */
 /*
- * vector<string>型でもnext_permutation()に渡すことができる。
+ * string型や、vector<string>型でもnext_permutation()に渡すことができる。
  * ただし事前に昇順ソートしておく必要がある。
- * 参考：ABC302-C
+ * 参考：ABC215-C, ABC302-C
  */
 int main(void)
 {
