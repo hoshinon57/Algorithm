@@ -1,52 +1,31 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <iomanip>
 using namespace std;
 typedef long long ll;
 const ll INF64 = 1LL << 60;
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// bitDPのメモ、ライブラリ
+// ABC180 https://atcoder.jp/contests/abc180
 
 /*
- * ★順列を全探索すれば解ける問題にて、計算量を削減したいときにbitDPが使える。
- *   https://atcoder.jp/contests/abc319/editorial/7117
+ * 通常の巡回セールスマン問題を解けばよい。
+ * 公式解説の「都市間の移動のコストについて三角不等式が成り立つので」という記載については、以下URLが参考になった。
+ *   https://drken1215.hatenablog.com/entry/2020/10/21/172509
+ * ※都市A->Bに行く場合、他の都市を経由せず直接Bに行けばよいという考え方。
+ *   仮に距離が
+ *     A->B:3
+ *     A->C:1
+ *     C->B:1
+ *   ならばCを経由した方が早いので、まずワーシャルフロイド法にて各頂点間の距離を求める必要がある。
  * 
- * [参考記事]
- * https://algo-logic.info/bit-dp/
- * 
- * [巡回セールスマン問題について]
- * dp[S][v]を以下のように定める。
- *   Sの各ビットをそれぞれの都市に割り当てて、
- *   1になっているビットに対して好きな順に辿ったときの、最小距離
- *   ただしスタート地点を0とし、最後にvに行く、という制約
- *   未探索であれば-1
- * 
- * 例えばS=b'1101, v=2であれば、
- *   頂点0,2,3を好きな順に辿ったときの、最小距離
- *   ただし最後に行くのは頂点2
- * となる。
- * 
- * dpの遷移式は以下となる。
- *   dp[S][v] = min(dp[S-{v}][u] + dist[u][v])
- *   ※ただしuは、S-{v}に含まれる頂点iそれぞれについて計算する
- * 頂点vを除いた集合の移動距離(終点u) + u->vの距離 という考え方。
- * 
- * [関連問題 / 巡回セールスマン問題]
- * AOJ DPL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_2_A&lang=ja
- * ABC180-E
- * ABC190-E  スタートとゴールの考え方が、一般的な巡回セールスマン問題とは少し異なる
- * ABC274-E
- * 
- * [関連問題 / その他のbitDP]  ★再帰を使わない場合、もらうDPより配るDPの方が解きやすいかも？
- * ABC318-D
- * ABC215-E
- * ABC199-E
- * ABC142-E
+ * あとはbitDPライブラリをペタリと貼って終了。
  */
 
-const int MAX_N = 15;  // 頂点数の最大
+const int MAX_N = 17;  // 頂点数の最大
 int dist[MAX_N][MAX_N];  // dist[i][j]:頂点i->jへの距離
 // dp[S][v]:
 //   Sの各ビットをそれぞれの都市に割り当てて、
@@ -94,33 +73,28 @@ int bitDP(int S, int v, int N)
 
 int main(void)
 {
-	// 以下はAOJ DPL_2_Aを解く内容
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_2_A&lang=ja
 	int i, j;
-	int N, M; cin >> N >> M;
+	int N; cin >> N;
+	vector<ll> x(N), y(N), z(N);
 	for(i = 0; i < N; i++)
 	{
-		for(j = 0; j < N; j++)
-		{
-			dist[i][j] = INF32;  // 辺で結ばれていない頂点間は距離をINFにする
-		}
+		cin >> x[i] >> y[i] >> z[i];
 	}
-	for(i = 0; i < M; i++)
+	// dist計算
+	for(i = 0; i < N; i++)
 	{
-		int s, t, d; cin >> s >> t >> d;
-		dist[s][t] = d;
+		for(j = 0; j < N; j++)  // dist[i][j]を求める !=dist[j][i]
+		{
+			dist[i][j] = abs(x[j]-x[i]) + abs(y[j]-y[i]) + max(0LL, z[j]-z[i]);
+		}
 	}
 	// dpテーブル初期化
 	for(i = 0; i < 1<<N; i++)
 	{
-		for(j = 0; j < N; j++)
-		{
-			dp[i][j] = -1;  // 未探索
-		}
+		for(j = 0; j < N; j++) dp[i][j] = -1;
 	}
 
 	int ans = bitDP((1<<N)-1, 0, N);
-	if(ans == INF32) ans = -1;
 	cout << ans << endl;
 
 	return 0;
