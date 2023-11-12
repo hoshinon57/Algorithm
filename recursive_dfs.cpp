@@ -14,6 +14,7 @@ using namespace std;
  * ABC268-D https://atcoder.jp/contests/abc268/tasks/abc268_d (D問題にしては難易度高めだが、良問だった)
  * ABC310-D https://atcoder.jp/contests/abc310/tasks/abc310_d (これ、コンテスト中に解けなかったのは反省)
  * ABC318-D https://atcoder.jp/contests/abc318/tasks/abc318_d (ペアを作る＆Nが奇数のケース有, 解けなかったが良問)
+ * ABC328-E https://atcoder.jp/contests/abc328/tasks/abc328_e (M個の辺からN-1個を選ぶ recursive_dfs_3()が参考)
  */
 
 const int NUM = 3;
@@ -79,14 +80,46 @@ void recursive_dfs_2(vector<int> &a, vector<bool> &used)
 	return;
 }
 
+const int M3 = 5;
+const int N3 = 3;
+// {0,1,2,...,M}から重複無しでN個選ぶ  CombinationのMCN
+// nxt:次に選ぶ/選ばないを決める番号
+// use:これまでに選んだ番号の一覧
+// cnt:これまでに選んだ番号の個数
+void recursive_dfs_3(int nxt, vector<int> &use, int cnt)
+{
+	if(cnt == N3)  // N個選んだので処理
+	{
+		for(auto &e : use) { cout << e << " "; }
+		cout << endl;
+		return;
+	}
+	if(nxt == M3) return;  // 最後まで見た
+	// 枝刈り 今後全ての要素を選んでもN個に足りない場合、return
+	// ただしABC328-Eではこの枝刈りの有無で実行時間はほとんど変わらなかった
+	if(cnt + (M3-nxt) < N3) return;
+
+	// nxtを選ばない場合
+	recursive_dfs_3(nxt+1, use, cnt);
+	// nxtを選ぶ場合
+	use.push_back(nxt);
+	recursive_dfs_3(nxt+1, use, cnt+1);
+	use.pop_back();
+}
+
 int main(void)
 {
 	vector<int> a;
 	recursive_dfs(a);
 
+	cout << "-----" << endl;
 	vector<int> a2;
 	vector<bool> used(NUM2, false);
 	recursive_dfs_2(a, used);
+
+	cout << "-----" << endl;
+	vector<int> use;
+	recursive_dfs_3(0, use, 0);
 
 	return 0;
 }
