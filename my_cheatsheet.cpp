@@ -395,9 +395,11 @@ void _vector_(void)
 void _string_(void)
 {
 	cout << "-----string-----" << endl;
-	string str = "012345";
-	
+	string str(5, '*');  // 5文字ぶん、'*'で初期化
+	assert(str == string(5, '*'));
+
 	// 文字列の切り出し:substr()
+	str = "012345";
 	assert(str.substr(2, 3) == "234");  // str[2]から3文字
 	assert(str.substr(3) == "345");  // str[3]以降の文字列
 	assert(str.substr(str.size() - 4) == "2345");  // 末尾から4文字取り出したい場合
