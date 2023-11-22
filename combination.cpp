@@ -73,11 +73,22 @@ int main(void)
 	nCk_init();
 
 	// Combinationの計算に使えるサイト：https://keisan.casio.jp/exec/system/1161228812
+	// または、Google検索で "20 choose 10" でも計算できる
 	cout << "10C2=" << nCk(10, 2) << endl;  // 45
 	cout << "5C5=" << nCk(5, 5) << endl;  // 1
 	cout << "1C1=" << nCk(1, 1) << endl;  // 1
 	cout << "2C1=" << nCk(2, 1) << endl;  // 2
 	cout << "100C10=" << nCk(100, 10) << endl;  // 752375420 (mod 998244353)
+
+	/*
+	 * 「MOD 998244353で計算する」ではないような問題について。
+	 * 例：ABC202-D
+	 * ＞(0,0)からスタートし、
+	 * ＞x軸の正の方向あるいはy軸の正の方向に1進むことを繰り返して(i,j)に至る方法の総数に等しい
+	 * から求めることができる。
+	 * 60C30=10^17 近辺までなら計算できる。
+	 * 実装参考：https://atcoder.jp/contests/abc202/submissions/47821692
+	 */
 
 	return 0;
 }
