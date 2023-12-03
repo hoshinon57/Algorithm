@@ -26,6 +26,7 @@ void _structured_bindings_(void);
 void _tie_(void);
 void _mex_(void);
 void _math_(void);
+void _value_with_index_(void);
 
 int main(void)
 {
@@ -44,6 +45,7 @@ int main(void)
 	_tie_();
 	_mex_();
 	_math_();
+	_value_with_index_();
 
 	/*
 	AtCoderにてWAが出た場合のチェックポイント(ABC262, ABC319での反省点)
@@ -1368,4 +1370,53 @@ void _math_(void)
 	 */
 	x = 36028797018963969;  // 2^55+1
 	// assert(36028797018963969 == (ll)x);  一致しない
+}
+
+// 値とインデックスを同時に持たせたいときのテクニック
+// 参考：
+//   https://kuretchi.hateblo.jp/entry/2017/07/28/131151
+//   https://hackmd.io/@tatyam-prime/value_with_index
+void _value_with_index_(void)
+{
+	cout << "-----_value_with_index_-----" << endl;
+	int i;
+	/*
+	配列の要素をソートしつつ、元のインデックスが必要になるケースがある。
+	例：
+	  N要素の数列 a[0],a[1],...,a[N-1] について、
+	  a[b[0]]<=a[b[1]]<=...<=a[b[N-1]] となるような数列b[]を求めよ。
+	以下2つの方法がある。いずれも実装は後述。
+	方法1：値とインデックスのペアで管理
+	方法2：インデックス用配列を別に作り、値をキーとしてソートする
+	 */
+	// 方法1：値とインデックスのペアで管理
+	int N = 5;
+	vector<int> inp(N); inp = {4, 0, 2, 1, 3};
+	vector<int> ans(N); ans = {1, 3, 2, 4, 0};
+	{
+		vector<pair<int,int>> a(N);  // {value, index}
+		for(i = 0; i < N; i++)
+		{
+			a[i] = {inp[i], i};
+		}
+		sort(a.begin(), a.end());  // valueでソート
+		for(i = 0; i < N; i++) assert(a[i].second == ans[i]);  // {1, 3, 2, 4, 0}
+
+		// [memo]元の入力について、ソート後のインデックスを求める方法は以下
+		vector<int> after_idx(N);
+		for(i = 0; i < N; i++) after_idx[a[i].second] = i;  // {4, 0, 2, 1, 3}
+	}
+	// 方法2：インデックス用配列を別に作り、値をキーとしてソートする
+	{
+		vector<int> a = inp;
+		vector<int> a_idx(N);
+		iota(a_idx.begin(), a_idx.end(), 0);  // {0, 1, 2, 3, 4}
+		sort(a_idx.begin(), a_idx.end(), [&](int x, int y){ return a[x] < a[y]; });  // a[]の値でソート
+		// a[a_idx[0]], a[a_idx[1]], a[a_idx[2]], ... でソートされている
+		for(i = 0; i < N; i++) assert(a_idx[i] == ans[i]);  // {1, 3, 2, 4, 0}
+		
+		// [memo]元の入力について、ソート後のインデックスを求める方法は以下
+		vector<int> after_idx(N);
+		for(i = 0; i < N; i++) after_idx[a_idx[i]] = i;  // {4, 0, 2, 1, 3}
+	}
 }
