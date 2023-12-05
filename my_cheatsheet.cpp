@@ -840,6 +840,17 @@ void _pair_(void)
 	{
 		cout << e.first << " " << e.second << endl;
 	}
+
+	// pairの要素でupper_bound, lower_boundをする場合
+	// {val, (何か補助的な値)} のように1つ目の要素で実施したい場合は以下。
+	// {*,*}ではなくmake_pair()にしないとエラーになる。
+	const int INF32 = 0x3FFFFFFF;
+	// upper_boundは +INF を指定
+	auto idx = upper_bound(LR.begin(), LR.end(), make_pair(1, INF32));
+	assert(*idx == make_pair(10,5));
+	// lower_boundは -INF を指定
+	idx = lower_bound(LR.begin(), LR.end(), make_pair(10, -INF32));
+	assert(*idx == make_pair(10,5));
 }
 
 // mod mの世界におけるaの逆元を返す
