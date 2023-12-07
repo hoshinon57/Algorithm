@@ -195,6 +195,9 @@ int main(void)
 
 	[in-place DP, 参考問題]
 	ABC203-E
+
+	[DPの復元、参考問題]
+	ABC200-D (ただし想定解法は異なる)
 	*/
 
 	/*
