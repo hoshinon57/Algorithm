@@ -11,6 +11,11 @@ typedef long long ll;
  * 
  */
 
+// a/b以下の最大の整数(床関数) floor(5,2)=2, floor(-5,2)=-3
+template <typename T> T floor_div(T a, T b){ if(b<0){a=-a; b=-b;} if(a>0){return a/b;} else {return (a-b+1)/b;}}
+// a/b以上の最小の整数(天井関数) ceil(5,2)=3, ceil(-5,2)=-2
+template <typename T> T ceil_div(T a, T b){ if(b<0) {a=-a; b=-b;} if(a>0){return (a+b-1)/b;} else {return a/b;}}
+
 // 以下、bは0-indexed
 bool isbiton(ll x, int b) { return ((x>>b)&1); }  // xのbビット目が立っていればtrue (bは0-indexed)
 void setbit(ll &x, int b) { x |= ((ll)1<<b); }  // xのbビット目を立てる
@@ -32,6 +37,23 @@ void rotate(vector<vector<int>> &a)
 
 int main(void)
 {
+	assert(floor_div( 5,  2) ==  2);
+	assert(floor_div(-5,  2) == -3);
+	assert(floor_div(-5, -2) ==  2);
+	assert(floor_div( 5, -2) == -3);
+	assert(floor_div( 5,  1) ==  5);
+	assert(floor_div( 5, -1) == -5);
+	assert(floor_div( 1000000000000000000, 60000000000) ==  16666666);  // 10^18 / 6^10
+	assert(floor_div(-1000000000000000000, 30000000000) == -33333334);  // -10^18 / 3^10
+	assert(ceil_div( 5,  2) ==  3);
+	assert(ceil_div( 5, -2) == -2);
+	assert(ceil_div(-5, -2) ==  3);
+	assert(ceil_div(-5,  2) == -2);
+	assert(ceil_div( 5,  1) ==  5);
+	assert(ceil_div( 5, -1) == -5);
+	assert(ceil_div( 1000000000000000000, 60000000000) ==  16666667);  // 10^18 / 6^10
+	assert(ceil_div(-1000000000000000000, 30000000000) == -33333333);  // -10^18 / 3^10
+
 	ll x = 0b1000;
 	assert(!isbiton(x, 4));
 	assert( isbiton(x, 3));
