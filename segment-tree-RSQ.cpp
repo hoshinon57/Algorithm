@@ -39,6 +39,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * [関連する問題]
  * AOJ DSL_2_B https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_B&lang=ja
  * ABC125-C
+ * ABC221-E 難しかった
  */
 
 // Range Sum Query(RSQ)の実装
