@@ -286,6 +286,7 @@ int main(void)
 	「和の形の数え上げ」は主客転倒に置き換えると解けるケースがありそう。
 	  https://physics0523.hatenablog.com/entry/2020/01/12/052513
 	[関連する問題]
+	ABC127-E
 	ABC151-E
 	ABC214-D
 	*/
