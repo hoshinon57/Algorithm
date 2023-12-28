@@ -49,6 +49,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC216-D トポロジカルソート(別解)
  * ABC184-E 通常のBFSと0-1 BFS どちらでも解ける
  * ABC168-D
+ * ABC139-E トポロジカルソート＆最長経路
  * ABC132-E
  * ABC277-E 0-1 BFS
  * ABC246-E 0-1 BFS
