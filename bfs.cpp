@@ -195,12 +195,13 @@ void bfs01_grid_graph(int H, int W, int sy, int sx, vector<vector<int>> &dist)
 }
 
 // サイクルの無い有向グラフGについて、トポロジカルソートを行う。
-// ソートした結果の頂点をresultに格納する。
+// ソートした結果の頂点をresultに、最長経路(=辺の本数)をdepthに、それぞれ格納する。
+// resultとdepthはそれぞれ空要素で渡してよい。
 // ※トポロジカルソートできない場合(サイクルがある場合)、G.size()とresult.size()が不一致かどうかで判断可能。
 // 参考：
 //   https://algo-logic.info/topological-sort/
 //   https://qiita.com/Morifolium/items/6c8f0a188af2f9620db2
-void bfs_topological_sort(Graph &G, vector<int> &result)
+void bfs_topological_sort(Graph &G, vector<int> &result, vector<int> &depth)
 {
 	int i;
 	int n = G.size();
@@ -216,6 +217,7 @@ void bfs_topological_sort(Graph &G, vector<int> &result)
 		if(indegree[i] == 0) que.push(i);
 	}
 
+	depth.resize(n, 0);
 	while(!que.empty())
 	{
 		int v = que.front();
@@ -224,7 +226,11 @@ void bfs_topological_sort(Graph &G, vector<int> &result)
 		for(auto &e : G[v])  // 頂点vを消すイメージで、vから出た先の頂点の入次数を1減らす
 		{
 			indegree[e]--;
-			if(indegree[e] == 0) que.push(e);
+			if(indegree[e] == 0)
+			{
+				que.push(e);
+				depth[e] = depth[v]+1;
+			}
 		}
 	}
 }
