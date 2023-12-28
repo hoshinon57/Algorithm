@@ -23,6 +23,7 @@ using namespace std;
  * AOJ ALDS1_5_D https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_5_D&lang=ja
  * ABC113-C (座標圧縮ではないが、考え方は似ている)
  * ABC213-C
+ * ABC231-F
  * ABC309-F
  */
 
