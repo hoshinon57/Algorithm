@@ -224,6 +224,13 @@ int main(void)
 	T ex = numeric_limits<T>::max();
 	---------------
 
+	Range Sum Query(RSQ)
+	---------------
+	using T = int;
+	auto fx = [](T x1, T x2) -> T { return x1+x2; };
+	T ex = 0;
+	---------------
+
 	Range OR Query(ABC157-E)
 	---------------
 	using T = int;
