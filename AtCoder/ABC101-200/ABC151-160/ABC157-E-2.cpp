@@ -1,48 +1,21 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <iomanip>
 #include <functional>  // function
-#include <limits>  // numeric_limits
-#include <cassert>
 using namespace std;
 typedef long long ll;
 const ll INF64 = 1LL << 60;
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// 抽象化版セグメント木のメモや実装
+// ABC157 https://atcoder.jp/contests/abc157
 
 /*
- * [ざっくり概要]
- * ・区間上の値を更新する
- * ・任意の区間における最小値や合計値を取得する
- * といった処理をO(logN)でできるデータ構造。
- * 要素には任意のモノイドを用いることができる(抽象化)。
- * 
- * SegmentTree:
- *   以下の操作をO(logN)で処理できる。
- *   (1)Update(x, val) : 要素xをvalで更新する
- *   (2)Query(a, b) : 区間[a,b)にある要素のモノイド積を返す
- *   0-indexed, および半開区間で処理する。
- *   コンストラクタには (size:要素数, fx_:二項演算, ex_:単位元) を指定する。
- *   ★代表的なfx,exはmain()に記述している。
- * 
- * [Tips]
- * ・木の最下段のノード数は、問題文にて指定されるsize以上の2のべき乗。
- *   これをNとすると、最下段のノード数はN, それより上の段のノードは全部でN-1.
- *   よって木全体で必要なノード数は 2N-1 となる。
- * ・要素xをnode[]の添字番号に変換する場合：N-1を加算する
- * ・親から子へ行く場合、 k -> 2k+1, 2k+2
- * ・子から親へ行く場合、 k -> (k-1)/2  (切り捨て)
- * 
- * [参考資料]
- *   https://algo-logic.info/segment-tree/
- *   https://tsutaj.hatenablog.com/entry/2017/03/29/204841
- * 
- * [関連する問題 / verifyした問題]
- * AOJ DSL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
- * ABC125-C
- * ABC157-E
+ * 抽象化版セグメント木で解く版。
  */
 
 // (1)Update(x, val) : 要素xをvalで更新する
@@ -157,113 +130,41 @@ public:
 	}
 };
 
-void Test(void)
-{
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	vector<int> v = {3, 1, 4, 1, 5, 9};
-	SegmentTree<T> seg(v.size(), fx, ex);
-	for(int i = 0; i < (int)v.size(); i++)
-	{
-		seg.Set(i, v[i]);
-	}
-	seg.Build();
-
-	assert(seg.Query(0, 6) == 1);
-	assert(seg.Query(0, 3) == 1);
-	assert(seg.Query(3, 4) == 1);
-	assert(seg.Query(4, 5) == 5);
-	seg.Update(6, -1);
-	seg.Update(2, 0);
-	assert(seg.Query(0, 7) == -1);
-	assert(seg.Query(1, 4) == 0);
-
-	// Find_Leftmost()のテスト
-	{
-		vector<int> a = {3, 1, 4, 1, 5, 9, 2};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(1, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 7, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 0) == 7);
-		assert(seg2.Find_Leftmost(2, 3, 4) == 2);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 10) == 0);
-	}
-	{
-		vector<int> a = {1, 1, 1};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 3, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 2);
-		assert(seg2.Find_Leftmost(0, 2, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(0, 3, -1) == 3);
-	}	
-}
-
 int main(void)
 {
-	/*
-	[代表的なfx,exの例]
-	Range Minimum Query(RMQ)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	---------------
+	int i;
+	int N, Q;
+	string s;
+	cin >> N >> s >> Q;
 
-	Range OR Query(ABC157-E)
-	---------------
 	using T = int;
 	auto fx = [](T x1, T x2) -> T { return x1|x2; };
 	T ex = 0;
-	---------------
-
-	Range GCD Query(ABC125-C)
-	---------------
-	using T = ll;
-	auto fx = gcd;
-	T ex = 0;  // gcd(a,0)=a のため
-	---------------
-	*/
-	Test();
-
-	// 以下は AOJ DSL_2_A のもの
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	int n, q;
-	cin >> n >> q;
-	SegmentTree<int> seg(n, fx, ex);
-	for(int i = 0; i < n; i++) seg.Set(i, (1UL<<31)-1);
+	SegmentTree<int> seg(N, fx, ex);
+	for(i = 0; i < N; i++)
+	{
+		int t = s[i] - 'a';
+		seg.Set(i, 1<<t);
+	}
 	seg.Build();
 
-	int c, x, y;
-	while(q > 0)
+	while(Q > 0)
 	{
-		cin >> c >> x >> y;
-		if(c == 0)  // update
+		Q--;
+		int k; cin >> k;
+		if(k == 1)
 		{
-			seg.Update(x, y);
+			int a; char b;
+			cin >> a >> b;
+			int t = b - 'a';
+			seg.Update(a-1, 1<<t);
 		}
-		else  // find
+		else
 		{
-			cout << seg.Query(x, y+1) << endl;  // 閉区間->半開区間への変換
+			int a, b; cin >> a >> b;
+			a--; b--;
+			cout << __builtin_popcount(seg.Query(a, b+1)) << endl;
 		}
-		q--;
 	}
 
 	return 0;
