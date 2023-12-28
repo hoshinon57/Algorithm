@@ -7,6 +7,7 @@
  * ABC257-E
  * ABC195-D
  * ABC161-E 左右から貪欲
+ * ABC149-D (周期Kごとに分けてDPの解法もある)
  * ABC091-C
  * ABC131-D
  * ABC141-D
