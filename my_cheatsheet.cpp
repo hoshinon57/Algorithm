@@ -292,6 +292,7 @@ int main(void)
 	[関連する問題]
 	ABC127-E
 	ABC151-E
+	ABC162-E 難しかったけど良問
 	ABC214-D
 	*/
 
