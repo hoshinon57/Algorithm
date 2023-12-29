@@ -236,6 +236,9 @@ int main(void)
 	[参考/両端から累積和]
 	ABC181-E
 	ABC334-C
+
+	[その他]
+	ABC182-D 累積和のMAX
 	*/
 
 	/*
