@@ -292,6 +292,7 @@ int main(void)
 	  https://physics0523.hatenablog.com/entry/2020/01/12/052513
 	[関連する問題]
 	ABC127-E
+	ABC140-E 難しかったけど良問
 	ABC151-E
 	ABC162-E 難しかったけど良問
 	ABC214-D
