@@ -275,8 +275,9 @@ int main(void)
 	ABC256-D-2.cppを参照。
 	https://imoz.jp/algorithms/imos_method.html
 	[関連する問題]
-	ABC268-E
 	ABC153-F
+	ABC260-E
+	ABC268-E
 	*/
 
 	/*
