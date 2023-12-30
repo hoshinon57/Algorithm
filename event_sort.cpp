@@ -11,6 +11,7 @@ using namespace std;
  * 
  * [関連する問題]
  * ABC128-E https://atcoder.jp/contests/abc128/tasks/abc128_e
+ * ABC183-D https://atcoder.jp/contests/abc183/tasks/abc183_d 基本問題 いもす法の方が簡単
  * ABC188-D https://atcoder.jp/contests/abc188/tasks/abc188_d
  * ABC221-D https://atcoder.jp/contests/abc221/tasks/abc221_d
  * ABC256-D https://atcoder.jp/contests/abc256/tasks/abc256_d
