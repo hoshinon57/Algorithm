@@ -44,6 +44,7 @@ using namespace std;
  * ABC285-D 連想配列 or 座標圧縮
  * ABC311-C
  * ABC315-E これ解けなかったのは大反省
+ * ABC327-D 二部グラフ
  * 
  * 連想配列を使う場合のグラフの定義方法は、このフォルダにあるgraph.cppを参考のこと。
  */
@@ -166,6 +167,33 @@ bool dfs_cycle_detection_undirected(Graph &g, int v, int p /* =-1 */, vector<boo
 	finished[v] = true;
 	history.pop_back();
 	return false;
+}
+
+// 頂点vを起点にDFSし、二部グラフにできればtrueを返す
+// col[i]:頂点iの色 未探索の場合は-1 呼び出し元で-1で初期化しておくこと
+// cur:
+//   vに塗る色
+//   基本0で呼び出して良いが、他の"偶数"cを指定すると c,c+1 で塗る
+//   例：cur=2なら2,3, cur=4なら4,5
+// 呼び出し元からは、未探索の頂点vについて(※)
+//   (g, v, col)
+// のように呼び出していくこと。 (※)col[v]が-1かどうかで判定できる
+bool dfs_bipartite(Graph &g, int v, vector<int> &col, int cur = 0)
+{
+	col[v] = cur;
+	for(auto &e : g[v])
+	{
+		if(col[e] != -1)  // もう塗られている
+		{
+			if(col[e] == col[v]) return false;
+		}
+		else  // まだ塗っていない
+		{
+			int nxt = cur^1;
+			if(!dfs_bipartite(g, e, col, nxt)) return false;
+		}
+	}
+	return true;
 }
 
 int main(void)
