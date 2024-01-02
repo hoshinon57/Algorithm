@@ -91,6 +91,37 @@ void dfs_tree(Graph &g, int v, int p = -1)
 	}
 }
 
+// 木であるグラフについて、頂点vを(部分木の)根としてDFS
+// 各頂点の深さ(vを0とする)をd[]に設定する
+// 呼び出し元からは dfs(g, depth, 0) のように呼び出す
+// p:vの親
+// now:頂点vの時点の根からの深さ
+void dfs_tree_depth(Graph &g, vector<int> &d, int v, int p = -1, int now = 0)
+{
+	d[v] = now;
+	for(auto &e : g[v])
+	{
+		if(e == p) continue;  // 親への逆流を禁止
+		dfs_tree_depth(g, d, e, v, now+1);
+	}
+}
+
+// 木であるグラフについて、頂点vを(部分木の)根としてDFS
+// 各頂点vを部分木としたときの頂点数(vを含む)をn[]に設定する
+// 呼び出し元からは dfs(g, sub_num, 0) のように呼び出す
+// nは0で初期化しておくこと
+// p:vの親
+int dfs_tree_subnum(Graph &g, vector<int> &n, int v, int p = -1)
+{
+	n[v]++;  // 自身のぶん
+	for(auto &e : g[v])
+	{
+		if(e == p) continue;  // 親への逆流を禁止
+		n[v] += dfs_tree_subnum(g, n, e, v);
+	}
+	return n[v];
+}
+
 // 有向グラフにて、頂点vを起点にDFS.
 // サイクルを見つけたらtrueを返す。その場合、vからサイクル終端までをhistoryに保持する。
 //   historyの例：0->1->2->3->4->2  サイクルは2-3-4の部分。末尾の2が2回出てくることに注意すること。
