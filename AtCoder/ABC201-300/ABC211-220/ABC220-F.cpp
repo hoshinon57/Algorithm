@@ -44,7 +44,7 @@ vector<int> vnum;
 // 呼び出し元からは dfs(g, depth, 0) のように呼び出す
 // p:vの親
 // now:頂点vの時点の根からの深さ
-void dfs_tree_depth(Graph &g, vector<int> &d, int v, int p = -1, ll now = 0)
+void dfs_tree_depth(Graph &g, vector<int> &d, int v, int p = -1, int now = 0)
 {
 	d[v] = now;
 	for(auto &e : g[v])
@@ -59,13 +59,13 @@ void dfs_tree_depth(Graph &g, vector<int> &d, int v, int p = -1, ll now = 0)
 // 呼び出し元からは dfs(g, sub_num, 0) のように呼び出す
 // nは0で初期化しておくこと
 // p:vの親
-int dfs_tree_vnum(Graph &g, vector<int> &n, int v, int p = -1)
+int dfs_tree_subnum(Graph &g, vector<int> &n, int v, int p = -1)
 {
 	n[v]++;  // 自身のぶん
 	for(auto &e : g[v])
 	{
 		if(e == p) continue;  // 親への逆流を禁止
-		n[v] += dfs_tree_vnum(g, n, e, v);
+		n[v] += dfs_tree_subnum(g, n, e, v);
 	}
 	return n[v];
 }
@@ -100,7 +100,7 @@ int main(void)
 	depth.resize(N);
 	vnum.resize(N);
 	dfs_tree_depth(g, depth, 0);
-	dfs_tree_vnum(g, vnum, 0);
+	dfs_tree_subnum(g, vnum, 0);
 
 	// ans[0]を元に他を差分計算していく
 	vector<ll> ans(N);
