@@ -647,6 +647,24 @@ void _priority_queue_(void)
 		cout << tmpPair.first << " " << tmpPair.second << endl;
 		queue_pair.pop();
 	}
+
+	// vector<int>と組み合わせる場合
+	// この場合、[0]が小さい方が優先度が高く、
+	// [0]が同じなら[1]が小さい方が優先度が高い。[2]以降も同様。
+	// キューの各要素のサイズが異なる場合の挙動は未確認。
+	priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>> que_vec;
+	que_vec.push({5, 1, 100});
+	que_vec.push({5, 0, 50});
+	que_vec.push({3, 100, 0});
+	// que_vec = {{3,100,0}, {5,0,50}, {5,1,100}}
+	string s;
+	while(!que_vec.empty())
+	{
+		auto tmp = que_vec.top();
+		que_vec.pop();
+		s += to_string(tmp[2]) + " ";
+	}
+	assert(s == "0 50 100 ");
 }
 
 // 双方向リスト
