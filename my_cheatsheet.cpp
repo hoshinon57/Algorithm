@@ -1248,6 +1248,7 @@ void _stl_(void)
 	//   https://qiita.com/yumetodo/items/3712dbb26b11f282e0e7
 	a_v = {10, 100, 1000};
 	assert(reduce(a_v.begin(), a_v.end()) == 1110);
+	// ★注意★戻り値は渡した要素の型となるため、オーバーフローに注意
 	// 合計値を特定の型にしたい場合、第3引数にて指定する
 	reduce(a_v.begin(), a_v.end(), 0LL);  // long long型で計算
 	reduce(a_v.begin(), a_v.end(), 0.0);  // double型で計算
