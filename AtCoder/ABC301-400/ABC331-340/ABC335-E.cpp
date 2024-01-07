@@ -73,7 +73,7 @@ int main(void)
 	// スコアを-1して保持することで、「小さい順」のpriority_queueを使える
 	using vi = vector<int>;  // {Ai, 頂点iのスコア の-1倍, 頂点i}  小さい方が優先度が高い
 	priority_queue<vi, vector<vi>, greater<vi>> que;
-	que.push({a[0], -(1), 0});  // 頂点vスタート
+	que.push({a[0], -(1), 0});  // 頂点0スタート
 	while(!que.empty())
 	{
 		auto vc = que.top();
