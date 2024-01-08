@@ -17,6 +17,7 @@ void _priority_queue_(void);
 void _list_(void);
 void _map_(void);
 void _pair_(void);
+void _deque_(void);
 void _mod_(void);
 void _pow_(void);
 void _unordered_set_(void);
@@ -36,6 +37,7 @@ int main(void)
 	_list_();
 	_map_();
 	_pair_();
+	_deque_();
 	_unordered_set_();
 	_unordered_map_();
 	_mod_();
@@ -899,6 +901,28 @@ void _pair_(void)
 	// lower_boundは -INF を指定
 	idx = lower_bound(LR.begin(), LR.end(), make_pair(10, -INF32));
 	assert(*idx == make_pair(10,5));
+}
+
+// deque
+// vectorと違い、先頭/末尾それぞれ追加/削除が可能
+// かつdeq[3]のように添字アクセスができる
+// 
+// #include <deque> が必要
+// #include <queue> でも良いっぽい
+void _deque_(void)
+{
+	cout << "*** deque ***" << endl;
+	deque<int> de;
+	// 先頭/末尾への追加
+	de.push_back(3);
+	de.push_front(1);  // {1,3}
+	assert(de[0] == 1 && de[1] == 3);
+	de.push_back(4);  // {1,3,4}
+
+	// 先頭/末尾の削除
+	de.pop_front();
+	de.pop_back();  // {3}
+	assert(de.size() == 1 && de[0] == 3);
 }
 
 // mod mの世界におけるaの逆元を返す
