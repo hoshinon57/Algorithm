@@ -24,6 +24,7 @@ using namespace std;
  * ABC113-C (座標圧縮ではないが、考え方は似ている)
  * ABC213-C
  * ABC231-F
+ * ABC261-F (座標圧縮を使わない方法もあると思う)
  * ABC309-F
  */
 
