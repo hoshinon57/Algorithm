@@ -1,13 +1,9 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <cassert>
 using namespace std;
 
 // ローリングハッシュのライブラリ
-
-//次やること
-//ソース整理 include内容とか、コメントとか、solveをsolve_AOJ_ALDS1_14_Bに変えるとか
 
 /*
  * [参考URL]
@@ -133,7 +129,7 @@ public:
 
 // 以下はAOJ ALDS1_14_Bを解く内容
 // https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_14_B&lang=ja
-void solve(void)
+void solve_AOJ_ALDS1_14_B(void)
 {
 	string t, p; cin >> t >> p;
 	RollingHash rh;
@@ -152,70 +148,31 @@ void solve(void)
 	}
 }
 
-void solve_ABC141_E(void)
-{
-	int i, j;
-	int N; cin >> N;
-	string s; cin >> s;
-	RollingHash rh;
-#if 0
-	vector<int> v;
-	for(auto &e : s)
-	{
-		v.push_back(e-'a'+1);
-	}
-	vector<uint64_t> hash = rh.build(v);
-#else
-	vector<uint64_t> hash = rh.build(s);
-#endif
-
-	int ans = 0;
-	for(i = 1; i <= N/2; i++)  // 長さi
-	{
-//		set<pair<uint64_t, int>> list;  // {hash, pos}
-		vector<pair<uint64_t, int>> list;
-		for(j = 0; j+i <= N; j++)  // 位置jスタート
-		{
-			auto h = rh.query(hash, j, j+i);
-//			list.insert({h, j});
-			list.push_back({h,j});
-			/*
-			auto itr = list.lower_bound({h, 0});
-			int pos = itr->second;
-			if(pos + i <= j)
-			{
-				ans = i;
-				break;
-			}
-			*/
-		}
-		sort(list.begin(), list.end());
-		for(j = 0; j < (int)list.size(); j++)
-		{
-			auto itr = lower_bound(list.begin(), list.end(), make_pair(list[j].first, list[j].second+i));
-			if(itr == list.end()) continue;
-			if(itr->first != list[j].first) continue;
-			ans = i;
-			break;
-		}
-		/*
-		for(j = 0; j <(int)list.size()-1; j++)
-		{
-			if((list[j].first == list[j+1].first) 
-				&& list[j].second+i <= list[j+1].second)
-			{
-				ans = i;
-				break;
-			}
-		}
-		*/
-	}
-	cout << ans << endl;
-}
-
 int main(void)
 {
 	{
+		using hash_type = vector<uint64_t>;  // buildの戻り値 ただautoで受けた方が楽かな
+		RollingHash rh;
+		string str1 = "abcdefghijklmnabcdefghijklmn";
+		string str2 = "cdefg";
+		int len1 = (int)str1.size();
+		int len2 = (int)str2.size();
+		hash_type h1 = rh.build(str1);
+		hash_type h2 = rh.build(str2);
+		int i;
+		for(i = 0; i+len2 <= len1; i++)
+		{
+			uint64_t hash1 = rh.query(h1, i, i+len2);
+			uint64_t hash2 = rh.query(h2);  // 全体のハッシュ
+			if(hash1 == hash2)
+			{
+				cout << "find:" << i << endl;
+			}
+		}
+	}
+
+	{
+		// str1,str2の指定区間で、先頭から何文字一致しているか
 	    string str1 = "abcdefghijklmnabcdefghijklmnabcdefghijklmn";
 	    string str2 = "bcdefzzz";
 		RollingHash rh;
@@ -223,31 +180,7 @@ int main(void)
 		auto hash2 = rh.build(str2);
 		assert(rh.lcp(hash1, 1, str1.size(), hash2, 0, str2.size()) == 5);
 	}
-	solve_ABC141_E();
-	return 0;
 	
-	solve();
-	return 0;
-
-	using hash_type = vector<uint64_t>;
-	RollingHash rh;
-    string str1 = "abcdefghijklmnabcdefghijklmnabcdefghijklmn";
-    string str2 = "mn";
-	int len1 = (int)str1.size();
-	int len2 = (int)str2.size();
-	hash_type h1 = rh.build(str1);
-	hash_type h2 = rh.build(str2);
-	int i;
-	for(i = 0; i+len2 <= len1; i++)
-	{
-		auto tmp1 = rh.query(h1, i, i+len2);
-//		auto tmp2 = rh.query(h2, 0, len2);
-		auto tmp2 = rh.query(h2);
-		if(tmp1 == tmp2)
-		{
-			cout << "find:" << i << endl;
-		}
-	}
-
+	// solve_AOJ_ALDS1_14_B();
 	return 0;
 }
