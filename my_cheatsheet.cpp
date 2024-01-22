@@ -457,6 +457,18 @@ void _string_(void)
 
 	// 数値を文字列に変換:std::to_string()
 	assert(to_string(1234) == "1234");
+
+	// 文字列を数値に変換:stoi(), stol(), stoll(), stoull()など
+	assert(stoi("1234") == 1234);
+	assert(stol("12345") == 12345);  // long
+	assert(stoll("12345678901") == 12345678901LL);  // long long
+	assert(stoull("12345678901") == 12345678901ULL);  // unsigned long long
+	// assert(stoi("12345678901") == 12345678901LL);  // 範囲外のときはout_of_range例外が投げられる
+	// その他、stof(), stod(), stold()もあるらしい
+	// 第3引数にて何進法(基数)を指定できる
+	assert(stoi("0011", nullptr, 2) == 3);  // 先頭に0があっても良い / 第2引数はnullptrで
+	assert(stoi("044", nullptr, 5) == 24);
+	assert(stoi("ABC", nullptr, 13) == 1845);  // A=10,B=11,C=12として 13^2*10+13*11+12=1845
 }
 
 void settest(set<int> &s, string &&prev)
