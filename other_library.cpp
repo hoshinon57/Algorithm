@@ -35,6 +35,20 @@ void rotate(vector<vector<int>> &a)
 	}
 }
 
+// [verify]ABC336-C, ABC234-C
+// nをbase進法で表したときの値を返す (n=0が変換後も0に対応する)
+// 戻り値は、一番下の桁から順に[0],[1],... と格納される
+vector<int> chg_base(ll n, int base)
+{
+	if(n == 0) return {0};  // 0のときだけ特別に処理
+	vector<int> a;
+	while(n > 0) {
+		a.push_back(n%base);
+		n /= base;
+	}
+	return a;
+}
+
 int main(void)
 {
 	assert(floor_div( 5,  2) ==  2);
