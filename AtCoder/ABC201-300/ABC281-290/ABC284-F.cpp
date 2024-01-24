@@ -1,25 +1,36 @@
 #include <iostream>
 #include <vector>
-#include <cassert>
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
 using namespace std;
+typedef long long ll;
+const ll INF64 = 1LL << 60;
+const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// ローリングハッシュのライブラリ
+// ABC284 https://atcoder.jp/contests/abc284
 
 /*
- * [参考URL]
- *   https://ei1333.github.io/library/string/rolling-hash.hpp  ほぼこのままの実装
- *   https://kyoroid.github.io/algorithm/string/rolling_hash.html
- *   https://qiita.com/hirominn/items/80464ee381c8d400725f
- *   https://trap.jp/post/1036/
- *   https://tjkendev.github.io/procon-library/python/string/rolling_hash.html
+ * ローリングハッシュで解く。
  * 
- * [ざっくり概要]
- * 文字列や数列のハッシュを計算することで、要素同士の比較をO(1)で可能とする。
+ * 入力文字列Tに対して、
+ *   T[0,i) + T[N+i, 2N) = reverse(T[i,N+i))
+ * となるようなiが存在すればよい。
  * 
- * [関連する問題 / verifyした問題]
- * AOJ ALDS1_14_B https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_14_B&lang=ja
- * ABC141-E
- * ABC284-F
+ * 左辺はローリングハッシュのライブラリにて合成するメソッドを作成すればよい。
+ * [N+i,2N)の長さがN-iなので、T[0,i)^p[N-i] + T[N+i,2N) で求められる。
+ * 
+ * 右辺はTの反転文字列をrevTとすると、 revT[N-i,2N-i) をローリングハッシュで求めればよい。
+ * 
+ * [どう思考すれば解法にたどり着けるか]
+ * ・入力文字列Tについて、
+ *     先頭i文字 + 末尾N-i文字
+ *     i+1文字目からN文字ぶん、の反転
+ *   が一致するかの判定問題となる。
+ *   であれば、反転用のハッシュも用意することで、ローリングハッシュで各iについてO(1)で判定できる。
  */
 
 /*
@@ -108,6 +119,17 @@ public:
 		return hash.back();
 	}
 
+	// 先頭idx文字と、末尾のN-idx文字を合成
+	// 今回のABC284-F用に作成
+	uint64_t mix(vector<uint64_t> &hash, int idx, int N)
+	{
+		auto h = query(hash, 0, idx);  // 先頭idx文字
+		h = (__uint128_t)h * p[N-idx] % mod;
+		h += query(hash, idx+N, N*2);  // 末尾N-idx文字
+		h %= mod;
+		return h;
+	}
+
 	// hash1の区間[l1,r1)とhash2の区間[l2,r2)のlcp(最長共通接頭辞, 一致する文字数の最大)の長さを返す
 	int lcp(vector<uint64_t> &hash1, int l1, int r1, vector<uint64_t> &hash2, int l2, int r2)
 	{
@@ -128,60 +150,30 @@ public:
 	}
 };
 
-// 以下はAOJ ALDS1_14_Bを解く内容
-// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_14_B&lang=ja
-void solve_AOJ_ALDS1_14_B(void)
-{
-	string t, p; cin >> t >> p;
-	RollingHash rh;
-	int len1 = (int)t.size();
-	int len2 = (int)p.size();
-	auto h1 = rh.build(t);
-	auto h2 = rh.build(p);
-	auto q2 = rh.query(h2);
-	for(int i = 0; i+len2 <= len1; i++)
-	{
-		auto q1 = rh.query(h1, i, i+len2);
-		if(q1 == q2)
-		{
-			cout << i << endl;
-		}
-	}
-}
-
 int main(void)
 {
+	int i;
+	ll N; cin >> N;
+	string s; cin >> s;
+	auto s_rev = s;
+	reverse(s_rev.begin(), s_rev.end());
+	RollingHash rh;
+	auto hash = rh.build(s);
+	auto hash_rev = rh.build(s_rev);
+
+	for(i = 0; i <= N; i++)
 	{
-		using hash_type = vector<uint64_t>;  // buildの戻り値 ただautoで受けた方が楽かな
-		RollingHash rh;
-		string str1 = "abcdefghijklmnabcdefghijklmn";
-		string str2 = "cdefg";
-		int len1 = (int)str1.size();
-		int len2 = (int)str2.size();
-		hash_type h1 = rh.build(str1);
-		hash_type h2 = rh.build(str2);
-		int i;
-		for(i = 0; i+len2 <= len1; i++)
+		auto h = rh.mix(hash, i, N);
+		auto h_rev = rh.query(hash_rev, N-i, 2*N-i);
+		if(h == h_rev)  // 一致した
 		{
-			uint64_t hash1 = rh.query(h1, i, i+len2);
-			uint64_t hash2 = rh.query(h2);  // 全体のハッシュ
-			if(hash1 == hash2)
-			{
-				cout << "find:" << i << endl;
-			}
+			string ans = s.substr(0, i);  // 先頭i文字
+			ans += s.substr(s.size() - (N-i));  // 末尾から(N-i)文字取り出し
+			cout << ans << endl << i << endl;
+			return 0;
 		}
 	}
+	cout << -1 << endl;
 
-	{
-		// str1,str2の指定区間で、先頭から何文字一致しているか
-	    string str1 = "abcdefghijklmnabcdefghijklmnabcdefghijklmn";
-	    string str2 = "bcdefzzz";
-		RollingHash rh;
-		auto hash1 = rh.build(str1);
-		auto hash2 = rh.build(str2);
-		assert(rh.lcp(hash1, 1, str1.size(), hash2, 0, str2.size()) == 5);
-	}
-	
-	// solve_AOJ_ALDS1_14_B();
 	return 0;
 }
