@@ -1,0 +1,320 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <functional>  // function
+#include <limits>  // numeric_limits
+#include <cassert>
+using namespace std;
+typedef long long ll;
+const ll INF64 = 1LL << 60;
+const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
+
+// 抽象化版セグメント木のメモや実装
+// ★注意★ #include <functional> を忘れずに。ローカル環境では無くてもビルドが通るが、AtCoderではCEになる。
+
+// [ToDo]
+// 区間和対応
+// verify
+//   AOJ DSL_2_F https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_F&lang=ja
+// inline()ほしい  query(a,a+1)
+// set,build
+// コメント整理
+
+/*
+ * [ざっくり概要]
+ * ・任意の区間の値を更新する(区間更新), 一律加算する(区間加算)
+ * ・任意の区間における最小値や合計値を取得する
+ * といった処理をO(logN)でできるデータ構造。
+ * 要素には任意の作用付きモノイドを用いることができる(抽象化)。
+ * 
+ * LazySegmentTree:
+ *   以下の操作をO(logN)で処理できる。
+ *   (1)Update(a, b, x) : 区間[a,b)の要素をxを用いて更新する
+ *   (2)Query(a, b) : 区間[a,b)にある要素にfxを作用させた値を返す
+ *   0-indexed, および半開区間で処理する。
+ *   コンストラクタには～～～
+ *   ★代表的な～～～
+ * 
+ * [Tips]
+ * ・木の最下段のノード数は、問題文にて指定されるsize以上の2のべき乗。
+ *   これをNとすると、最下段のノード数はN, それより上の段のノードは全部でN-1.
+ *   よって木全体で必要なノード数は 2N-1 となる。
+ * ・要素xをnode[]の添字番号に変換する場合：N-1を加算する
+ * ・親から子へ行く場合、 k -> 2k+1, 2k+2
+ * ・子から親へ行く場合、 k -> (k-1)/2  (切り捨て)
+ * 
+ * [参考資料]
+ *   https://algo-logic.info/segment-tree/
+ *   https://tsutaj.hatenablog.com/entry/2017/03/30/224339
+ * 
+ * [関連する問題 / verifyした問題]
+ * 
+ */
+
+// (1)Update(a, b, x) : 区間[a,b)の要素をxを用いて更新する
+// (2)Query(a, b) : 区間[a,b)にある要素にfxを作用させた値を返す
+// [未実装](3)Find_Leftmost(a, b, x) : 区間[a,b)の範囲で、x以下となる最も左側の要素番号を返す
+// [注意]
+//   0-indexed, および半開区間で処理する。
+// 以下URLをほぼそのまま持ってきている
+// https://tsutaj.hatenablog.com/entry/2017/03/30/224339
+// https://algo-logic.info/segment-tree/
+template <typename X, typename M>
+struct LazySegmentTree
+{
+private:
+    using FX = function<X(X, X)>;
+    using FA = function<X(X, M)>;
+    using FM = function<M(M, M)>;
+	int n;   // 木の最下段の要素数 (コンストラクタで指定したsize以上の、2のべき乗)
+    FX fx;  // モノイドX上での二項演算
+    FA fa;
+    FM fm;
+	const X ex;  // モノイドX上での単位元
+	const M em;  // モノイドM上での単位元 (lazyがこの値なら何も作用させないイメージ)
+	vector<X> node;  // 値配列
+	vector<M> lazy;  // 遅延配列
+//	vector<bool> lazyFlag;  // 遅延配列に値が設定されたらtrue
+//	const T INF = numeric_limits<T>::max();
+
+	// k番目のnodeについて遅延評価を行う
+	void Evaluate(int k, int l, int r)
+	{
+		// 以下3つの観点で実施する
+		//   子ノードの遅延配列に値を伝播させる
+		//   自ノードの値配列に値を伝播させる
+		//   自分のノードの遅延配列を空にする
+		if(lazy[k] == em) return;  // 更新するものが無い
+		if(r-l > 1)  // 最下段でなければ、子へ伝搬させる
+		{
+			lazy[2*k+1] = fm(lazy[2*k+1], lazy[k]);
+			lazy[2*k+2] = fm(lazy[2*k+2], lazy[k]);
+		}
+		// 自身を更新
+		node[k] = fa(node[k], lazy[k]);
+		lazy[k] = em;  // lazyを空にするイメージ
+#if 0
+		if(lazyFlag[k])
+		{
+			node[k] = lazy[k];
+			if(r-l > 1)  // 最下段でなければ、子へ伝搬させる
+			{
+				lazy[2*k+1] = lazy[k];
+				lazy[2*k+2] = lazy[k];
+				lazyFlag[2*k+1] = lazyFlag[2*k+2] = true;
+			}
+			lazy[k] = INF;
+			lazyFlag[k] = false;
+		}
+#endif
+	}
+
+public:
+	// 要素数で初期化
+	LazySegmentTree(int size, FX fx_, FA fa_, FM fm_, X ex_, M em_) : fx(fx_), fa(fa_), fm(fm_), ex(ex_), em(em_)
+//	SegmentTree(int size, FX fx_, T ex_) : fx(fx_), ex(ex_)
+	{
+		// 最下段のノード数は、size以上の2のべき乗 -> nとする
+		// するとセグメント木全体で必要なノード数は 2*n-1 となる
+		n = 1;
+		while(n < size) n *= 2;
+		node.resize(2*n-1, ex);  // 単位元で初期化
+		lazy.resize(2*n-1, em);
+//		lazyFlag.resize(2*n-1, false);
+	}
+
+	// 区間[a,b)の要素をxを用いて更新する
+	void Update(int a, int b, M x, int k = 0, int l = 0, int r = -1)
+	{
+		// 非遅延セグ木と違い、最上段から設定していくイメージ
+
+		// r=-1 なら最初の呼び出し
+		if(r < 0) r = n;  // [0,n)を対象とする
+
+		// [memo]
+		// クエリと対象が交わらない場合でも、評価は実施必要
+		// 自身(=子)の親の計算にて、最後に子のnode[]を参照しているため、
+		// lazy[]からnode[]へ値を反映させておく必要がある
+		Evaluate(k, l, r);
+
+		// クエリ[a,b)と対象[l,r)が交わらないので、何もしない
+		if(r <= a || b <= l) return;
+
+		// クエリが対象を完全に被覆する
+		if(a <= l && r <= b)
+		{
+//			lazy[k] = x;
+			lazy[k] = fm(lazy[k], x);
+//			lazyFlag[k] = true;
+			Evaluate(k, l, r);
+			return;
+		}
+
+		// 左右の子について再帰的に探索
+		Update(a, b, x, 2*k+1, l, (l+r)/2);  // 左側
+		Update(a, b, x, 2*k+2, (l+r)/2, r);  // 右側
+//		node[k] = min(node[2*k+1], node[2*k+2]);
+		node[k] = fx(node[2*k+1], node[2*k+2]);
+	}
+
+	// 区間[a,b)にある要素にfxを作用させた値を返す
+	// k:自分がいるnodeのindex
+	// nodeの[l,r)を対象とする
+	X Query(int a, int b, int k = 0, int l = 0, int r = -1)
+	{
+		// r=-1 なら最初の呼び出し
+		if(r < 0) r = n;  // [0,n)を対象とする
+
+		// クエリ[a,b)と対象[l,r)が交わらないので、答に影響しない値(=単位元)を返す
+		if(r <= a || b <= l) return ex;
+
+		Evaluate(k, l, r);
+
+		// クエリが対象を完全に被覆する
+		if(a <= l && r <= b) return node[k];
+
+		// 左右の子について再帰的に探索
+		X vl = Query(a, b, 2*k+1, l, (l+r)/2);  // 左側
+		X vr = Query(a, b, 2*k+2, (l+r)/2, r);  // 右側
+//		return min(vl, vr);
+		return fx(vl, vr);
+	}
+
+#if 0  // [ToDo]実装する
+	// [a,b)の範囲で、x以下となる最も左側の要素番号を返す
+	// 範囲内にx以下が見つからなければ、b(=範囲外)を返す
+	// k:自分がいるnodeのindex
+	// nodeの[l,r)を対象とする
+	int Find_Leftmost(int a, int b, T x, int k = 0, int l = 0, int r = -1)
+	{
+		// r=-1 なら最初の呼び出し
+		if(r < 0) r = n;  // [0,n)を対象とする
+
+		Evaluate(k, l, r);
+
+		// 自分の値がxより大きい   もしくは
+		// クエリ[a,b)と対象[l,r)が交わらない
+		if(node[k] > x || (r <= a || b <= l)) return b;  // 自身の右隣を返す
+
+		if(k >= n-1) return l;  // 自分が葉なら、その位置を返す
+		// 葉なので、lが位置を表している
+
+		int vl = Find_Leftmost(a, b, x, 2*k+1, l, (l+r)/2);  // 左側
+		if(vl != b)  // 左側に答がある
+		{
+			return vl;
+		}
+		else
+		{
+			return Find_Leftmost(a, b, x, 2*k+2, (l+r)/2, r);  // 右側
+		}
+	}
+#endif
+};
+
+
+#if 0
+void Test(void)
+{
+	LazySegmentTree<int> seg(6);  // [0,6)
+	seg.Update(0, 2, 10);  // {10, 10, INF, INF, INF, INF}
+	seg.Update(1, 4, 20);  // {10, 20,  20,  20, INF, INF}
+	assert(seg.Find_Leftmost(0, 6, 10) == 0);
+	assert(seg.Find_Leftmost(1, 4, 10) == 4);
+	assert(seg.Find_Leftmost(0, 6, 9) == 6);
+	assert(seg.GetMin(0, 2) == 10);
+	assert(seg.GetMin(0, 6) == 10);
+	assert(seg.GetMin(4, 6) > INF32);
+	seg.Update(3, 6, 5);  //  {10, 20, 20, 5, 5, 5}
+	assert(seg.Find_Leftmost(0, 6, 5) == 3);
+	assert(seg.Find_Leftmost(0, 6, 4) == 6);
+	assert(seg.Find_Leftmost(0, 1, 10) == 0);
+	assert(seg.Find_Leftmost(5, 6, 5) == 5);
+	assert(seg.Find_Leftmost(0, 2, 9) == 2);
+	assert(seg.GetMin(3, 6) == 5);
+	assert(seg.GetMin(1, 3) == 20);
+	assert(seg.GetMin(0, 6) == 5);
+}
+#endif
+
+void Test_AOJ_DSL_2_H(void)
+{
+	int n, q; cin >> n >> q;
+	using X = int;
+	using M = int;
+	auto fx = [](X x1, X x2) -> X { return min(x1, x2); };
+	auto fa = [](X x, M m) -> X { return x+m; };
+	auto fm = [](M m1, M m2) -> M { return m1+m2; };
+	X ex = numeric_limits<X>::max();
+	M em = 0;
+	LazySegmentTree<X, M> seg(n, fx, fa, fm, ex, em);
+	// 初期化
+	seg.Update(0, n, -ex);
+	int c, s, t, x;
+	while(q > 0)
+	{
+		cin >> c;
+		if(c == 0)  // add
+		{
+			cin >> s >> t >> x;
+			t++;  // 閉区間から半開区間への変換
+			seg.Update(s, t, x);
+		}
+		else  // find
+		{
+			cin >> s >> t;
+			t++;  // 閉区間から半開区間への変換
+			cout << seg.Query(s, t) << endl;
+		}
+		q--;
+	}
+
+}
+
+int main(void)
+{
+	Test_AOJ_DSL_2_H();
+	return 0;
+	// Test();
+
+	// 以下は AOJ DSL_2_F のもの
+	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_F&lang=ja
+	int n, q;
+	cin >> n >> q;
+	using X = int;
+	using M = int;
+	auto fx = [](X x1, X x2) -> X { return min(x1, x2); };
+	auto fa = [](X x, M m) -> X { return m; };
+	auto fm = [](M m1, M m2) -> M { return m2; };
+	X ex = numeric_limits<X>::max();
+	M em = numeric_limits<M>::max();
+	LazySegmentTree<X, M> seg(n, fx, fa, fm, ex, em);
+
+	// 初期化
+	for(int i = 0; i < n; i++)
+	{
+		seg.Update(0, n, (1LL<<31)-1);
+	}
+
+	int c, s, t, x;
+	while(q > 0)
+	{
+		cin >> c;
+		if(c == 0)  // update
+		{
+			cin >> s >> t >> x;
+			t++;  // 閉区間から半開区間への変換
+			seg.Update(s, t, x);
+		}
+		else  // find
+		{
+			cin >> s >> t;
+			t++;  // 閉区間から半開区間への変換
+			cout << seg.Query(s, t) << endl;
+		}
+		q--;
+	}
+
+	return 0;
+}
