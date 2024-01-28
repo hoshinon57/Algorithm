@@ -14,11 +14,11 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 // ★注意★ #include <functional> を忘れずに。ローカル環境では無くてもビルドが通るが、AtCoderではCEになる。
 
 // [ToDo]
-// 区間和対応
 // verify
 //   AOJ DSL_2_F https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_F&lang=ja
 //   AOJ DSL_2_G https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_G
 //   AOJ DSL_2_H https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_H
+//   AOJ DSL_2_I(RSQ and RUQ) https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_I&lang=ja
 // inline()ほしい  query(a,a+1)
 // set,build
 // コメント整理
@@ -362,9 +362,43 @@ void Test_AOJ_DSL_2_H(void)
 
 }
 
+// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_I&lang=ja
+// RSQ and RUQ
+void Test_AOJ_DSL_2_I(void)
+{
+	int n, q; cin >> n >> q;
+	using X = ll;
+	using M = ll;
+	auto fx = [](X x1, X x2) -> X { return x1+x2; };  // sum
+	auto fa = [](X x, M m) -> X { return m; };
+	auto fm = [](M m1, M m2) -> M { return m2; };  // update
+	auto fp = [](M m, ll n_) -> M { return m*n_; };  // sumのため区間に比例
+	X ex = 0;
+	M em = INF64;  // updateする値として取りえない値
+	LazySegmentTree<X, M> seg(n, fx, fa, fm, fp, ex, em);
+	ll c, s, t, x;
+	while(q > 0)
+	{
+		q--;
+		cin >> c;
+		if(c == 0)  // update
+		{
+			cin >> s >> t >> x;
+			t++;
+			seg.Update(s, t, x);
+		}
+		else  // getsum
+		{
+			cin >> s >> t;
+			t++;
+			cout << seg.Query(s, t) << endl;
+		}
+	}
+}
+
 int main(void)
 {
-	const int mode = 2;
+	const int mode = 3;
 	if(mode == 0) {
 		Test_AOJ_DSL_2_F();
 	}
@@ -373,6 +407,9 @@ int main(void)
 	}
 	else if(mode == 2) {
 		Test_AOJ_DSL_2_H();
+	}
+	else if(mode == 3) {
+		Test_AOJ_DSL_2_I();
 	}
 	return 0;
 	// Test();
