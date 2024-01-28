@@ -17,6 +17,8 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 // 区間和対応
 // verify
 //   AOJ DSL_2_F https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_F&lang=ja
+//   AOJ DSL_2_G https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_G
+//   AOJ DSL_2_H https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_H
 // inline()ほしい  query(a,a+1)
 // set,build
 // コメント整理
@@ -67,10 +69,12 @@ private:
     using FX = function<X(X, X)>;
     using FA = function<X(X, M)>;
     using FM = function<M(M, M)>;
+	using FP = function<M(M, ll)>;  // 区間和など、区間に比例した作用素用
 	int n;   // 木の最下段の要素数 (コンストラクタで指定したsize以上の、2のべき乗)
     FX fx;  // モノイドX上での二項演算
     FA fa;
     FM fm;
+	FP fp = [](M m_, ll n_) -> M { return m_; };  // デフォルトでは区間比例は無し
 	const X ex;  // モノイドX上での単位元
 	const M em;  // モノイドM上での単位元 (lazyがこの値なら何も作用させないイメージ)
 	vector<X> node;  // 値配列
@@ -92,7 +96,8 @@ private:
 			lazy[2*k+2] = fm(lazy[2*k+2], lazy[k]);
 		}
 		// 自身を更新
-		node[k] = fa(node[k], lazy[k]);
+//		node[k] = fa(node[k], lazy[k]);
+		node[k] = fa(node[k], fp(lazy[k], r-l));
 		lazy[k] = em;  // lazyを空にするイメージ
 #if 0
 		if(lazyFlag[k])
@@ -112,9 +117,10 @@ private:
 
 public:
 	// 要素数で初期化
-	LazySegmentTree(int size, FX fx_, FA fa_, FM fm_, X ex_, M em_) : fx(fx_), fa(fa_), fm(fm_), ex(ex_), em(em_)
-//	SegmentTree(int size, FX fx_, T ex_) : fx(fx_), ex(ex_)
+	// fp_:区間和など、区間に比例した作用が無ければnullptr
+	LazySegmentTree(int size, FX fx_, FA fa_, FM fm_, FP fp_, X ex_, M em_) : fx(fx_), fa(fa_), fm(fm_), ex(ex_), em(em_)
 	{
+		if(fp_ != nullptr) fp = fp_;  // 引数指定があれば設定
 		// 最下段のノード数は、size以上の2のべき乗 -> nとする
 		// するとセグメント木全体で必要なノード数は 2*n-1 となる
 		n = 1;
@@ -238,6 +244,90 @@ void Test(void)
 }
 #endif
 
+// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_F&lang=ja
+void Test_AOJ_DSL_2_F(void)
+{
+	// 
+	int n, q;
+	cin >> n >> q;
+	using X = int;
+	using M = int;
+	auto fx = [](X x1, X x2) -> X { return min(x1, x2); };
+	auto fa = [](X x, M m) -> X { return m; };
+	auto fm = [](M m1, M m2) -> M { return m2; };
+	X ex = numeric_limits<X>::max();
+	M em = numeric_limits<M>::max();
+	LazySegmentTree<X, M> seg(n, fx, fa, fm, nullptr, ex, em);
+
+	// 初期化
+	for(int i = 0; i < n; i++)
+	{
+		seg.Update(0, n, (1LL<<31)-1);
+	}
+
+	int c, s, t, x;
+	while(q > 0)
+	{
+		cin >> c;
+		if(c == 0)  // update
+		{
+			cin >> s >> t >> x;
+			t++;  // 閉区間から半開区間への変換
+			seg.Update(s, t, x);
+		}
+		else  // find
+		{
+			cin >> s >> t;
+			t++;  // 閉区間から半開区間への変換
+			cout << seg.Query(s, t) << endl;
+		}
+		q--;
+	}	
+}
+
+// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_G
+void Test_AOJ_DSL_2_G(void)
+{
+	int n, q; cin >> n >> q;
+	using X = ll;
+	using M = ll;
+	auto fx = [](X x1, X x2) -> X { return x1+x2; };
+	auto fa = [](X x, M m) -> X { return x+m; };
+	auto fm = [](M m1, M m2) -> M { return m1+m2; };
+	auto fp = [](M m, ll n_) -> M { return m*n_; };
+	X ex = 0;
+	M em = 0;
+//	LazySegmentTree<X, M> seg(n, fx, fa, fm, ex, em, fp);
+	LazySegmentTree<X, M> seg(n+1, fx, fa, fm, fp, ex, em);
+	ll c, s, t, x;
+	while(q > 0)
+	{
+		q--;
+		cin >> c;
+		if(c == 0)  // add
+		{
+			cin >> s >> t >> x;
+			t++;
+			seg.Update(s, t, x);
+		}
+		else  // getsum
+		{
+			cin >> s >> t;
+			t++;
+			cout << seg.Query(s, t) << endl;
+			/*
+			int i;
+			for(i = 1; i <= 4; i++)
+			{
+				cout << seg.Query(i,i+1) << " ";
+			}
+			cout << endl;
+			*/
+		}
+	}
+}
+
+// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_H
 void Test_AOJ_DSL_2_H(void)
 {
 	int n, q; cin >> n >> q;
@@ -248,7 +338,7 @@ void Test_AOJ_DSL_2_H(void)
 	auto fm = [](M m1, M m2) -> M { return m1+m2; };
 	X ex = numeric_limits<X>::max();
 	M em = 0;
-	LazySegmentTree<X, M> seg(n, fx, fa, fm, ex, em);
+	LazySegmentTree<X, M> seg(n, fx, fa, fm, nullptr, ex, em);
 	// 初期化
 	seg.Update(0, n, -ex);
 	int c, s, t, x;
@@ -274,47 +364,18 @@ void Test_AOJ_DSL_2_H(void)
 
 int main(void)
 {
-	Test_AOJ_DSL_2_H();
+	const int mode = 2;
+	if(mode == 0) {
+		Test_AOJ_DSL_2_F();
+	}
+	else if(mode == 1) {
+		Test_AOJ_DSL_2_G();
+	}
+	else if(mode == 2) {
+		Test_AOJ_DSL_2_H();
+	}
 	return 0;
 	// Test();
-
-	// 以下は AOJ DSL_2_F のもの
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_F&lang=ja
-	int n, q;
-	cin >> n >> q;
-	using X = int;
-	using M = int;
-	auto fx = [](X x1, X x2) -> X { return min(x1, x2); };
-	auto fa = [](X x, M m) -> X { return m; };
-	auto fm = [](M m1, M m2) -> M { return m2; };
-	X ex = numeric_limits<X>::max();
-	M em = numeric_limits<M>::max();
-	LazySegmentTree<X, M> seg(n, fx, fa, fm, ex, em);
-
-	// 初期化
-	for(int i = 0; i < n; i++)
-	{
-		seg.Update(0, n, (1LL<<31)-1);
-	}
-
-	int c, s, t, x;
-	while(q > 0)
-	{
-		cin >> c;
-		if(c == 0)  // update
-		{
-			cin >> s >> t >> x;
-			t++;  // 閉区間から半開区間への変換
-			seg.Update(s, t, x);
-		}
-		else  // find
-		{
-			cin >> s >> t;
-			t++;  // 閉区間から半開区間への変換
-			cout << seg.Query(s, t) << endl;
-		}
-		q--;
-	}
 
 	return 0;
 }
