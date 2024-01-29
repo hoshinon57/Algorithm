@@ -15,13 +15,11 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 
 // [ToDo]
 // verify
-//   AOJ DSL_2_F https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_F&lang=ja
-//   AOJ DSL_2_G https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_G
-//   AOJ DSL_2_H https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_H
-//   AOJ DSL_2_I(RSQ and RUQ) https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_I&lang=ja
+//   ABC035-C
+//   ABC153-F
+//   square869120Contest#2-H https://atcoder.jp/contests/s8pc-2
 // inline()ほしい  query(a,a+1)
 // set,build
-// コメント整理
 
 /*
  * [ざっくり概要]
@@ -35,8 +33,11 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   (1)Update(a, b, x) : 区間[a,b)の要素をxを用いて更新する
  *   (2)Query(a, b) : 区間[a,b)にある要素にfxを作用させた値を返す
  *   0-indexed, および半開区間で処理する。
- *   コンストラクタには～～～
- *   ★代表的な～～～
+ *   コンストラクタには以下を指定する。
+ *     	size:要素数, fx_,fa_,fm_:二項演算,
+ *      fp_:区間和など区間に比例した作用素のときに使う二項演算。不要なときはnullptr.
+ *      ex_,em_:単位元
+ *   ★代表的なfx,ex等はmain()に記述している。
  * 
  * [Tips]
  * ・木の最下段のノード数は、問題文にて指定されるsize以上の2のべき乗。
@@ -51,7 +52,10 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   https://tsutaj.hatenablog.com/entry/2017/03/30/224339
  * 
  * [関連する問題 / verifyした問題]
- * 
+ *   AOJ DSL_2_F(RMQ and RUQ) https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_F&lang=ja
+ *   AOJ DSL_2_G(RSQ and RAQ) https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_G
+ *   AOJ DSL_2_H(RMQ and RAQ) https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_H
+ *   AOJ DSL_2_I(RSQ and RUQ) https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_I&lang=ja
  */
 
 // (1)Update(a, b, x) : 区間[a,b)の要素をxを用いて更新する
@@ -79,8 +83,6 @@ private:
 	const M em;  // モノイドM上での単位元 (lazyがこの値なら何も作用させないイメージ)
 	vector<X> node;  // 値配列
 	vector<M> lazy;  // 遅延配列
-//	vector<bool> lazyFlag;  // 遅延配列に値が設定されたらtrue
-//	const T INF = numeric_limits<T>::max();
 
 	// k番目のnodeについて遅延評価を行う
 	void Evaluate(int k, int l, int r)
@@ -99,20 +101,6 @@ private:
 //		node[k] = fa(node[k], lazy[k]);
 		node[k] = fa(node[k], fp(lazy[k], r-l));
 		lazy[k] = em;  // lazyを空にするイメージ
-#if 0
-		if(lazyFlag[k])
-		{
-			node[k] = lazy[k];
-			if(r-l > 1)  // 最下段でなければ、子へ伝搬させる
-			{
-				lazy[2*k+1] = lazy[k];
-				lazy[2*k+2] = lazy[k];
-				lazyFlag[2*k+1] = lazyFlag[2*k+2] = true;
-			}
-			lazy[k] = INF;
-			lazyFlag[k] = false;
-		}
-#endif
 	}
 
 public:
@@ -127,7 +115,6 @@ public:
 		while(n < size) n *= 2;
 		node.resize(2*n-1, ex);  // 単位元で初期化
 		lazy.resize(2*n-1, em);
-//		lazyFlag.resize(2*n-1, false);
 	}
 
 	// 区間[a,b)の要素をxを用いて更新する
@@ -150,9 +137,7 @@ public:
 		// クエリが対象を完全に被覆する
 		if(a <= l && r <= b)
 		{
-//			lazy[k] = x;
 			lazy[k] = fm(lazy[k], x);
-//			lazyFlag[k] = true;
 			Evaluate(k, l, r);
 			return;
 		}
@@ -160,7 +145,6 @@ public:
 		// 左右の子について再帰的に探索
 		Update(a, b, x, 2*k+1, l, (l+r)/2);  // 左側
 		Update(a, b, x, 2*k+2, (l+r)/2, r);  // 右側
-//		node[k] = min(node[2*k+1], node[2*k+2]);
 		node[k] = fx(node[2*k+1], node[2*k+2]);
 	}
 
@@ -183,7 +167,6 @@ public:
 		// 左右の子について再帰的に探索
 		X vl = Query(a, b, 2*k+1, l, (l+r)/2);  // 左側
 		X vr = Query(a, b, 2*k+2, (l+r)/2, r);  // 右側
-//		return min(vl, vr);
 		return fx(vl, vr);
 	}
 
@@ -247,7 +230,6 @@ void Test(void)
 // https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_F&lang=ja
 void Test_AOJ_DSL_2_F(void)
 {
-	// 
 	int n, q;
 	cin >> n >> q;
 	using X = int;
@@ -297,7 +279,6 @@ void Test_AOJ_DSL_2_G(void)
 	auto fp = [](M m, ll n_) -> M { return m*n_; };
 	X ex = 0;
 	M em = 0;
-//	LazySegmentTree<X, M> seg(n, fx, fa, fm, ex, em, fp);
 	LazySegmentTree<X, M> seg(n+1, fx, fa, fm, fp, ex, em);
 	ll c, s, t, x;
 	while(q > 0)
@@ -315,14 +296,6 @@ void Test_AOJ_DSL_2_G(void)
 			cin >> s >> t;
 			t++;
 			cout << seg.Query(s, t) << endl;
-			/*
-			int i;
-			for(i = 1; i <= 4; i++)
-			{
-				cout << seg.Query(i,i+1) << " ";
-			}
-			cout << endl;
-			*/
 		}
 	}
 }
@@ -374,7 +347,7 @@ void Test_AOJ_DSL_2_I(void)
 	auto fm = [](M m1, M m2) -> M { return m2; };  // update
 	auto fp = [](M m, ll n_) -> M { return m*n_; };  // sumのため区間に比例
 	X ex = 0;
-	M em = INF64;  // updateする値として取りえない値
+	M em = numeric_limits<M>::max();;  // updateする値として取りえない値
 	LazySegmentTree<X, M> seg(n, fx, fa, fm, fp, ex, em);
 	ll c, s, t, x;
 	while(q > 0)
@@ -398,7 +371,60 @@ void Test_AOJ_DSL_2_I(void)
 
 int main(void)
 {
-	const int mode = 3;
+	/*
+	[代表的なfx,ex等の例]
+	RMQ and RUQ(Range Minimum Query and Range Update Query)
+	---------------
+	using X = int;
+	using M = int;
+	auto fx = [](X x1, X x2) -> X { return min(x1, x2); };
+	auto fa = [](X x, M m) -> X { return m; };
+	auto fm = [](M m1, M m2) -> M { return m2; };
+	X ex = numeric_limits<X>::max();
+	M em = numeric_limits<M>::max();
+	LazySegmentTree<X, M> seg(n, fx, fa, fm, nullptr, ex, em);
+	---------------
+
+	RSQ and RAQ(Range Sum Query and Range Add Query)
+	区間に比例した作用素が必要
+	---------------
+	using X = ll;
+	using M = ll;
+	auto fx = [](X x1, X x2) -> X { return x1+x2; };
+	auto fa = [](X x, M m) -> X { return x+m; };
+	auto fm = [](M m1, M m2) -> M { return m1+m2; };
+	auto fp = [](M m, ll n_) -> M { return m*n_; };
+	X ex = 0;
+	M em = 0;
+	LazySegmentTree<X, M> seg(n+1, fx, fa, fm, fp, ex, em);
+	---------------
+
+	RMQ and RAQ(Range Minimum Query and Range Add Query)
+	---------------
+	using X = int;
+	using M = int;
+	auto fx = [](X x1, X x2) -> X { return min(x1, x2); };
+	auto fa = [](X x, M m) -> X { return x+m; };
+	auto fm = [](M m1, M m2) -> M { return m1+m2; };
+	X ex = numeric_limits<X>::max();
+	M em = 0;
+	LazySegmentTree<X, M> seg(n, fx, fa, fm, nullptr, ex, em);
+	---------------
+
+	RSQ and RUQ
+	---------------
+	using X = ll;
+	using M = ll;
+	auto fx = [](X x1, X x2) -> X { return x1+x2; };  // sum
+	auto fa = [](X x, M m) -> X { return m; };
+	auto fm = [](M m1, M m2) -> M { return m2; };  // update
+	auto fp = [](M m, ll n_) -> M { return m*n_; };  // sumのため区間に比例
+	X ex = 0;
+	M em = numeric_limits<M>::max();;  // updateする値として取りえない値 INF64でも可
+	LazySegmentTree<X, M> seg(n, fx, fa, fm, fp, ex, em);
+	---------------
+	*/
+	const int mode = 0;
 	if(mode == 0) {
 		Test_AOJ_DSL_2_F();
 	}
