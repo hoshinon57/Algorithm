@@ -204,7 +204,7 @@ public:
 	}
 #endif
 
-	// 要素xをvalで更新する
+	// 要素iをvalで更新する
 	// Update()と違い、木全体の更新は行わない。Build()の呼び出しが必要。
 	// 用途：初期化時に全要素を設定し、Build()で木を構築する
 	void Set(int i, X val)
@@ -223,32 +223,41 @@ public:
 			node[i] = fx(node[2*i+1], node[2*i+2]);
 		}
 	}
+
+	// 要素iを取得する
+	X Get(int i) { return Query(i, i+1); }
 };
 
-
-#if 0
 void Test(void)
 {
-	LazySegmentTree<int> seg(6);  // [0,6)
-	seg.Update(0, 2, 10);  // {10, 10, INF, INF, INF, INF}
-	seg.Update(1, 4, 20);  // {10, 20,  20,  20, INF, INF}
-	assert(seg.Find_Leftmost(0, 6, 10) == 0);
-	assert(seg.Find_Leftmost(1, 4, 10) == 4);
-	assert(seg.Find_Leftmost(0, 6, 9) == 6);
-	assert(seg.GetMin(0, 2) == 10);
-	assert(seg.GetMin(0, 6) == 10);
-	assert(seg.GetMin(4, 6) > INF32);
-	seg.Update(3, 6, 5);  //  {10, 20, 20, 5, 5, 5}
-	assert(seg.Find_Leftmost(0, 6, 5) == 3);
-	assert(seg.Find_Leftmost(0, 6, 4) == 6);
-	assert(seg.Find_Leftmost(0, 1, 10) == 0);
-	assert(seg.Find_Leftmost(5, 6, 5) == 5);
-	assert(seg.Find_Leftmost(0, 2, 9) == 2);
-	assert(seg.GetMin(3, 6) == 5);
-	assert(seg.GetMin(1, 3) == 20);
-	assert(seg.GetMin(0, 6) == 5);
+	int i;
+	int n = 6;
+	using X = int;
+	using M = int;
+	auto fx = [](X x1, X x2) -> X { return x1+x2; };
+	auto fa = [](X x, M m) -> X { return x+m; };
+	auto fm = [](M m1, M m2) -> M { return m1+m2; };
+	auto fp = [](M m, ll n_) -> M { return m*n_; };
+	X ex = 0;
+	M em = 0;
+	LazySegmentTree<X, M> seg(n, fx, fa, fm, fp, ex, em);
+	for(i = 0; i < n; i++) seg.Set(i, i+1);
+	seg.Build();  // {1, 2, 3, 4, 5, 6};
+	assert(seg.Query(0, 4) == 10);
+	assert(seg.Query(0, 6) == 21);
+	assert(seg.Query(5, 6) == 6);
+	seg.Update(1, 3, -3);  // {1, -1, 0, 4, 5, 6};
+	assert(seg.Query(0, 6) == 15);
+	seg.Update(0, 6, 0);  // {1, -1, 0, 4, 5, 6};
+	assert(seg.Query(0, 6) == 15);
+	seg.Update(0, 1, 5);  // {6, -1, 0, 4, 5, 6};
+	assert(seg.Query(0, 2) == 5);
+	vector<int> a = {6, -1, 0, 4, 5, 6};
+	for(i = 0; i < n; i++)
+	{
+		assert(seg.Get(i) == a[i]);
+	}
 }
-#endif
 
 // https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_F&lang=ja
 void Test_AOJ_DSL_2_F(void)
@@ -461,6 +470,7 @@ int main(void)
 	LazySegmentTree<int, int> seg(N, fx, fa, fm, nullptr, ex, em);
 	---------------
 	*/
+	Test();
 	const int mode = 2;
 	if(mode == 0) {
 		Test_AOJ_DSL_2_F();
@@ -475,7 +485,6 @@ int main(void)
 		Test_AOJ_DSL_2_I();
 	}
 	return 0;
-	// Test();
 
 	return 0;
 }
