@@ -13,12 +13,6 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 // 抽象化版セグメント木のメモや実装
 // ★注意★ #include <functional> を忘れずに。ローカル環境では無くてもビルドが通るが、AtCoderではCEになる。
 
-// [ToDo]
-// verify
-//   ABC153-F
-//   square869120Contest#2-H https://atcoder.jp/contests/s8pc-2
-// inline()ほしい  query(a,a+1)
-
 /*
  * [ざっくり概要]
  * ・任意の区間の値を更新する(区間更新), 一律加算する(区間加算)
@@ -430,7 +424,7 @@ int main(void)
 	auto fp = [](M m, ll n_) -> M { return m*n_; };
 	X ex = 0;
 	M em = 0;
-	LazySegmentTree<X, M> seg(n+1, fx, fa, fm, fp, ex, em);
+	LazySegmentTree<X, M> seg(n, fx, fa, fm, fp, ex, em);
 	---------------
 
 	RMQ and RAQ(Range Minimum Query and Range Add Query)
