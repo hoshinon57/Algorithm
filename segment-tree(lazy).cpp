@@ -58,6 +58,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   AOJ DSL_2_G(RSQ and RAQ) https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_G
  *   AOJ DSL_2_H(RMQ and RAQ) https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_H
  *   AOJ DSL_2_I(RSQ and RUQ) https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_I&lang=ja
+ *   ABC185-F
  */
 
 // (1)Update(a, b, x) : 区間[a,b)の要素をxを用いて更新する
@@ -446,6 +447,18 @@ int main(void)
 	X ex = 0;
 	M em = numeric_limits<M>::max();  // updateする値として取りえない値 INF64でも可
 	LazySegmentTree<X, M> seg(n, fx, fa, fm, fp, ex, em);
+	---------------
+
+	Range XOR Query(区間をXORで更新、区間のXORを答える)
+	---------------
+	using X = int;
+	using M = int;
+	auto fx = [](X x1, X x2) -> X { return x1^x2; };
+	auto fa = [](X x, M m) -> X { return x^m; };
+	auto fm = [](M m1, M m2) -> M { return m1^m2; };
+	X ex = 0;
+	M em = 0;
+	LazySegmentTree<int, int> seg(N, fx, fa, fm, nullptr, ex, em);
 	---------------
 	*/
 	const int mode = 2;
