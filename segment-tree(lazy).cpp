@@ -19,7 +19,6 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 //   ABC153-F
 //   square869120Contest#2-H https://atcoder.jp/contests/s8pc-2
 // inline()ほしい  query(a,a+1)
-// set,build
 
 /*
  * [ざっくり概要]
@@ -37,6 +36,9 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *     	size:要素数, fx_,fa_,fm_:二項演算,
  *      fp_:区間和など区間に比例した作用素のときに使う二項演算。不要なときはnullptr.
  *      ex_,em_:単位元
+ *      exは fx(x,ex_)=x となるものを指定するイメージ。
+ *      emは「この値なら作用させない」「作用させる値として取りえない値」となるものを指定するイメージ。INF64でも良さそう。
+ *      要素は単位元で初期化される。
  *   ★代表的なfx,ex等はmain()に記述している。
  * 
  * [Tips]
@@ -200,6 +202,26 @@ public:
 		}
 	}
 #endif
+
+	// 要素xをvalで更新する
+	// Update()と違い、木全体の更新は行わない。Build()の呼び出しが必要。
+	// 用途：初期化時に全要素を設定し、Build()で木を構築する
+	void Set(int i, X val)
+	{
+		i += n-1;  // node[]の要素番号に変換
+		node[i] = val;
+	}
+
+	// 初期化時にSet()で全要素を設定した後、Build()にて木を構築する
+	void Build(void)
+	{
+		// 最下段を除いた右下の要素から、左上方向へ構築していく
+		int i;
+		for(i = n-2; i >= 0; i--)
+		{
+			node[i] = fx(node[2*i+1], node[2*i+2]);
+		}
+	}
 };
 
 
@@ -313,7 +335,9 @@ void Test_AOJ_DSL_2_H(void)
 	M em = 0;
 	LazySegmentTree<X, M> seg(n, fx, fa, fm, nullptr, ex, em);
 	// 初期化
-	seg.Update(0, n, -ex);
+	int i;
+	for(i = 0; i < n; i++) seg.Set(i, 0);
+	seg.Build();
 	int c, s, t, x;
 	while(q > 0)
 	{
@@ -347,7 +371,7 @@ void Test_AOJ_DSL_2_I(void)
 	auto fm = [](M m1, M m2) -> M { return m2; };  // update
 	auto fp = [](M m, ll n_) -> M { return m*n_; };  // sumのため区間に比例
 	X ex = 0;
-	M em = numeric_limits<M>::max();;  // updateする値として取りえない値
+	M em = numeric_limits<M>::max();  // updateする値として取りえない値
 	LazySegmentTree<X, M> seg(n, fx, fa, fm, fp, ex, em);
 	ll c, s, t, x;
 	while(q > 0)
@@ -420,11 +444,11 @@ int main(void)
 	auto fm = [](M m1, M m2) -> M { return m2; };  // update
 	auto fp = [](M m, ll n_) -> M { return m*n_; };  // sumのため区間に比例
 	X ex = 0;
-	M em = numeric_limits<M>::max();;  // updateする値として取りえない値 INF64でも可
+	M em = numeric_limits<M>::max();  // updateする値として取りえない値 INF64でも可
 	LazySegmentTree<X, M> seg(n, fx, fa, fm, fp, ex, em);
 	---------------
 	*/
-	const int mode = 0;
+	const int mode = 2;
 	if(mode == 0) {
 		Test_AOJ_DSL_2_F();
 	}
