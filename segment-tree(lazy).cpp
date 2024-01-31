@@ -53,6 +53,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   AOJ DSL_2_I(RSQ and RUQ) https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_I&lang=ja
  *   ABC035-C
  *   ABC185-F
+ *   ABC327-F
  */
 
 // (1)Update(a, b, x) : 区間[a,b)の要素をxを用いて更新する
