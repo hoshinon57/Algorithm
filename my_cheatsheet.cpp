@@ -386,6 +386,8 @@ void _vector_(void)
 	vector<vector<vector<int>>> a(X, vector<vector<int>>(Y, vector<int>(Z, -1)));
 	以下の形式でいけるらしい
 	vector dp(X, vector(Y, vector<ll>(Z, -1)));
+	四次元の場合は以下 dp[A][B][C][D]
+	vector dp(A, vector(B, vector(C, vector<ll>(D, -1))));
 	*/
 	/*
 	vectorの要素数変更
