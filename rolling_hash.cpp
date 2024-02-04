@@ -40,7 +40,7 @@ using namespace std;
  */
 class RollingHash
 {
-	const uint64_t mod = (1ull << 61) -1;
+	const uint64_t mod;  // デフォルトは (1ull << 61) -1;
 	const uint64_t base = 1897230259;  // とりあえず基数決め打ち(素数)
 	vector<uint64_t> p;
 
@@ -59,7 +59,7 @@ class RollingHash
 	}
 
 public:
-	RollingHash() : p{1} {;}
+	RollingHash(uint64_t mod_ = (1ull << 61) -1) : mod(mod_), p{1} {;}
 
 	// 文字列sのハッシュを計算して返す
 	vector<uint64_t> build(string &s)
@@ -161,15 +161,14 @@ int main(void)
 		hash_type h1 = rh.build(str1);
 		hash_type h2 = rh.build(str2);
 		int i;
+		vector<int> ans;
 		for(i = 0; i+len2 <= len1; i++)
 		{
 			uint64_t hash1 = rh.query(h1, i, i+len2);
 			uint64_t hash2 = rh.query(h2);  // 全体のハッシュ
-			if(hash1 == hash2)
-			{
-				cout << "find:" << i << endl;
-			}
+			if(hash1 == hash2) ans.push_back(i);
 		}
+		assert(ans == vector<int>({2, 16}));
 	}
 
 	{
