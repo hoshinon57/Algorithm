@@ -49,6 +49,25 @@ vector<int> chg_base(ll n, int base)
 	return a;
 }
 
+// x,yについての一次不定方程式 ax+by=c が整数解を持つ条件：
+//   cがgcd(a,b)で割り切れること
+// よって ax+by=c の整数解を求めたい場合、以下の手順で求められる。
+//   まず上記条件を確かめる (整数解を持たなければ終了)
+//   以下のextgcd()にて ax+by=gcd(a,b) での{x,y}を求める
+//   c/gcd(a,b) をx,yそれぞれにかける
+
+// [verify]ABC340-F
+// 一次不定方程式 ax+by=gcd(a,b) を満たす {x,y} を格納する
+// 戻り値：gcd(a,b)
+// 以下URLのコードをほぼそのまま持ってきている
+//   https://qiita.com/drken/items/b97ff231e43bce50199a
+long long extgcd(long long a, long long b, long long &x, long long &y) {
+	if (b == 0) { x = 1; y = 0; return a; }
+	long long d = extgcd(b, a%b, y, x);
+	y -= a/b * x;
+	return d;
+}
+
 int main(void)
 {
 	assert(floor_div( 5,  2) ==  2);
