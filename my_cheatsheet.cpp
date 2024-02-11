@@ -94,6 +94,12 @@ int main(void)
 	数値型の範囲
 	int	-2147483648～2147483647  およそ-2*10^9～+2*10^9   2^32(1<<32)
 	long long  -9223372036854775808～9223372036854775807  およそ-9*10^18～+9*10^18  2^64(1<<64)
+
+	一時的にlong long型を超える範囲で計算したい場合、gccでは以下が使える。cin/coutは不可能。
+	  __int128_t  符号つき128bit
+	  __uint128_t 符号なし128bit
+	https://kenkoooo.hatenablog.com/entry/2016/11/30/163533
+	https://qiita.com/trineutron/items/3ad05e0aec602a56bc30
 	*/
 
 	/*
