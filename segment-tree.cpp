@@ -45,13 +45,15 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC125-C
  * ABC140-E
  * ABC157-E
+ * ABC223-F
  * ABC231-F
  */
 
 // (1)Update(x, val) : 要素xをvalで更新する
 // (2)Query(a, b) : 区間[a,b)にある要素のモノイド積を返す
 // (3)Set(i, val) & Build() : 木の更新を行わず要素iを更新し(Set), まとめて木の構築を行う(Build)
-// (4)Find_Leftmost(a, b, x) : 区間[a,b)の範囲で、x以下となる最も左側の要素番号を返す
+// (4)Get(i) : 要素iを取得する
+// (5)Find_Leftmost(a, b, x) : 区間[a,b)の範囲で、x以下となる最も左側の要素番号を返す
 // [注意]
 //   0-indexed, および半開区間で処理する。
 // 以下URLをほぼそのまま持ってきている
@@ -195,6 +197,13 @@ public:
 			node[i] = fx(node[2*i+1], node[2*i+2]);
 		}
 	}
+
+	// 要素iを取得する
+	T Get(int i)
+	{
+		i += n-1;  // node[]の要素番号に変換
+		return node[i];
+	}
 };
 
 void Test(void)
@@ -218,6 +227,10 @@ void Test(void)
 	seg.Update(2, 0);
 	assert(seg.Query(0, 7) == -1);
 	assert(seg.Query(1, 4) == 0);
+	for(int i = 0; i < (int)v.size(); i++)
+	{
+		assert(seg.Get(i) ==  seg.Query(i, i+1));
+	}
 
 	// Find_Leftmost(),Find_Rightmost()のテスト
 	{
