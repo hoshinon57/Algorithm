@@ -329,6 +329,17 @@ int main(void)
 	  反時計回り：a+N-b
 	となる。(2つを加算するとNになる)
 	*/
+
+	/*
+	Grundy数
+	Grundy数は、現状態からの遷移先のGrundy数の集合について、そのmexとなる。
+    山が複数ある場合は、山ごとのGrundy数のxorを計算し、それが0以外なら勝ち、0なら負け。
+	  https://yang33-kassa.hatenablog.com/entry/2017/12/21/202812
+	  https://augusuto04.hatenablog.com/entry/2015/05/03/233606  その2,3もある
+	  https://kyopro-friends.hatenablog.com/entry/2023/04/12/195012  xorとなる理由
+	[関連する問題]
+	典型90-31
+	*/
 	return 0;
 }
 
