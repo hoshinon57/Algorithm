@@ -55,6 +55,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   ABC035-C
  *   ABC185-F
  *   ABC327-F
+ *   ABC340-E
  */
 
 // (1)Update(a, b, x) : 区間[a,b)の要素をxを用いて更新する
@@ -220,7 +221,7 @@ public:
 		}
 	}
 
-	// 要素iを取得する
+	// 要素iを取得する -> これnode[]アクセスに変更する
 	X Get(int i) { return Query(i, i+1); }
 };
 
@@ -405,65 +406,65 @@ int main(void)
 	[代表的なfx,ex等の例]
 	RMQ and RUQ(Range Minimum Query and Range Update Query)
 	---------------
-	using X = int;
-	using M = int;
-	auto fx = [](X x1, X x2) -> X { return min(x1, x2); };
-	auto fa = [](X x, M m) -> X { return m; };
-	auto fm = [](M m1, M m2) -> M { return m2; };
-	X ex = numeric_limits<X>::max();
-	M em = numeric_limits<M>::max();
-	LazySegmentTree<X, M> seg(n, fx, fa, fm, nullptr, ex, em);
+	using Xt = int;
+	using Mt = int;
+	auto fx = [](Xt x1, Xt x2) -> Xt { return min(x1, x2); };
+	auto fa = [](Xt x, Mt m) -> Xt { return m; };
+	auto fm = [](Mt m1, Mt m2) -> Mt { return m2; };
+	Xt ex = numeric_limits<Xt>::max();
+	Mt em = numeric_limits<Mt>::max();
+	LazySegmentTree<Xt, Mt> seg(n, fx, fa, fm, nullptr, ex, em);
 	---------------
 
 	RSQ and RAQ(Range Sum Query and Range Add Query)
 	区間に比例した作用素が必要
 	---------------
-	using X = ll;
-	using M = ll;
-	auto fx = [](X x1, X x2) -> X { return x1+x2; };
-	auto fa = [](X x, M m) -> X { return x+m; };
-	auto fm = [](M m1, M m2) -> M { return m1+m2; };
-	auto fp = [](M m, ll n_) -> M { return m*n_; };
-	X ex = 0;
-	M em = 0;
-	LazySegmentTree<X, M> seg(n, fx, fa, fm, fp, ex, em);
+	using Xt = ll;
+	using Mt = ll;
+	auto fx = [](Xt x1, Xt x2) -> Xt { return x1+x2; };
+	auto fa = [](Xt x, Mt m) -> Xt { return x+m; };
+	auto fm = [](Mt m1, Mt m2) -> Mt { return m1+m2; };
+	auto fp = [](Mt m, ll n_) -> Mt { return m*n_; };
+	Xt ex = 0;
+	Mt em = 0;
+	LazySegmentTree<Xt, Mt> seg(n, fx, fa, fm, fp, ex, em);
 	---------------
 
 	RMQ and RAQ(Range Minimum Query and Range Add Query)
 	---------------
-	using X = int;
-	using M = int;
-	auto fx = [](X x1, X x2) -> X { return min(x1, x2); };
-	auto fa = [](X x, M m) -> X { return x+m; };
-	auto fm = [](M m1, M m2) -> M { return m1+m2; };
-	X ex = numeric_limits<X>::max();
-	M em = 0;
-	LazySegmentTree<X, M> seg(n, fx, fa, fm, nullptr, ex, em);
+	using Xt = int;
+	using Mt = int;
+	auto fx = [](Xt x1, Xt x2) -> Xt { return min(x1, x2); };
+	auto fa = [](Xt x, Mt m) -> Xt { return x+m; };
+	auto fm = [](Mt m1, Mt m2) -> Mt { return m1+m2; };
+	Xt ex = numeric_limits<Xt>::max();
+	Mt em = 0;
+	LazySegmentTree<Xt, Mt> seg(n, fx, fa, fm, nullptr, ex, em);
 	---------------
 
 	RSQ and RUQ
 	---------------
-	using X = ll;
-	using M = ll;
-	auto fx = [](X x1, X x2) -> X { return x1+x2; };  // sum
-	auto fa = [](X x, M m) -> X { return m; };
-	auto fm = [](M m1, M m2) -> M { return m2; };  // update
-	auto fp = [](M m, ll n_) -> M { return m*n_; };  // sumのため区間に比例
-	X ex = 0;
-	M em = numeric_limits<M>::max();  // updateする値として取りえない値 INF64でも可
-	LazySegmentTree<X, M> seg(n, fx, fa, fm, fp, ex, em);
+	using Xt = ll;
+	using Mt = ll;
+	auto fx = [](Xt x1, Xt x2) -> Xt { return x1+x2; };  // sum
+	auto fa = [](Xt x, Mt m) -> Xt { return m; };
+	auto fm = [](Mt m1, Mt m2) -> Mt { return m2; };  // update
+	auto fp = [](Mt m, ll n_) -> Mt { return m*n_; };  // sumのため区間に比例
+	Xt ex = 0;
+	Mt em = numeric_limits<Mt>::max();  // updateする値として取りえない値 INF64でも可
+	LazySegmentTree<Xt, Mt> seg(n, fx, fa, fm, fp, ex, em);
 	---------------
 
 	Range XOR Query(区間をXORで更新、区間のXORを答える)
 	---------------
-	using X = int;
-	using M = int;
-	auto fx = [](X x1, X x2) -> X { return x1^x2; };
-	auto fa = [](X x, M m) -> X { return x^m; };
-	auto fm = [](M m1, M m2) -> M { return m1^m2; };
-	X ex = 0;
-	M em = 0;
-	LazySegmentTree<int, int> seg(N, fx, fa, fm, nullptr, ex, em);
+	using Xt = int;
+	using Mt = int;
+	auto fx = [](Xt x1, Xt x2) -> Xt { return x1^x2; };
+	auto fa = [](Xt x, Mt m) -> Xt { return x^m; };
+	auto fm = [](Mt m1, Mt m2) -> Mt { return m1^m2; };
+	Xt ex = 0;
+	Mt em = 0;
+	LazySegmentTree<Xt, Mt> seg(N, fx, fa, fm, nullptr, ex, em);
 	---------------
 	*/
 	Test();
