@@ -130,6 +130,7 @@ int main(void)
 	[関連する問題]
 	ABC002-D
 	ABC159-E
+	ABC197-C
 	ABC200-D
 	ABC219-E
 	ABC264-C
