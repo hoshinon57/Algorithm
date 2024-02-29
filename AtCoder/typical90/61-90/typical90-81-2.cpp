@@ -2,21 +2,28 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <functional>  // function
+#include <limits>  // numeric_limits
+#include <iomanip>
 using namespace std;
 typedef long long ll;
 const ll INF64 = 1LL << 60;
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// 累積和のメモ、ライブラリ
+// 競プロ典型90問:81 https://atcoder.jp/contests/typical90/tasks/typical90_cc
 
 /*
- * [関連する問題]
- * ABC005-D
- * ABC203-D 難しかった
- * ABC278-E
- * ABC313-E (別解)
- * ABC331-D
- * 典型90-81 https://atcoder.jp/contests/typical90/tasks/typical90_cc
+ * 公式解説を参考に、二次元累積和で解く。
+ * 
+ * 身長Ai,体重Biの生徒を(Ai,Bi)の二次元平面状にプロットしていくことで、
+ *   a<=A<=a+K, b<=B<=b+K
+ * となる範囲の生徒はチームを組める。
+ * 
+ * よって各生徒をプロットした後に二次元累積和を計算し、
+ * 全てのK*Kの範囲の和を計算していけば、その最大値が答となる。
  */
 
 // 2次元累積和のライブラリ
@@ -79,5 +86,29 @@ public:
 
 int main(void)
 {
+	int i, j;
+	int N, K; cin >> N >> K;
+	const int ABMAX = 5000;
+	PrefixSum_2D<int> sum(ABMAX+5, ABMAX+5);
+	for(i = 0; i < N; i++)
+	{
+		int a, b; cin >> a >> b;
+		sum.n[a][b]++;
+	}
+	sum.Build();
+
+	int ans = 0;
+	for(i = 0; i <= ABMAX; i++)
+	{
+		if(i+K > ABMAX) break;
+		for(j = 0; j <= ABMAX; j++)
+		{
+			if(j+K > ABMAX) break;
+			int d = sum.Sum(i, i+K+1, j, j+K+1);
+			chmax(ans, d);
+		}
+	}
+	cout << ans << endl;
+
 	return 0;
 }
