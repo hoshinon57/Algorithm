@@ -58,6 +58,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC213-E 0-1 BFS
  * ABC176-D 0-1 BFS
  * ARC005-C 0-1 BFS
+ * 典型90-54 超頂点 https://atcoder.jp/contests/typical90/tasks/typical90_bb
  * 
  * 0-1 BFSについて：
  * 重み付きグラフの辺の重みが0 or 1、または移動コストが0 or 1のときに使える手法。
