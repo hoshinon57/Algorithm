@@ -1,54 +1,34 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <map>
 #include <functional>  // function
 #include <limits>  // numeric_limits
-#include <cassert>
+#include <iomanip>
 using namespace std;
 typedef long long ll;
 const ll INF64 = 1LL << 60;
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// 抽象化版セグメント木のメモや実装
-// ★注意★ #include <functional> を忘れずに。ローカル環境では無くてもビルドが通るが、AtCoderではCEになる。
+// ABC343 https://atcoder.jp/contests/abc343
 
 /*
- * [ざっくり概要]
- * ・区間上の値を更新する
- * ・任意の区間における最小値や合計値を取得する
- * といった処理をO(logN)でできるデータ構造。
- * 要素には任意のモノイドを用いることができる(抽象化)。
+ * セグメントツリーで解く。
  * 
- * SegmentTree:
- *   以下の操作をO(logN)で処理できる。
- *   (1)Update(x, val) : 要素xをvalで更新する
- *   (2)Query(a, b) : 区間[a,b)にある要素のモノイド積を返す
- *   0-indexed, および半開区間で処理する。
- *   コンストラクタには (size:要素数, fx_:二項演算, ex_:単位元) を指定する。
- *   ★代表的なfx,exはmain()に記述している。
+ * 「最も大きい値、その個数」「2番目に大きい値、その個数」の計4つを乗せる。
+ * モノイド同士の二項演算fxは実装を頑張る。
+ * mapで「値とその個数」を管理すると実装が楽だった。要素は昇順に並ぶため、リバースイテレータでアクセスすると取得も楽。
+ * ※ただし他の人と比較したところ、実行時間は結構伸びるっぽい。実行時間が1000msほどだった。
  * 
- * [Tips]
- * ・木の最下段のノード数は、問題文にて指定されるsize以上の2のべき乗。
- *   これをNとすると、最下段のノード数はN, それより上の段のノードは全部でN-1.
- *   よって木全体で必要なノード数は 2N-1 となる。
- * ・要素xをnode[]の添字番号に変換する場合：N-1を加算する
- * ・親から子へ行く場合、 k -> 2k+1, 2k+2
- * ・子から親へ行く場合、 k -> (k-1)/2  (切り捨て)
+ * Axに入力される値は1以上のため、単位元は「値0, 0個」とした。
  * 
- * [参考資料]
- *   https://algo-logic.info/segment-tree/
- *   https://tsutaj.hatenablog.com/entry/2017/03/29/204841
- * 
- * [関連する問題 / verifyした問題]
- * AOJ DSL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
- * ABC125-C
- * ABC140-E
- * ABC157-E
- * ABC223-F
- * ABC231-F
- * ABC343-F
- * 典型90-37
+ * [ACまでの思考の流れ]
+ * ・1点更新かつ区間に対するクエリのため、セグ木っぽい。
+ * ・1,2番目に大きい値とその個数、はモノイドになりそう。なのでセグ木に乗せられる。
  */
 
 // (1)Update(x, val) : 要素xをvalで更新する
@@ -208,133 +188,60 @@ public:
 	}
 };
 
-void Test(void)
-{
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	vector<int> v = {3, 1, 4, 1, 5, 9};
-	SegmentTree<T> seg(v.size(), fx, ex);
-	for(int i = 0; i < (int)v.size(); i++)
-	{
-		seg.Set(i, v[i]);
-	}
-	seg.Build();
-
-	assert(seg.Query(0, 6) == 1);
-	assert(seg.Query(0, 3) == 1);
-	assert(seg.Query(3, 4) == 1);
-	assert(seg.Query(4, 5) == 5);
-	seg.Update(6, -1);
-	seg.Update(2, 0);
-	assert(seg.Query(0, 7) == -1);
-	assert(seg.Query(1, 4) == 0);
-	for(int i = 0; i < (int)v.size(); i++)
-	{
-		assert(seg.Get(i) ==  seg.Query(i, i+1));
-	}
-
-	// Find_Leftmost(),Find_Rightmost()のテスト
-	{
-		vector<int> a = {3, 1, 4, 1, 5, 9, 2};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(1, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 7, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 0) == 7);
-		assert(seg2.Find_Leftmost(2, 3, 4) == 2);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 10) == 0);
-		assert(seg2.Find_Rightmost(0, 7, 1) == 3);
-		assert(seg2.Find_Rightmost(0, 4, 1) == 3);
-		assert(seg2.Find_Rightmost(0, 3, 1) == 1);
-		assert(seg2.Find_Rightmost(0, 7, 0) == -1);
-		assert(seg2.Find_Rightmost(0, 7, 10) == 6);
-	}
-	{
-		vector<int> a = {1, 1, 1};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 3, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 2);
-		assert(seg2.Find_Leftmost(0, 2, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(0, 3, -1) == 3);
-		assert(seg2.Find_Rightmost(0, 3, 1) == 2);
-		assert(seg2.Find_Rightmost(2, 3, 1) == 2);
-		assert(seg2.Find_Rightmost(0, 1, 1) == 0);
-		assert(seg2.Find_Rightmost(0, 3, -1) == -1);
-	}	
-}
-
 int main(void)
 {
-	/*
-	[代表的なfx,exの例]
-	Range Minimum Query(RMQ)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	---------------
+	using T = pair<pair<ll,ll>, pair<ll,ll>>;  // {1stの値, 個数}, {2ndの値, 個数}
+	auto fx = [](T x1, T x2) -> T {
+		T ret;
+		map<ll,ll> cnt;
+		auto x1_1st = x1.first;
+		auto x1_2nd = x1.second;
+		auto x2_1st = x2.first;
+		auto x2_2nd = x2.second;
+		cnt[x1_1st.first] += x1_1st.second;
+		cnt[x1_2nd.first] += x1_2nd.second;
+		cnt[x2_1st.first] += x2_1st.second;
+		cnt[x2_2nd.first] += x2_2nd.second;
 
-	Range Sum Query(RSQ)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return x1+x2; };
-	T ex = 0;
-	---------------
-
-	Range OR Query(ABC157-E)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return x1|x2; };
-	T ex = 0;
-	---------------
-
-	Range GCD Query(ABC125-C)
-	---------------
-	using T = ll;
-	auto fx = gcd;
-	T ex = 0;  // gcd(a,0)=a のため
-	---------------
-	*/
-	Test();
-
-	// 以下は AOJ DSL_2_A のもの
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	int n, q;
-	cin >> n >> q;
-	SegmentTree<T> seg(n, fx, ex);
-	for(int i = 0; i < n; i++) seg.Set(i, (1UL<<31)-1);
+		// map:cnt は昇順に並んでいるので、リバースイテレータにて先頭2つが1番大きい値と2番目に大きい値となる
+		auto itr = cnt.rbegin();
+		// 1番大きい値
+		ret.first.first = itr->first;
+		ret.first.second = itr->second;
+		itr++;
+		// 2番目に大きい値
+		ret.second.first = itr->first;
+		ret.second.second = itr->second;
+		return ret;
+	};
+	T ex = {{0, 0}, {0, 0}};
+	// 1-indexed
+	ll N, Q; cin >> N >> Q;
+	ll i;
+	SegmentTree<T> seg(N+5, fx, ex);
+	for(i = 1; i <= N; i++)
+	{
+		ll tmp; cin >> tmp;
+		seg.Set(i, {{tmp, 1}, {0, 0}});
+	}
 	seg.Build();
 
-	int c, x, y;
-	while(q > 0)
+	while(Q > 0)
 	{
-		cin >> c >> x >> y;
-		if(c == 0)  // update
+		Q--;
+		int k; cin >> k;
+		if(k == 1)
 		{
-			seg.Update(x, y);
+			ll p, x; cin >> p >> x;
+			seg.Update(p, {{x, 1}, {0, 0}});
 		}
-		else  // find
+		else
 		{
-			cout << seg.Query(x, y+1) << endl;  // 閉区間->半開区間への変換
+			ll l, r; cin >> l >> r;
+			r++;
+			T ret = seg.Query(l, r);
+			cout << ret.second.second << endl;
 		}
-		q--;
 	}
 
 	return 0;
