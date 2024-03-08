@@ -136,6 +136,7 @@ int main(void)
 	ABC264-C
 	ABC269-C
 	ABC289-C
+	典型90-86
 	*/
 
 	/*
