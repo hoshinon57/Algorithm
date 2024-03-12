@@ -137,6 +137,7 @@ int main(void)
 	ABC269-C
 	ABC289-C
 	典型90-86
+	アルゴリズムと数学 068 https://atcoder.jp/contests/math-and-algorithm/
 	*/
 
 	/*
@@ -349,6 +350,7 @@ int main(void)
 	※問題によって偶奇が逆になったりする。
 	[関連する問題]
 	典型90-80
+	アルゴリズムと数学 068 https://atcoder.jp/contests/math-and-algorithm/
 	*/
 	return 0;
 }
