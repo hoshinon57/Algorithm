@@ -20,6 +20,7 @@ using namespace std;
  * AOJ ALDS1_14_B https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_14_B&lang=ja
  * ABC141-E
  * ABC284-F
+ * ABC331-F このライブラリは使っていないが、ローリングハッシュの考え方
  */
 
 /*
