@@ -57,6 +57,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   ABC185-F
  *   ABC327-F
  *   ABC340-E
+ *   ABC341-E ただし想定解法は通常のセグメント木だった
  */
 
 // (1)Update(a, b, x) : 区間[a,b)の要素をxを用いて更新する
@@ -77,8 +78,8 @@ private:
 	using FP = function<M(M, ll)>;  // 区間和など、区間に比例した作用素用
 	int n;   // 木の最下段の要素数 (コンストラクタで指定したsize以上の、2のべき乗)
     FX fx;  // モノイドX上での二項演算
-    FA fa;
-    FM fm;
+    FA fa;  // lazyをnodeに反映させるイメージ
+    FM fm;  // lazyにlazyを重ねるとどうなるか？ の考え方
 	FP fp = [](M m_, ll n_) -> M { return m_; };  // デフォルトでは区間比例は無し
 	const X ex;  // モノイドX上での単位元
 	const M em;  // モノイドM上での単位元 (lazyがこの値なら何も作用させないイメージ)
