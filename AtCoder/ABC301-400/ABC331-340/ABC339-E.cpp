@@ -33,6 +33,7 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * [ACまでの思考の流れ]
  * ・DPの更新式は思いついたが、そのままだとTLEする。
  *   ⇒区間の最大なので、セグメント木が使えそう。
+ * ・[典型]DPをセグメント木で高速化
  */
 
 // (1)Update(x, val) : 要素xをvalで更新する
