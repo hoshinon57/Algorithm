@@ -7,23 +7,32 @@ using namespace std;
 typedef long long ll;
 const ll INF64 = 1LL << 60;
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// 最小全域木のメモ、ライブラリ
+// 競プロ典型90問:49 https://atcoder.jp/contests/typical90/tasks/typical90_aw
 
 /*
- * [使い方]
- * UnionFindを本ファイルまたはunion_find.cppからコピーする。
- * Edge構造体およびmain()の内容をコピーする。
- * 辺に辺番号など情報を追加したい場合は、メンバ変数およびコンストラクタ、"<"演算子に手を入れること。
+ * 最小全域木で解く。
  * 
- * [関連する問題]
- * AOJ GRL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_2_A&lang=ja
- * ABC210-E MSTだが本質は数学の問題かなと
- * ABC218-E
- * ABC235-E
- * ABC282-E
- * 典型90-49
+ * 各文字について、その文字単体だけ0/1切り替えられる必要があるっぽいと分かる。
+ * 試行錯誤してみたところ、区間[l,r+1)を反転させる行為を、頂点(l,r+1)に辺を張る行為に置き換えたとき、
+ * 頂点(i,i+1)に辺が張られていれば、文字iは独立で0/1切り替えられる模様。
+ * 
+ * よって全ての頂点iについて上記を満たすようにしたい。
+ * つまり頂点1～頂点N+1まで連結にすることであり、つまり最小全域木を求める問題になる。
+ * 
+ * ※公式解説の、区間[l,r)の反転を、
+ *   隣り合う要素の差分をd[]としたときに、d[l]とd[r]を反転させるという趣旨は理解できた。
+ *   ただそこから2^(N+1)通りとかの話は理解できなかった。
+ *   https://twitter.com/e869120/status/1397322487554199553
+ * 
+ * [どう思考すれば解法にたどり着けるか]
+ * ・区間[l,r)を反転させる問題は、頂点(l,r)に辺を張る問題に置き換えてみる。
+ *   類題：ABC238-E(Range Sums)
+ * ・区間[l,r)を反転させる
+ *   ⇒隣り合う要素の差分d[]を考えたときに、d[l]とd[r]を反転させる
  */
 
 struct UnionFind
@@ -100,30 +109,38 @@ struct Edge
 
 int main(void)
 {
-	// 以下はAOJのGRL_2_Aを解く内容
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_2_A&lang=ja
+	// 0-indexed
 	int i;
-	int N, E; cin >> N >> E;
-	vector<Edge> edge(E);
-	for(i = 0; i < E; i++)
+	int N, M; cin >> N >> M;
+	vector<Edge> edge(M);
+	for(i = 0; i < M; i++)
 	{
-		int s, t, w; cin >> s >> t >> w;
-		// s--; t--;  // 必要に応じて
-		edge[i] = Edge(s, t, w);
+		int c, l, r; cin >> c >> l >> r;
+		l--; r--;
+		edge[i] = {l, r+1, c};
 	}
-	sort(edge.begin(), edge.end());  // "<"演算子を元にソート
+	sort(edge.begin(), edge.end());
 
 	ll ans = 0;
-	UnionFind uf(N);
-	for(i = 0; i < E; i++)
+	UnionFind uf(N+1);
+	for(auto &e : edge)
 	{
-		auto &e = edge[i];
 		if(uf.issame(e.u, e.v)) continue;
-
 		ans += e.w;
 		uf.unite(e.u, e.v);
 	}
+	// 頂点0～NのN+1個が連結していればtrue
+	auto check = [&](void) -> bool
+	{
+		bool ok = true;
+		for(i = 0; i < N; i++)
+		{
+			if(!uf.issame(i, i+1)) ok = false;
+		}
+		return ok;
+	};
+	if(!check()) ans = -1;
 	cout << ans << endl;
-
+	
 	return 0;
 }
