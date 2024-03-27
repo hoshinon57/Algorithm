@@ -15,6 +15,8 @@ using namespace std;
  * 元データは手順(1)にて書き換えられる点に注意。
  * 計算量はO(NlogN).
  * 
+ * 圧縮前の値を求める方法はmain()を参照。
+ * 
  * [参考資料]
  * https://drken1215.hatenablog.com/entry/2021/08/09/235400
  * https://algo-logic.info/coordinate-compress/
@@ -25,6 +27,7 @@ using namespace std;
  * ABC213-C
  * ABC231-F
  * ABC261-F (座標圧縮を使わない方法もあると思う)
+ * ABC277-C (mapでも十分)
  * ABC309-F
  */
 
@@ -54,8 +57,10 @@ int main(void)
 {
 	vector<int> a = {10, 100, 1000, 1, 5, 1, 1};  // 座標圧縮したい元データ
 	vector<int> a_comp = compression_one<int>(a);
+	// a = {1,5,10,100,1000} に置き換わる
 	vector<int> a_test = {2, 3, 4, 0, 1, 0, 0};
 	assert(a_comp == a_test);
+	// a[a_comp[i]] で、圧縮前のi番目の値を求められる
 
 	using ll = long long;
 	ll p = 1LL<<60;
