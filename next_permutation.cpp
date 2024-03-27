@@ -11,10 +11,11 @@ using namespace std;
 
 /*
  * [関連する問題]
- * ABC232-C https://atcoder.jp/contests/abc232/tasks/abc232_c
- * ABC268-D https://atcoder.jp/contests/abc268/tasks/abc268_d D問題にしては難易度高めだが、良問だった
- * ABC302-C https://atcoder.jp/contests/abc302/tasks/abc302_c
- * ABC328-E https://atcoder.jp/contests/abc328/tasks/abc328_e M個の辺からN-1個を選ぶ
+ * ABC232-C 
+ * ABC268-D D問題にしては難易度高めだが、良問だった
+ * ABC302-C 
+ * ABC328-E M個の辺からN-1個を選ぶ
+ * ABC345-D
  */
 
 /*

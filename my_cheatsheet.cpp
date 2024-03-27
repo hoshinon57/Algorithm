@@ -66,6 +66,7 @@ int main(void)
 
 	/*
 	ABCのC,D辺りの問題で、実装が重めの問題リスト。実装の練習に。
+	ABC345-D
 	ABC326-D
 	ABC322-E
 	ABC322-D
@@ -138,6 +139,7 @@ int main(void)
 	ABC264-C
 	ABC269-C
 	ABC289-C
+	ABC345-D
 	典型90-86
 	アルゴリズムと数学 068 https://atcoder.jp/contests/math-and-algorithm/
 	*/
