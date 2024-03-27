@@ -1,0 +1,95 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
+using namespace std;
+typedef long long ll;
+const ll INF64 = 1LL << 60;
+const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
+
+// ABC277 https://atcoder.jp/contests/abc277
+
+/*
+ * 座標圧縮で解いてみた。
+ * 
+ * 入力にて登場する階数をA,Bともにfl[]に入れていき、座標圧縮。
+ * 例3のような、入力に1階が無いケースがあるため、1階->1階も入れておく必要がある。
+ * 
+ * 入力A,Bを圧縮後の値に置き換えてグラフを構築する。
+ * 本問の場合、頂点数はN*2になる。
+ * 
+ * 圧縮前の値を求めるには、fl[v]にアクセスすればよい。
+ * DFSにてこの最大値を保持しておけば、それが答となる。
+ */
+
+using Graph = vector<vector<int>>;
+vector<bool> seen;
+int ans = 0;
+
+// 1次元の座標圧縮
+// a：座標圧縮したい元データ 処理途中で要素が書き換えられる点に注意(保持したい場合は参照を外す)
+// 返り値：圧縮後のデータ
+// 計算量はO(NlogN)
+template <typename T>
+vector<T> compression_one(vector<T> &a)
+{
+	vector<T> a_comp = a;
+
+	// 元データをソートし、重複を削除する
+	sort(a.begin(), a.end());
+	a.erase(unique(a.begin(), a.end()), a.end());  // unique()で隣り合う重複を削除し、erase()で末端までのゴミを削除する
+
+	// それぞれの元データが「何番目に小さいか」をlower_bound()で求める
+	for(int i = 0; i < (int)a_comp.size(); i++)
+	{
+		a_comp[i] = lower_bound(a.begin(), a.end(), a_comp[i]) - a.begin();
+	}
+
+	return a_comp;
+}
+
+void dfs(Graph &g, int v, vector<int> &fl)
+{
+	if(seen[v]) return;
+	seen[v] = true;
+	chmax(ans, fl[v]);  // 圧縮前の値
+	for(auto &e : g[v])
+	{
+		dfs(g, e, fl);
+	}
+}
+
+int main(void)
+{
+	int i;
+	int N; cin >> N;
+	N++;  // 1階->1階を入れておく (例3のような、入力に1階が無いケース)
+	vector<int> a(N), b(N);
+	vector<int> fl;
+	for(i = 0; i < N; i++)
+	{
+		if(i == 0) a[i] = b[i] = 1;
+		else cin >> a[i] >> b[i];
+		fl.push_back(a[i]);
+		fl.push_back(b[i]);
+	}
+	auto fl_comp = compression_one(fl);
+	Graph g(N*2);
+	for(i = 0; i < N; i++)
+	{
+		a[i] = fl_comp[i*2];
+		b[i] = fl_comp[i*2+1];
+		g[a[i]].push_back(b[i]);
+		g[b[i]].push_back(a[i]);
+	}
+
+	seen.resize(N*2, false);
+	dfs(g, 0, fl);
+	cout << ans << endl;
+
+	return 0;
+}
