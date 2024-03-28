@@ -126,6 +126,26 @@ ABC346の反省：
 　
 [合同式]
 割り算の余りのみに着目した等式
+aとbをnで割った余りが等しいことを a≡b (mod n) と書く
 ab≡ac (mod n) でa,nが互いに素なら両辺をaで割れる(b≡c) 互いに素でないなら、割れない
 a≡bならa^k≡b^k
+------------
+除算について：
+ab≡ac (mod n) で g=gcd(a,n) のとき、 b≡c (mod n/g)
+つまり法nをn/gで置き換えれば、割っても良い
+g=gcd(a,n)=1のとき、「a,nが互いに素なら両辺をaで割って良い」と同じことになる。
 
+一般化すると、g=gcd(a,n)として、
+  ab≡ac (mod n)
+  ⇒ b≡c (mod n/g)
+が除算の公式。
+
+参考：
+  https://www.geisya.or.jp/~mwm48961/electro/mod1.htm
+  https://detail.chiebukuro.yahoo.co.jp/qa/question_detail/q13182052368
+  http://oto-suu.seesaa.net/article/216454231.html
+------------
+勉強に用いたページ：
+  https://manabitimes.jp/math/683
+  https://rakustudy.com/modulo-calculation
+  http://www.geisya.or.jp/~mwm48961/electro/mod1.htm
