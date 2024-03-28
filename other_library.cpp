@@ -56,6 +56,11 @@ vector<int> chg_base(ll n, int base)
 //   以下のextgcd()にて ax+by=gcd(a,b) での{x,y}を求める
 //   c/gcd(a,b) をx,yそれぞれにかける
 
+// extgcd()にてx,yが1つ決まったら、g=gcd(a,b)として、
+//   x'=x+(b/g), y'=y-(a/g)
+// となる{x',y'}も式を満たす。
+// 1つ求めたxがx<0のとき、(x/(b/g))+1 回だけ(b/g)を足してやれば、正である最小のxが求まる、はず。
+
 // [verify]ABC340-F
 // 一次不定方程式 ax+by=gcd(a,b) を満たす {x,y} を格納する
 // 戻り値：gcd(a,b)
