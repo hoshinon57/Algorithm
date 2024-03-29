@@ -356,7 +356,11 @@ int main(void)
 	包除原理
 	4つ以上の包除原理は、集合の数の偶奇によって加算/減算が切り替わる。奇数なら答に加算、偶数なら答に減算など。
 	※問題によって偶奇が逆になったりする。
+	[参考記事]
+	https://drken1215.hatenablog.com/entry/2022/04/03/212800
+	https://satanic0258.hatenablog.com/entry/2016/04/10/104524
 	[関連する問題]
+	ABC246-F
 	典型90-80
 	アルゴリズムと数学 068 https://atcoder.jp/contests/math-and-algorithm/
 	*/
