@@ -322,6 +322,7 @@ int main(void)
 	ABC206-E 難しかった
 	ABC214-D
 	ABC224-F
+	ABC306-F 難しかったが何とか自力AC
 	典型90-39
 	*/
 
