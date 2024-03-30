@@ -364,6 +364,13 @@ int main(void)
 	典型90-80
 	アルゴリズムと数学 068 https://atcoder.jp/contests/math-and-algorithm/
 	*/
+
+	/*
+	半分全列挙
+	[関連する問題]
+	ABC271-F
+	典型90-51
+	*/
 	return 0;
 }
 
