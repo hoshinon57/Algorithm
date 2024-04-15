@@ -14,6 +14,7 @@ typedef long long ll;
  * ・nをbase進法で表したときの値
  * ・extgcd
  * ・SCC
+ * ・3x3のマス目について縦/横/斜めがそろったかを判定
  */
 
 // a/b以下の最大の整数(床関数) floor(5,2)=2, floor(-5,2)=-3
@@ -213,6 +214,9 @@ void Test_AOJ_GRL_3_C(void)
 		cout << ans << endl;
 	}
 }
+
+// 3x3のマス目について縦/横/斜めがそろったかどうかを判定するコード
+// ABC349-E.cppを参照
 
 int main(void)
 {
