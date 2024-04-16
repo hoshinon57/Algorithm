@@ -532,6 +532,12 @@ void _string_(void)
 	assert(stoi("0011", nullptr, 2) == 3);  // 先頭に0があっても良い / 第2引数はnullptrで
 	assert(stoi("044", nullptr, 5) == 24);
 	assert(stoi("ABC", nullptr, 13) == 1845);  // A=10,B=11,C=12として 13^2*10+13*11+12=1845
+
+	// 文字列を全て小文字に変換
+	str = "ABCYZ";
+	transform(str.begin(), str.end(), str.begin(), ::tolower);
+	assert(str == "abcyz");
+	// 大文字に変換する場合は ::toupper を指定する
 }
 
 void settest(set<int> &s, string &&prev)
