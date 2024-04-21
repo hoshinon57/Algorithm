@@ -215,6 +215,7 @@ int main(void)
 	ABC314-E
 	ABC323-E
 	ABC326-E
+	ABC350-E  ※自己ループあり
 
 	[in-place DP, 参考問題]
 	ABC203-E
