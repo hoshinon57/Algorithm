@@ -55,6 +55,14 @@ vector<int> chg_base(ll n, int base)
 	return a;
 }
 
+// [verify]ABC350-F
+// 大文字小文字を反転して返す
+// cが英字以外の挙動は未確認のため注意
+char revLowUp(char c) {
+	if(islower(c)) return toupper(c);
+	else return tolower(c);
+}
+
 // x,yについての一次不定方程式 ax+by=c が整数解を持つ条件：
 //   cがgcd(a,b)で割り切れること
 // よって ax+by=c の整数解を求めたい場合、以下の手順で求められる。
@@ -266,6 +274,10 @@ int main(void)
 		 {2,0,0,0}};
 	rotate(a);
 	assert(a == b);
+
+	string s = "abCD";
+	for(auto &e : s) e = revLowUp(e);
+	assert(s == "ABcd");
 
 	return 0;
 }
