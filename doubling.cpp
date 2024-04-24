@@ -10,6 +10,10 @@
  * https://satanic0258.hatenablog.com/entry/2017/02/23/222647
  * https://algo-logic.info/doubling/
  * 
+ * [注意事項]
+ * 事前計算にてforの順序に注意。(EDPC-Rでハマった)
+ * もちろん問題次第だが、2^kのkをループのもっとも外側に記述する必要がある。
+ * 
  * [関連する問題]
  * ABC136-D
  * ABC167-D
@@ -19,6 +23,7 @@
  * ABC293-E
  * ARC060-E
  * 典型90-58
+ * EDPC-R
  */
 
 // ダブリングの基本コード
