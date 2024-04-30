@@ -33,6 +33,20 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   ※ただしuは、S-{v}に含まれる頂点iそれぞれについて計算する
  * 頂点vを除いた集合の移動距離(終点u) + u->vの距離 という考え方。
  * 
+ * [O(3^N)の"部分集合の部分集合"問題について]
+ * dp[S][n]を「集合Sをn個のグループに分ける」とする場合、
+ *   N=16:間に合わない (EDPC-U)
+ *   N=15:間に合うが、枝刈りが必要 (典型90-45)
+ * となる感じ。dp[S]で情報として十分かを考える必要がある。
+ * 
+ * またSの部分集合を全列挙したい場合、以下のテクニックがある。 (https://kyopro-friends.hatenablog.com/entry/2019/01/12/231106)
+ *   for(T = S; T >= 0; T--)  // T:Sの部分集合
+ *   {
+ *     T &= S;
+ *     int T2 = S & (~T);  // 必要に応じて使う T∪T2=S, T∩T2={}
+ *     (処理)
+ *   }
+ * 
  * [関連問題 / 巡回セールスマン問題]
  * AOJ DPL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_2_A&lang=ja
  * ABC180-E
@@ -48,6 +62,8 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC199-E
  * ABC142-E
  * EDPC-O
+ * EDPC-U 部分集合の部分集合
+ * 典型90-45 部分集合の部分集合
  */
 
 const int MAX_N = 15;  // 頂点数の最大
