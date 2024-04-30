@@ -671,6 +671,23 @@ void _set_multiset_(void)
 
 }
 
+namespace for_priority_queue
+{
+struct stque_ {
+	int a, b;
+};
+bool operator< (const stque_ &l, const stque_ &r) {
+	if(l.a != r.a) return (l.a < r.a);
+	else if(l.b != r.b) return (l.b < r.b);
+	else return false;  // 同値はfalseにする必要がある
+};
+bool operator> (const stque_ &l, const stque_ &r) {
+	if(l.a != r.a) return (l.a > r.a);
+	else if(l.b != r.b) return (l.b > r.b);
+	else return false;
+};
+}
+
 // 優先度付きキュー
 // キューからの取り出しが、優先度が高い要素からになる
 // push, pop, topの計算量はO(logN)
@@ -753,6 +770,26 @@ void _priority_queue_(void)
 		s += to_string(tmp[2]) + " ";
 	}
 	assert(s == "0 50 100 ");
+	// ★arrayとも同様に組み合わせ可能。
+	//   競プロでは無理に自作クラスやカスタム比較を使うよりも、arrayで済ます方が手っ取り早いかな
+
+	// 自作クラスを使う場合
+	// < or > の演算子オーバーロードが必要。前者はlessでの比較、後者はgreaterの比較で必要。
+	//   https://rkd3.dev/post/pqmycls/
+	using namespace for_priority_queue;
+	priority_queue<stque_, vector<stque_>, greater<stque_>> stque;
+	stque.push({10, 20});
+	stque.push({20, 40});
+	stque.push({20, 30});
+	stque.push({10, 20});
+	s.clear();
+	while(!stque.empty())
+	{
+		auto tmp = stque.top();
+		stque.pop();
+		s += "{" + to_string(tmp.a) + "," + to_string(tmp.b) + "},";
+	}
+	assert(s == "{10,20},{10,20},{20,30},{20,40},");
 }
 
 // 双方向リスト
