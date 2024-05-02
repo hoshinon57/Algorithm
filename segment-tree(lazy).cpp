@@ -35,7 +35,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   ★代表的なfx,ex等はmain()に記述している。
  * 
  *   各ノードの値xに対して、言葉を選ばずに書くと以下のイメージ。
- *     fx:複数の要素x1,x2が合体するとどうなるか
+ *     fx:複数の要素x1,x2が合体するとどうなるか x1,x2の親はどうなるか
  *     fa:xをどう変化させたいか
  *     fp:faが重なるとどうなるか
  * 
@@ -61,9 +61,10 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   ABC035-C
  *   ABC185-F
  *   ABC327-F
- *   ABC332-F
+ *   ABC332-F 1次関数
  *   ABC340-E
  *   ABC341-E ただし想定解法は通常のセグメント木だった
+ *   ABC350-F 1次関数 (想定解法はDFS等)
  *   AtCoder Library Practice Contest-K https://atcoder.jp/contests/practice2/tasks/practice2_k
  */
 
