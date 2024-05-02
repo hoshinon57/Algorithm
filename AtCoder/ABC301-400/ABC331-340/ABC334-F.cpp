@@ -1,60 +1,37 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 #include <functional>  // function
 #include <limits>  // numeric_limits
-#include <cassert>
+#include <iomanip>
 using namespace std;
 typedef long long ll;
 const ll INF64 = 1LL << 60;
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// 抽象化版セグメント木のメモや実装
-// ★注意★ #include <functional> を忘れずに。ローカル環境では無くてもビルドが通るが、AtCoderではCEになる。
+// ABC334 https://atcoder.jp/contests/abc334
 
 /*
- * [ざっくり概要]
- * ・区間上の値を更新する
- * ・任意の区間における最小値や合計値を取得する
- * といった処理をO(logN)でできるデータ構造。
- * 要素には任意のモノイドを用いることができる(抽象化)。
+ * セグメント木を用いて解く。
  * 
- * SegmentTree:
- *   以下の操作をO(logN)で処理できる。
- *   (1)Update(x, val) : 要素xをvalで更新する
- *   (2)Query(a, b) : 区間[a,b)にある要素のモノイド積を返す
- *   0-indexed, および半開区間で処理する。
- *   コンストラクタには (size:要素数, fx_:二項演算, ex_:単位元) を指定する。
- *   ★代表的なfx,exはmain()に記述している。
+ * dp[i]を以下のように定義する。
+ *   家iまでプレゼントを届けたときに、
+ *   家iに行く "直前" にプレゼントを補充したとして、  (i=1～N)
+ *   最短ルートから増える距離
  * 
- * [Tips]
- * ・木の最下段のノード数は、問題文にて指定されるsize以上の2のべき乗。
- *   これをNとすると、最下段のノード数はN, それより上の段のノードは全部でN-1.
- *   よって木全体で必要なノード数は 2N-1 となる。
- * ・要素xをnode[]の添字番号に変換する場合：N-1を加算する
- * ・親から子へ行く場合、 k -> 2k+1, 2k+2
- * ・子から親へ行く場合、 k -> (k-1)/2  (切り捨て)
+ * 答は、プレゼント補充をせず最短ルートで周ったときの距離に、
+ * min(dp[N-K+1]～dp[N]) を加算したものととなる。
+ * (最後に補給するのは [N-K+1,N] の区間であるため)
  * 
- * [参考資料]
- *   https://algo-logic.info/segment-tree/
- *   https://tsutaj.hatenablog.com/entry/2017/03/29/204841
- * 
- * [関連する問題 / verifyした問題]
- * AOJ DSL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
- * ABC125-C
- * ABC140-E
- * ABC157-E
- * ABC223-F
- * ABC231-F
- * ABC306-F
- * ABC331-F
- * ABC334-F
- * ABC339-E
- * ABC341-E
- * ABC343-F
- * ABC351-F 平面走査
- * 典型90-37
+ * dpはセグメント木を用いて確定させていく。
+ * 家iの直前に補充するのであれば、
+ * 家(i-K)～家(i-1)のどこかで補充が必要であるので、
+ *   dp[i] = min(dp[i-K]～dp[i-1]) + (家iの直前に補充する場合の、延びる距離)
+ * となる。min部分をセグメント木を用いればよい。
  */
 
 // (1)Update(x, val) : 要素xをvalで更新する
@@ -214,134 +191,56 @@ public:
 	}
 };
 
-void Test(void)
-{
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	vector<int> v = {3, 1, 4, 1, 5, 9};
-	SegmentTree<T> seg(v.size(), fx, ex);
-	for(int i = 0; i < (int)v.size(); i++)
-	{
-		seg.Set(i, v[i]);
-	}
-	seg.Build();
-
-	assert(seg.Query(0, 6) == 1);
-	assert(seg.Query(0, 3) == 1);
-	assert(seg.Query(3, 4) == 1);
-	assert(seg.Query(4, 5) == 5);
-	seg.Update(6, -1);
-	seg.Update(2, 0);
-	assert(seg.Query(0, 7) == -1);
-	assert(seg.Query(1, 4) == 0);
-	for(int i = 0; i < (int)v.size(); i++)
-	{
-		assert(seg.Get(i) ==  seg.Query(i, i+1));
-	}
-
-	// Find_Leftmost(),Find_Rightmost()のテスト
-	{
-		vector<int> a = {3, 1, 4, 1, 5, 9, 2};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(1, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 7, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 0) == 7);
-		assert(seg2.Find_Leftmost(2, 3, 4) == 2);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 10) == 0);
-		assert(seg2.Find_Rightmost(0, 7, 1) == 3);
-		assert(seg2.Find_Rightmost(0, 4, 1) == 3);
-		assert(seg2.Find_Rightmost(0, 3, 1) == 1);
-		assert(seg2.Find_Rightmost(0, 7, 0) == -1);
-		assert(seg2.Find_Rightmost(0, 7, 10) == 6);
-	}
-	{
-		vector<int> a = {1, 1, 1};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 3, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 2);
-		assert(seg2.Find_Leftmost(0, 2, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(0, 3, -1) == 3);
-		assert(seg2.Find_Rightmost(0, 3, 1) == 2);
-		assert(seg2.Find_Rightmost(2, 3, 1) == 2);
-		assert(seg2.Find_Rightmost(0, 1, 1) == 0);
-		assert(seg2.Find_Rightmost(0, 3, -1) == -1);
-	}	
-}
-
 int main(void)
 {
-	/*
-	[代表的なfx,exの例]
-	Range Minimum Query(RMQ)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
+	ll i;
+	ll N, K; cin >> N >> K;
+	ll sx, sy; cin >> sx >> sy;
+	vector<ll> x(N+1), y(N+1);  // 1-indexed
+	for(i = 1; i <= N; i++) cin >> x[i] >> y[i];
+
+	using T = double;
+	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };  // Range Minimum Query
 	T ex = numeric_limits<T>::max();
-	---------------
+	SegmentTree<T> dp(N+1, fx, ex);
+	dp.Update(1, 0.0);  // 家1に行く前は補充不要という考え方
 
-	Range Sum Query(RSQ)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return x1+x2; };
-	T ex = 0;
-	---------------
-
-	Range OR Query(ABC157-E)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return x1|x2; };
-	T ex = 0;
-	---------------
-
-	Range GCD Query(ABC125-C)
-	---------------
-	using T = ll;
-	auto fx = gcd;
-	T ex = 0;  // gcd(a,0)=a のため
-	---------------
-	*/
-	Test();
-
-	// 以下は AOJ DSL_2_A のもの
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	int n, q;
-	cin >> n >> q;
-	SegmentTree<T> seg(n, fx, ex);
-	for(int i = 0; i < n; i++) seg.Set(i, (1UL<<31)-1);
-	seg.Build();
-
-	int c, x, y;
-	while(q > 0)
+	auto dist = [&](ll x1, ll x2, ll y1, ll y2) -> double
 	{
-		cin >> c >> x >> y;
-		if(c == 0)  // update
-		{
-			seg.Update(x, y);
-		}
-		else  // find
-		{
-			cout << seg.Query(x, y+1) << endl;  // 閉区間->半開区間への変換
-		}
-		q--;
+		double tmp = sqrtl((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+		return tmp;
+	};
+
+	// もらうDP
+	for(i = 2; i <= N; i++)
+	{
+		// dp[i-K]～dp[i-1]のmin
+		ll l = max(i-K, (ll)1);
+		ll r = i-1;
+		double d = dp.Query(l, r+1);  // [l,r] -> [l,r+1)
+
+		// 家(i-1)->iの間で補充する際に、最短ルートから増える距離
+		double aa = dist(x[i], x[i-1], y[i], y[i-1]);
+		double bb = dist(x[i-1], sx, y[i-1], sy);
+		double cc = dist(x[i], sx, y[i], sy);
+		double add = bb+cc-aa;
+
+		dp.Update(i, d+add);
 	}
+
+	double ans = 0.0;
+	// i-1 -> i
+	for(i = 1+1; i <= N; i++)
+	{
+		ans += dist(x[i], x[i-1], y[i], y[i-1]);
+	}
+	ans += dist(x[1], sx, y[1], sy);  // スタート⇒家1
+	ans += dist(x[N], sx, y[N], sy);  // 家N⇒帰宅
+	// この時点のans:最短ルート
+	double tmp = dp.Query(N-K+1, N+1);  // [N-K+1, N] の直前には、補充している必要がある
+	ans += tmp;
+	cout << std::fixed << std::setprecision(15);
+	cout << ans << endl;
 
 	return 0;
 }
