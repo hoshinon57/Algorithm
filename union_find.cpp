@@ -17,6 +17,7 @@ using namespace std;
  *   参考：AtCoder/past_questions_100 のpast-questions-25-4(uf).cpp
  * 
  * [関連する問題]
+ * ABC040-D
  * ABC075-C
  * ABC120-D
  * ABC049-D
