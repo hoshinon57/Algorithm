@@ -367,6 +367,7 @@ int main(void)
 	ABC246-F
 	典型90-80
 	アルゴリズムと数学 068 https://atcoder.jp/contests/math-and-algorithm/
+	EDPC-Y
 	*/
 
 	/*
