@@ -23,6 +23,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC218-E
  * ABC235-E
  * ABC282-E
+ * ABC352-E 愚直に頂点間の全辺を張るとTLEするので、クラスカル法の気持ちを踏まえて必要な辺のみを張る
  * 典型90-49
  */
 
@@ -104,20 +105,19 @@ int main(void)
 	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_2_A&lang=ja
 	int i;
 	int N, E; cin >> N >> E;
-	vector<Edge> edge(E);
+	vector<Edge> edge;
 	for(i = 0; i < E; i++)
 	{
 		int s, t, w; cin >> s >> t >> w;
 		// s--; t--;  // 必要に応じて
-		edge[i] = Edge(s, t, w);
+		edge.push_back({s, t, w});
 	}
 	sort(edge.begin(), edge.end());  // "<"演算子を元にソート
 
 	ll ans = 0;
 	UnionFind uf(N);
-	for(i = 0; i < E; i++)
+	for(auto &e : edge)
 	{
-		auto &e = edge[i];
 		if(uf.issame(e.u, e.v)) continue;
 
 		ans += e.w;
