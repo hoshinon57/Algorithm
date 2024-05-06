@@ -24,6 +24,7 @@ void _unordered_set_(void);
 void _unordered_map_(void);
 void _stl_(void);
 void _structured_bindings_(void);
+void _aggregate_(void);
 void _tie_(void);
 void _mex_(void);
 void _math_(void);
@@ -44,6 +45,7 @@ int main(void)
 	_string_();
 	_stl_();
 	_structured_bindings_();
+	_aggregate_();
 	_tie_();
 	_mex_();
 	_math_();
@@ -1468,6 +1470,28 @@ void _structured_bindings_(void)
 	vector<int> a = {10,20,30};
 	auto [c1, c2, c3] = a;  // コンパイルエラー
 	*/
+}
+
+// 集成体およびその初期化に関するメモ (仕様の理解は浅い)
+// 参考：
+//   https://onihusube.hatenablog.com/entry/2019/04/06/123202
+//   https://onihusube.hatenablog.com/entry/2019/02/22/201044
+void _aggregate_(void)
+{
+	struct aggregate {
+		int a, b;
+		string s;
+	};
+	// 集成体となる構造体の場合、以下のような初期化が可能
+	aggregate ag = {10, 20, "test"};  // {}にてメンバ変数を順に指定
+	aggregate ag2 = {30};  // 残りはデフォルト初期化されるらしい
+	assert(ag.s == "test");
+	assert(ag2.a == 30);
+	assert(ag2.s == "");
+
+	vector<aggregate> va;
+	va.push_back({20, 30, "vec"});  // これは便利
+	assert(va.back().s == "vec");
 }
 
 // pairやtupleの分解にはstd::tieを使える
