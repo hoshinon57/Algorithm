@@ -31,6 +31,7 @@ typedef long long ll;
  * 
  * [関連する問題]
  * ABC132-D
+ * ABC042-D
  */
 
 const ll MOD = 998244353;
