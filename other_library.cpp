@@ -8,14 +8,15 @@ typedef long long ll;
 
 /*
  * その他のライブラリ
- * ・床関数,天井関数
- * ・bビット目の確認、ビットON/OFF
- * ・N*N配列を回転
- * ・nをbase進法で表したときの値
- * ・大文字小文字を反転
+ * ・床関数,天井関数 floor_div, ceil_div
+ * ・bビット目の確認、ビットON/OFF isbiton, setbit, unbit
+ * ・N*N配列を回転 rotate
+ * ・Y*X配列を回転 rotate_2, rotate_2_rev
+ * ・nをbase進法で表したときの値 chg_base
+ * ・大文字小文字を反転 revLowUp
  * ・extgcd
  * ・SCC
- * ・3x3のマス目について縦/横/斜めがそろったかを判定
+ * ・3x3のマス目について縦/横/斜めがそろったかを判定 -> ABC349-E.cppを参照
  */
 
 // a/b以下の最大の整数(床関数) floor(5,2)=2, floor(-5,2)=-3
