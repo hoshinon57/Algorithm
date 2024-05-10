@@ -42,6 +42,41 @@ void rotate(vector<vector<int>> &a)
 	}
 }
 
+// a[Y][X]を時計回りに90度回転させたものを返す (戻り値のサイズはa[X][Y]になる)
+template <typename T>
+vector<vector<T>> rotate_2(vector<vector<T>> &a)
+{
+	int y = (int)a.size();
+	int x = (int)a[0].size();
+	vector<vector<T>> a_r(x, vector<T>(y));  // a_r[x][y]
+	for(int i = 0; i < y; i++)
+	{
+		for(int j = 0; j < x; j++)  // a[i][j]がどこに移動するか
+		{
+			a_r[j][y-i-1] = a[i][j];
+		}
+	}
+	return a_r;
+}
+
+// a[Y][X]を反時計回りに90度回転させたものを返す (戻り値のサイズはa[X][Y]になる)
+template <typename T>
+vector<vector<T>> rotate_2_rev(vector<vector<T>> &a)
+{
+	int y = (int)a.size();
+	int x = (int)a[0].size();
+	vector<vector<T>> a_r(x, vector<T>(y));  // a_r[x][y]
+
+	for(int i = 0; i < y; i++)
+	{
+		for(int j = 0; j < x; j++)  // a[i][j]がどこに移動するか
+		{
+			a_r[x-j-1][i] = a[i][j];
+		}
+	}
+	return a_r;
+}
+
 // [verify]ABC336-C, ABC234-C
 // nをbase進法で表したときの値を返す (n=0が変換後も0に対応する)
 // 戻り値は、一番下の桁から順に[0],[1],... と格納される
@@ -264,17 +299,48 @@ int main(void)
 	assert(!isbiton(x, 62));
 	assert(x == ((ll)1<<1));
 
-	vector<vector<int>> a(4, vector<int>(4)), b(4, vector<int>(4));
-	a = {{1,0,0,0},
-	     {1,1,0,0},
-		 {1,0,2,0},
-		 {1,2,2,2}};
-	b = {{1,1,1,1},
-	     {2,0,1,0},
-		 {2,2,0,0},
-		 {2,0,0,0}};
-	rotate(a);
-	assert(a == b);
+	{
+		vector<vector<int>> a(4, vector<int>(4)), b(4, vector<int>(4));
+		a = {{1,0,0,0},
+			{1,1,0,0},
+			{1,0,2,0},
+			{1,2,2,2}};
+		b = {{1,1,1,1},
+			{2,0,1,0},
+			{2,2,0,0},
+			{2,0,0,0}};
+		rotate(a);
+		assert(a == b);
+	}
+
+	{
+		vector<vector<int>> a(2, vector<int>(3));  // a[2][3]
+		vector<vector<int>> b(3, vector<int>(2));  // b[3][2]
+		a = {{0,1,2},
+			 {3,4,5}};
+		b = {{3,0},
+			 {4,1},
+			 {5,2}};
+		auto a_2 = rotate_2<int>(a);
+		assert(a_2 == b);
+		auto a_3 = rotate_2_rev<int>(a);
+		a_3 = rotate_2_rev<int>(a_3);
+		a_3 = rotate_2_rev<int>(a_3);
+		assert(a_2 == a_3);  // 1回右回転と3回左回転は同一
+
+		vector<vector<char>> c(1, vector<char>(4));
+		vector<vector<char>> d(4, vector<char>(1));
+		c = {{0,1,2,3}};
+		d = {{0},
+			 {1},
+			 {2},
+			 {3}};
+		assert(rotate_2<char>(c) == d);
+		auto c2 = rotate_2_rev<char>(c);
+		c2 = rotate_2_rev<char>(c2);
+		c2 = rotate_2_rev<char>(c2);
+		assert(c2 == d);
+	}
 
 	string s = "abCD";
 	for(auto &e : s) e = revLowUp(e);
