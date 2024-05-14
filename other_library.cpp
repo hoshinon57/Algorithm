@@ -10,6 +10,8 @@ typedef long long ll;
  * その他のライブラリ
  * ・床関数,天井関数 floor_div, ceil_div
  * ・bビット目の確認、ビットON/OFF isbiton, setbit, unbit
+ * ・桁数を返す cal_digit
+ * ・p^0～p^(n-1)を事前計算 cal_pow_inadv
  * ・N*N配列を回転 rotate
  * ・Y*X配列を回転 rotate_2, rotate_2_rev
  * ・nをbase進法で表したときの値 chg_base
@@ -28,6 +30,34 @@ template <typename T> T ceil_div(T a, T b){ if(b<0) {a=-a; b=-b;} if(a>0){return
 bool isbiton(ll x, int b) { return ((x>>b)&1); }  // xのbビット目が立っていればtrue (bは0-indexed)
 void setbit(ll &x, int b) { x |= ((ll)1<<b); }  // xのbビット目を立てる
 void unbit(ll &x, int b) { x &= (~((ll)1<<b)); }  // xのbビット目を落とす
+
+// [verify]ABC353-D
+// n(>=0)の桁数を返す dig(0)=1
+int cal_digit(long long n)
+{
+	if(n == 0) return 1;
+	int c = 0;
+	while(n > 0) {
+		c++;
+		n /= 10;
+	}
+	return c;
+}
+
+// [verify]ABC353-D
+// p^0～p^(n-1)を事前計算して返す
+// mが0以外の場合、mで割った余りを設定する
+template<typename T>
+vector<T> cal_pow_inadv(T p, int n, T m = 0)
+{
+	vector<T> ret(n);
+	ret[0] = (T)1;
+	for(int i = 1; i < n; i++) {
+		ret[i] = ret[i-1] * p;
+		if(m != 0) ret[i] %= m;
+	}
+	return ret;
+}
 
 // 要素がN*Nであるaについて、右に90度回転させる
 void rotate(vector<vector<int>> &a)
@@ -300,6 +330,26 @@ int main(void)
 	assert(!isbiton(x, 62));
 	assert(x == ((ll)1<<1));
 
+	assert(cal_digit(0) == 1);
+	assert(cal_digit(1) == 1);
+	assert(cal_digit(10) == 2);
+	assert(cal_digit(999) == 3);
+	assert(cal_digit(10000000000) == 11);  // 1^10は11桁
+
+	{
+		auto p = cal_pow_inadv<long long>(10, 12);
+		assert(p[0] == 1);
+		assert(p[1] == 10);
+		assert(p[11] == (long long)1e11);
+		assert(p.size() == (int)12);
+		p = cal_pow_inadv<long long>(2, 11, 100);  // MOD 100
+		assert(p[0] == 1);
+		assert(p[6] == 64);
+		assert(p[7] == 28);  // 128
+		assert(p[10] == 24);  // 1024
+		assert(p.size() == (int)11);
+	}
+	
 	{
 		vector<vector<int>> a(4, vector<int>(4)), b(4, vector<int>(4));
 		a = {{1,0,0,0},
