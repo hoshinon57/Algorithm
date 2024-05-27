@@ -16,6 +16,9 @@ using namespace std;
  * グリッドグラフであれば、マス{y,x}に対してuf_id[y][x]にUnion-Findの番号を保持しておく手段が考えられる。
  *   参考：AtCoder/past_questions_100 のpast-questions-25-4(uf).cpp
  * 
+ * vectorで定義したい場合、以下のようにする。
+ *   vector<UnionFind> uf(10, UnionFind(N));  // N頂点のを10個
+ * 
  * [関連する問題]
  * ABC040-D
  * ABC075-C
