@@ -325,6 +325,7 @@ int main(void)
 	ABC140-E 難しかったけど良問
 	ABC151-E
 	ABC162-E 難しかったけど良問
+	ABC169-F
 	ABC206-E 難しかった
 	ABC214-D
 	ABC224-F
