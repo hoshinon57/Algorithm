@@ -181,6 +181,7 @@ long long extgcd(long long a, long long b, long long &x, long long &y) {
  * 
  * [関連する問題 / verifyした問題]
  *   AOJ GRL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_3_C&lang=jp
+ *   ABC245-F(Endless Walk) SCCしたグループにてグラフを構築する
  */
 
 using Graph = vector<vector<int>>;
@@ -245,7 +246,7 @@ public:
 			grp[idx[i]].push_back(i);
 		}
 
-#if 0  // 縮めたグラフを構築する場合、以下のようになる模様 (動作確認はほとんどできていない)
+#if 0  // 縮めたグラフを構築する場合、以下のようになる [verify:ABC245-F]
 		Graph shg;  // 呼び出し元から参照で渡す
 		shg.clear();
 		shg.resize(gr);
