@@ -10,13 +10,13 @@ using namespace std;
  *   https://qiita.com/pata_/items/e7cfdbbb4414cf13e715
  * 
  * [関連する問題]
- * ABC128-E https://atcoder.jp/contests/abc128/tasks/abc128_e
- * ABC183-D https://atcoder.jp/contests/abc183/tasks/abc183_d 基本問題 いもす法の方が簡単
- * ABC188-D https://atcoder.jp/contests/abc188/tasks/abc188_d
- * ABC221-D https://atcoder.jp/contests/abc221/tasks/abc221_d
- * ABC256-D https://atcoder.jp/contests/abc256/tasks/abc256_d
- * ABC257-C https://atcoder.jp/contests/abc257/tasks/abc257_c
- * ABC309-C https://atcoder.jp/contests/abc309/tasks/abc309_c
+ * ABC128-E
+ * ABC183-D 基本問題 いもす法の方が簡単
+ * ABC188-D
+ * ABC221-D
+ * ABC256-D
+ * ABC257-C
+ * ABC309-C
  * ABC355-D
  * 精選100 No.81 https://atcoder.jp/contests/abc014/tasks/abc014_3
  * 精選100 No.82 https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2013
