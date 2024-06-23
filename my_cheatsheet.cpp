@@ -71,6 +71,7 @@ int main(void)
 
 	/*
 	ABCのC,D辺りの問題で、実装が重めの問題リスト。実装の練習に。
+	ABC359-D
 	ABC345-D
 	ABC326-D
 	ABC322-E
@@ -227,6 +228,10 @@ int main(void)
 	[DPの復元、参考問題]
 	ABC200-D (ただし想定解法は異なる)
 	典型90-56
+
+	[過去いくつかの状態を持ち、スライドさせていくようなDP]
+	ABC359-D
+	JOI Pasta https://atcoder.jp/contests/joi2012yo/tasks/joi2012yo_d
 	*/
 
 	/*
