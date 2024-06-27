@@ -36,6 +36,7 @@ const int INF32 = 1 << 30;
  * ABC292-F l,rが小数
  * ABC294-F 濃度(平均値)の最大化
  * ABC299-D インタラクティブ問題
+ * ABC300-F
  * ABC309-C
  * ABC313-E (別解)
  * ABC312-C
