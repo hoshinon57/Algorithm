@@ -15,7 +15,10 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
 // ABC162 https://atcoder.jp/contests/abc162
 
 /*
- * 動的計画法で解く。
+ * 動的計画法で解く。各種解説を見て、方針が近いのは以下だった。
+ *   https://kmjp.hatenablog.jp/entry/2020/04/12/1030
+ *   https://perogram.hateblo.jp/entry/abc162_f
+ *   https://blog.hamayanhamayan.com/entry/2020/04/12/224036
  * 
  * 例えばN=5のとき、どういう組み合わせが可能かを考える。
  * o:選ぶ, -:選ばない として、例えば以下が考えられる。
