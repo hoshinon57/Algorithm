@@ -220,7 +220,8 @@ int main(void)
 	ABC314-E
 	ABC323-E
 	ABC326-E
-	ABC350-E  ※自己ループあり
+	ABC350-E  自己ループあり
+	ABC360-E  場合の数を用いて遷移式を考える
 
 	[in-place DP, 参考問題]
 	ABC203-E
