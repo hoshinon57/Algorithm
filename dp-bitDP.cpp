@@ -60,6 +60,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC318-D
  * ABC310-D
  * ABC278-F
+ * ABC232-F
  * ABC215-E 実装大変だった もらうDPで解いた
  * ABC199-E
  * ABC187-F 部分集合の部分集合
