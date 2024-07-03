@@ -146,6 +146,7 @@ int main(void)
 	ABC269-C
 	ABC289-C
 	ABC345-D
+	ABC356-C
 	典型90-63
 	典型90-86
 	アルゴリズムと数学 068 https://atcoder.jp/contests/math-and-algorithm/
