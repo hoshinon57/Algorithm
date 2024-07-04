@@ -15,7 +15,8 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC203-D 難しかった
  * ABC278-E
  * ABC313-E (別解)
- * ABC331-D
+ * ABC331-D (Tile Pattern) ループ部分と端数部分をそれぞれ計算
+ * ABC354-D (AtCoder Wallpaper) ループ部分と端数部分をそれぞれ計算
  * 典型90-81 https://atcoder.jp/contests/typical90/tasks/typical90_cc
  */
 
