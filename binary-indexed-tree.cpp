@@ -31,12 +31,12 @@ using namespace std;
  * AOJ DSL_2_E https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_E&lang=ja  Range Add Query
  * AOJ ALDS1_5_D https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_5_D&lang=ja  反転数(転倒数)
  * AOJ 0365 https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0365&lang=ja
- * ARC033-C https://atcoder.jp/contests/arc033/tasks/arc033_3
- * ABC244-D https://atcoder.jp/contests/abc244/tasks/abc244_d
- * ABC221-E https://atcoder.jp/contests/abc221/tasks/abc221_e  難しかった
- * ABC153-F https://atcoder.jp/contests/abc153/tasks/abc153_f
- * ABC190-F https://atcoder.jp/contests/abc190/tasks/abc190_f  転倒数
- * ABC261-F https://atcoder.jp/contests/abc261/tasks/abc261_f  転倒数
+ * ARC033-C
+ * ABC244-D
+ * ABC221-E 難しかった
+ * ABC153-F
+ * ABC190-F 転倒数
+ * ABC261-F 転倒数
  */
 
 // Binary Indexed Treeを用いて以下(1)(2)(4)をO(logN)で計算する
