@@ -25,6 +25,7 @@ void _unordered_map_(void);
 void _stl_(void);
 void _structured_bindings_(void);
 void _aggregate_(void);
+void _optimize_(void);
 void _tie_(void);
 void _mex_(void);
 void _math_(void);
@@ -46,6 +47,7 @@ int main(void)
 	_stl_();
 	_structured_bindings_();
 	_aggregate_();
+	_optimize_();
 	_tie_();
 	_mex_();
 	_math_();
@@ -1521,6 +1523,23 @@ void _aggregate_(void)
 	vector<aggregate> va;
 	va.push_back({20, 30, "vec"});  // これは便利
 	assert(va.back().s == "vec");
+}
+
+// #pragmaを用いた最適化テクニックについて
+// 参考：https://qiita.com/ageprocpp/items/7bda728d109c953ece3c
+void _optimize_(void)
+{
+#if 0
+	// 以下3行を追加で、高速なバイナリが生成されるとのこと。
+	// 順に自動ベクトル化(SIMD), 最適化オプション、ループアンロール
+#pragma GCC target("avx2")
+#pragma GCC optimize("O3")
+#pragma GCC optimize("unroll-loops")
+
+	// ＞浮動小数点の計算が絡むときにも、次のpragmaでSIMDを有効化できます。
+	// とのこと。 [未施行]
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
+#endif
 }
 
 // pairやtupleの分解にはstd::tieを使える
