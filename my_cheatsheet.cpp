@@ -380,6 +380,7 @@ int main(void)
 	https://satanic0258.hatenablog.com/entry/2016/04/10/104524
 	[関連する問題]
 	ABC246-F
+	ABC361-F
 	典型90-80
 	アルゴリズムと数学 068 https://atcoder.jp/contests/math-and-algorithm/
 	EDPC-Y
