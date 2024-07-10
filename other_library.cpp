@@ -12,6 +12,7 @@ typedef long long ll;
  * ・bビット目の確認、ビットON/OFF isbiton, setbit, unbit
  * ・桁数を返す cal_digit
  * ・p^0～p^(n-1)を事前計算 cal_pow_inadv
+ * ・k乗根 kth_root_integer
  * ・N*N配列を回転 rotate
  * ・Y*X配列を回転 rotate_2, rotate_2_rev
  * ・nをbase進法で表したときの値 chg_base
@@ -56,6 +57,33 @@ vector<T> cal_pow_inadv(T p, int n, T m = 0)
 	for(int i = 1; i < n; i++) {
 		ret[i] = ret[i-1] * p;
 		if(m != 0) ret[i] %= m;
+	}
+	return ret;
+}
+
+// Luzhiled's Library より
+// https://ei1333.github.io/library/math/number-theory/kth-root-integer.hpp.html
+// aのk乗根を整数(切り捨て)で返す
+// 制約：0<=a<2^64, 1<=k<=64
+// 計算量：O(k*loglog(a))
+// 補足：制約のk上限を外したい場合、先頭の#ifを有効化する
+// #include <cstdint> が必要かも。AtCoderでは問題なかったが、Library CheckerではCEとなった。
+uint64_t kth_root_integer(uint64_t a, int k) {
+	if (k == 1) return a;
+#if 1	// Libraryから追加 kを上限クリップしたい場合はこちらを有効
+	if (a <= 1 || k == 1) return a;	// a=0時に0を返したいため、必要
+	if (k >= 64) return 1;
+#endif
+	auto check = [&](uint32_t x) {
+		uint64_t mul = 1;
+		for (int j = 0; j < k; j++) {
+			if (__builtin_mul_overflow(mul, x, &mul)) return false;
+		}
+		return mul <= a;
+	};
+	uint64_t ret = 0;
+	for (int i = 31; i >= 0; i--) {
+		if (check(ret | (1u << i))) ret |= 1u << i;
 	}
 	return ret;
 }
