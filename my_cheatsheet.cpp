@@ -410,6 +410,16 @@ int main(void)
 	ABC353-D
 	ABC356-E 累積和や調和級数など、難しかったが良問
 	*/
+
+	/*
+	ac-library(AtCoder Library) 検索用:ACL
+	https://atcoder.github.io/ac-library/master/document_ja/
+	https://github.com/atcoder/ac-library/tree/master?tab=readme-ov-file
+	#include <atcoder/all>
+	using namespace atcoder;
+	[使用した問題]
+	ABC362-G suffix array
+	*/
 	return 0;
 }
 
