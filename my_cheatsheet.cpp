@@ -544,6 +544,7 @@ void _string_(void)
 	assert(str.substr(2, 3) == "234");  // str[2]から3文字
 	assert(str.substr(3) == "345");  // str[3]以降の文字列
 	assert(str.substr(str.size() - 4) == "2345");  // 末尾から4文字取り出したい場合
+	assert(str.substr(2, 100) == "2345");  // 切り出し数が大きくてもOK 末尾まで切り出してくれる
 
 	// 文字列の検索:find()
 	str = "0123450";
