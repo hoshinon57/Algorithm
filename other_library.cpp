@@ -21,6 +21,7 @@ typedef long long ll;
  * ・extgcd
  * ・SCC
  * ・3x3のマス目について縦/横/斜めがそろったかを判定 -> ABC349-E.cppを参照
+ * ・文字列が回文かを判定 is_palindrome
  */
 
 // a/b以下の最大の整数(床関数) floor(5,2)=2, floor(-5,2)=-3
@@ -354,6 +355,21 @@ void Test_AOJ_GRL_3_C(void)
 // 3x3のマス目について縦/横/斜めがそろったかどうかを判定するコード
 // ABC349-E.cppを参照
 
+// 文字列sについて、stからk文字、つまり[st,st+k)の部分文字列が回文かを判定する
+// 回文ならtrue
+// st,kが未指定のときはs全体に対して判定する
+bool is_palindrome(string &s, int st = -1, int k = -1)
+{
+	if(st == -1) { st = 0; k = (int)s.size(); }
+	int ed = st+k-1;
+	while(st <= ed)
+	{
+		if(s[st] != s[ed]) return false;
+		st++; ed--;
+	}
+	return true;
+}
+
 int main(void)
 {
 	assert(floor_div( 5,  2) ==  2);
@@ -454,9 +470,25 @@ int main(void)
 		assert(c2 == d);
 	}
 
-	string s = "abCD";
-	for(auto &e : s) e = revLowUp(e);
-	assert(s == "ABcd");
+	{
+		string s = "abCD";
+		for(auto &e : s) e = revLowUp(e);
+		assert(s == "ABcd");
+	}
+
+	{
+		string s;
+		s = "abcba";	assert( is_palindrome(s));  // s全体 奇数 
+		s = "abba";		assert( is_palindrome(s));  // s全体 偶数
+		s = "abcbz";	assert(!is_palindrome(s));  // s全体 奇数
+		s = "abbz";		assert(!is_palindrome(s));  // s全体 偶数
+		s = "a";		assert( is_palindrome(s));  // s全体 1文字
+		s = "abcdczzyz";
+		assert( is_palindrome(s, 2, 3));
+		assert( is_palindrome(s, 5, 2));
+		assert(!is_palindrome(s, 1, 3));
+		assert(!is_palindrome(s, 5, 4));  // 1文字目は一致するが、2文字目に不一致
+	}
 
 	return 0;
 }
