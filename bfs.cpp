@@ -47,6 +47,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC259-D
  * ABC257-F 超頂点
  * ABC257-D
+ * ABC244-F bitDPっぽいのをBFSで解く
  * ABC232-D
  * ABC231-D サイクル検出
  * ABC226-E
