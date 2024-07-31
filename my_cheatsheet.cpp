@@ -7,6 +7,7 @@
 #include <queue>
 #include <unordered_set>
 #include <unordered_map>
+#include <bitset>
 #include <cassert>
 #include <numeric>
 using namespace std;
@@ -27,6 +28,7 @@ void _structured_bindings_(void);
 void _aggregate_(void);
 void _optimize_(void);
 void _tie_(void);
+void _bitset_(void);
 void _mex_(void);
 void _math_(void);
 void _value_with_index_(void);
@@ -49,6 +51,7 @@ int main(void)
 	_aggregate_();
 	_optimize_();
 	_tie_();
+	_bitset_();
 	_mex_();
 	_math_();
 	_value_with_index_();
@@ -1577,6 +1580,34 @@ void _tie_(void)
 	// 代入不要の要素がある場合、std::ignoreを指定する
 	tie(a, std::ignore) = data;
 	assert(b == "Hoge");
+}
+
+// ビット集合を表す型。N桁の2進数ともみなせる。
+// 競プロでは定数倍を1/64にして高速化を図る問題が存在する。
+// #include <bitset> が必要。
+// 参考：
+//   https://cpprefjp.github.io/reference/bitset/bitset.html
+//   https://qiita.com/SSK_Ayagawa/items/544a277101948f8307bb
+//   https://qiita.com/e869120/items/518297c6816adb67f9a5
+//   https://w.atwiki.jp/vivid_turtle/pages/40.html  bitsetでの定数倍改善
+void _bitset_(void)
+{
+	cout << "-----bitset-----" << endl;
+	bitset<8> bs("10000001");  // 長さ8 長さは固定サイズであること
+	// set, reset:指定したビットを1,0にする
+	bs.set(1);
+	bs.reset(0);
+	assert(bs.to_string() == "10000010");  // 文字列化が可能 bitsetのメンバ関数を使う
+
+	// 論理演算は &,|,^,~ が可能
+	bs |= bitset<8>("01110000");  // "11110010"
+	bs = ~bs;  // "00001101";
+	assert(bs == bitset<8>("00001101"));
+
+	// シフト演算
+	bs <<= 3;  // 3ビット左シフト
+	bs >>= 2;
+	assert(bs == bitset<8>("00011010"));
 }
 
 // a[]の要素に含まれない最小の非負整数を返す
