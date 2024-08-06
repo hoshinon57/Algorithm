@@ -1,10 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cassert>
 using namespace std;
 
-// Union-Findのテンプレート
-// 「問題解決力を鍛える!アルゴリズムとデータ構造」のcode11.3を写経したもの
+// Union-Findのライブラリ
 
 /*
  * ＞辺の追加と連結性の判定を得意とするデータ構造は Union Find である. 
@@ -41,6 +41,7 @@ using namespace std;
  * AOJ 1160 https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1160&lang=jp
  */
 
+// 「問題解決力を鍛える!アルゴリズムとデータ構造」のcode11.3を写経したもの
 struct UnionFind
 {
 	vector<int> parent;  // parent[x]:xの親の番号 xが根であれば-1
@@ -106,11 +107,11 @@ int main(void)
 	uf.unite(1,2);
 	uf.unite(2,3);  // {0}, {1,2,3}, {4}, {5}, {6}
 	uf.unite(5,6);  // {0}, {1,2,3}, {4}, {5,6}
-	cout << uf.issame(1,3) << endl;  // true
-	cout << uf.issame(2,5) << endl;  // false
+	assert( uf.issame(1,3));
+	assert(!uf.issame(2,5));
 
 	uf.unite(1,5);  // {0}, {1,2,3,5,6}, {4}
-	cout << uf.issame(2,5) << endl;  // 今度はtrue
+	assert(uf.issame(1,3));  // 今度はtrue
 
 	return 0;
 }
