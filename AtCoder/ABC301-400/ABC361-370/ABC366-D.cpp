@@ -2,23 +2,23 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <iomanip>
 using namespace std;
 typedef long long ll;
-const ll INF64 = 1LL << 60;
+// const ll INF64 = 1LL << 60;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// 累積和のメモ、ライブラリ
+// ABC366 https://atcoder.jp/contests/abc366
 
 /*
- * [関連する問題]
- * ABC005-D
- * ABC203-D 難しかった
- * ABC278-E
- * ABC313-E (別解)
- * ABC331-D (Tile Pattern) ループ部分と端数部分をそれぞれ計算
- * ABC354-D (AtCoder Wallpaper) ループ部分と端数部分をそれぞれ計算
- * ABC366-D 三次元累積和だが、制約より二次元累積和をN回繰り返しても間に合う
- * 典型90-81 https://atcoder.jp/contests/typical90/tasks/typical90_cc
+ * 二次元累積和で解く。
+ * 
+ * 解説では三次元累積和を構築していたが、制約よりO(NQ)が間に合うので
+ * 二次元累積和をN個作ってクエリごとにlx～rxの範囲で加算する方法でも間に合う。
  */
 
 // 2次元累積和のライブラリ
@@ -81,5 +81,38 @@ public:
 
 int main(void)
 {
+	int i, j, k;
+	int N; cin >> N;
+	vector<PrefixSum_2D<int>> sum;
+	sum.resize(N, PrefixSum_2D<int>(N, N));  // xを固定してy,zについての二次元累積和
+	for(i = 0; i < N; i++)  // x
+	{
+		for(j = 0; j < N; j++)  // y
+		{
+			for(k = 0; k < N; k++)  // z
+			{
+				int a; cin >> a;
+				sum[i].n[j][k] = a;
+			}
+		}
+		sum[i].Build();
+	}
+
+	int Q; cin >> Q;
+	while(Q > 0)
+	{
+		Q--;
+		int lx, rx, ly, ry; cin >> lx >> rx >> ly >> ry;
+		int lz, rz; cin >> lz >> rz;
+		lx--; rx--; ly--; ry--; lz--; rz--;
+		rx++; ry++; rz++;  // 0-indexed [lx,rx)
+		int ans = 0;
+		for(i = lx; i < rx; i++)
+		{
+			ans += sum[i].Sum(ly, ry, lz, rz);
+		}
+		cout << ans << endl;
+	}
+
 	return 0;
 }
