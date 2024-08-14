@@ -166,6 +166,7 @@ char revLowUp(char c) {
  * 
  * [関連する問題]
  * ABC358-D
+ * ABC366-E 難しかったが良問
  */
 void shakutori(void) {
 	// 書きかけ
