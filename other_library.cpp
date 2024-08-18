@@ -4,8 +4,8 @@
 #include <limits>  // numeric_limits
 #include <cassert>
 #include <array>
-#include <random>  // rng
-#include <chrono>  // rng
+#include <random>  // rng_64
+#include <chrono>  // rng_64
 using namespace std;
 typedef long long ll;
 
