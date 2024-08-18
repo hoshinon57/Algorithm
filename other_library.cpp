@@ -3,6 +3,9 @@
 #include <algorithm>
 #include <limits>  // numeric_limits
 #include <cassert>
+#include <array>
+#include <random>  // rng
+#include <chrono>  // rng
 using namespace std;
 typedef long long ll;
 
@@ -13,6 +16,7 @@ typedef long long ll;
  * ・桁数を返す cal_digit
  * ・p^0～p^(n-1)を事前計算 cal_pow_inadv
  * ・k乗根 kth_root_integer
+ * ・乱数生成 rng_64
  * ・N*N配列を回転 rotate
  * ・Y*X配列を回転 rotate_2, rotate_2_rev
  * ・nをbase進法で表したときの値 chg_base
@@ -87,6 +91,27 @@ uint64_t kth_root_integer(uint64_t a, int k) {
 		if (check(ret | (1u << i))) ret |= 1u << i;
 	}
 	return ret;
+}
+
+// [lo,hi]の区間の乱数を返す(閉区間)
+// 必要なincludeは以下2つ
+//   #include <random>
+//   #include <chrono>
+// 型はlong longで決め打ちしている。(mt19937_64を使っており、生成される値は64bit)
+// 参考：
+//   https://betrue12.hateblo.jp/entry/2019/09/07/171628
+//   https://zenn.dev/mafafa/articles/f1030c3a014d4e
+//   https://ei1333.github.io/luzhiled/snippets/other/random-number-generator.html
+//   https://yosupo.hatenablog.com/entry/2024/06/14/064913
+//   https://rsk0315.hatenablog.com/entry/2020/09/02/164428
+//   https://cpprefjp.github.io/reference/random/mt19937_64.html
+//   https://cpprefjp.github.io/reference/random/uniform_int_distribution.html
+long long rng_64(long long lo, long long hi) {
+	// static std::random_device rd;  // random_deviceを使うのは避けた方が良い環境があるらしい
+	// static std::mt19937_64 rng(rd());
+	static auto seed = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()).count();
+	static std::mt19937_64 rng(seed);
+	return std::uniform_int_distribution<long long>(lo, hi)(rng);  // [lo,hi]の範囲での乱数を生成
 }
 
 // 要素がN*Nであるaについて、右に90度回転させる
@@ -428,6 +453,25 @@ int main(void)
 		assert(p.size() == (int)11);
 	}
 	
+	// rng_64
+	// 乱数のため厳密なテストはできないが、可能な範囲で
+	{
+		const ll INF = 1LL<<61;
+		vector<array<ll,2>> test = {{0, 99}, {INF-99, INF}};  // [lo,hi]
+		for(auto &e : test)
+		{
+			for(int i = 0; i < 10000; i++)  // ざっと1万回回し、[lo,hi]の範囲が返ってくることのテスト
+			{
+				ll r = rng_64(e[0], e[1]);
+				assert(e[0] <= r && r <= e[1]);
+			}
+			// 下限と上限が返ってくることのテスト (範囲は100なので、すぐ終わるでしょという考え方)
+			while(true) { if(rng_64(e[0], e[1]) == e[0]) break; }
+			while(true) { if(rng_64(e[0], e[1]) == e[1]) break; }
+		}
+		cout << "rng_64() test OK" << endl;
+	}
+
 	{
 		vector<vector<int>> a(4, vector<int>(4)), b(4, vector<int>(4));
 		a = {{1,0,0,0},
