@@ -12,6 +12,7 @@
 #include <numeric>
 using namespace std;
 
+void _vector_(void);
 void _string_(void);
 void _set_multiset_(void);
 void _priority_queue_(void);
@@ -35,6 +36,7 @@ void _value_with_index_(void);
 
 int main(void)
 {
+	_vector_();
 	_priority_queue_();
 	_set_multiset_();
 	_pow_();
@@ -463,7 +465,8 @@ long long gcd(long long a, long long b)
 
 void _vector_(void)
 {
-	// vector<int> a = {3, 1, 4, 1, 5};  // 定義時に要素を指定
+	cout << "-----vector-----" << endl;
+	vector<int> a = {3,1,4,1,5,9};  // 定義時に要素を指定
 	/*
 	vectorの二次元配列
 	a[X][Y]
@@ -482,6 +485,8 @@ void _vector_(void)
 	vector<vector<int>> a(X, vector<int>());
 	vector<vector<int>> a(X);
 	*/
+	vector<int> b(a.begin()+2, a.begin()+5);  // [2,5) で初期化  他の要素を使って初期化できる 
+	assert(b == vector<int>({4, 1, 5}));
 	/*
 	vectorの三次元配列
 	a[X][Y][Z]  -1で初期化
