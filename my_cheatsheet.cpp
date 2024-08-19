@@ -1773,3 +1773,29 @@ void _value_with_index_(void)
 		for(i = 0; i < N; i++) after_idx[a_idx[i]] = i;  // {4, 0, 2, 1, 3}
 	}
 }
+
+// Zobrist Hashのメモ
+void _zobrist_hash_(void)
+{
+	/*
+	[概要]
+	集合をハッシュすることで、2つの集合の一致判定を高確率で判定できる。判定の計算量はO(1).
+	多重集合でも利用可能。後述。
+
+	1.集合の要素にランダムな整数を割り当てる。
+	2.集合のハッシュは割り当てられた整数をxorしたもの。
+
+	多重集合の場合、割り当てられた整数を偶数回xorすると0になってしまい、区別がつかない。
+	xorではなく加算することでハッシュにできる。かんたん。
+	https://x.com/chokudai/status/875112616523218944/quotes
+
+	[参考]
+	https://trap.jp/post/1594/
+	https://cympfh.cc/procon/hash.zobrist.html
+	https://blog.hamayanhamayan.com/entry/2017/05/24/154618
+	https://qiita.com/a_uchida/items/bec46c20fd2965c6e1a0
+
+	[関連する問題]	
+	ABC367-F
+	*/
+}
