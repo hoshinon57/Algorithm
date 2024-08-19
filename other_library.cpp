@@ -93,6 +93,7 @@ uint64_t kth_root_integer(uint64_t a, int k) {
 	return ret;
 }
 
+// [使用した問題]ABC367-F
 // [lo,hi]の区間の乱数を返す(閉区間)
 // 必要なincludeは以下2つ
 //   #include <random>
