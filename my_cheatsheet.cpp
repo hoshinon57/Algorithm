@@ -426,7 +426,14 @@ int main(void)
 	https://github.com/atcoder/ac-library/tree/master?tab=readme-ov-file
 	#include <atcoder/all>
 	using namespace atcoder;
+
+	[中国剰余定理]
+	crt()
+	https://atcoder.github.io/ac-library/production/document_ja/math.html
+	三元以上の場合、m1,m2,...,miについて「どの2つも互いに素」であること。
+
 	[使用した問題]
+	ABC286-F crt(中国剰余定理)
 	ABC362-G suffix array
 	*/
 	return 0;
