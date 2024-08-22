@@ -1397,7 +1397,7 @@ void _stl_(void)
 	cout << "-----stl-----" << endl;
 
 	// 以下に記載している標準ライブラリ
-	// reverse, find, count, max(min), max_element(min), reduce
+	// reverse, find, count, max(min), max_element(min), reduce, merge
 
 	/*
 	コンテナ使用時、要素の追加や削除操作には要注意。「イテレータ破壊」が発生する可能性がある。
@@ -1493,6 +1493,19 @@ void _stl_(void)
 	// 合計値を特定の型にしたい場合、第3引数にて指定する
 	reduce(a_v.begin(), a_v.end(), 0LL);  // long long型で計算
 	reduce(a_v.begin(), a_v.end(), 0.0);  // double型で計算
+
+	// 2つのソート済みイテレータ範囲をマージする:std::merge
+	// 結果のイテレータ範囲と入力のイテレータ範囲は重なってはならない
+	// back_inserterは引数にpush_back()を繰り返し行うイメージ
+	//   https://cpprefjp.github.io/reference/algorithm/merge.html
+	//   https://cpprefjp.github.io/reference/iterator/back_insert_iterator.html
+	{
+		vector<int> v1 = {1, 3, 10};
+		vector<int> v2 = {2, 4, 5};
+		vector<int> result;
+		std::merge(v1.begin(), v1.end(), v2.begin(), v2.end(), std::back_inserter(result));
+		assert(result == vector<int>({1, 2, 3, 4, 5, 10}));
+	}
 }
 
 // 構造化束縛に関するメモ
