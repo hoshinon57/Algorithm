@@ -1495,8 +1495,10 @@ void _stl_(void)
 	reduce(a_v.begin(), a_v.end(), 0.0);  // double型で計算
 
 	// 2つのソート済みイテレータ範囲をマージする:std::merge
+	// 入力がソート済みであることで、マージソートの要領で全体としてソートされた要素を得られる
 	// 結果のイテレータ範囲と入力のイテレータ範囲は重なってはならない
 	// back_inserterは引数にpush_back()を繰り返し行うイメージ
+	// 計算量はO(N).
 	//   https://cpprefjp.github.io/reference/algorithm/merge.html
 	//   https://cpprefjp.github.io/reference/iterator/back_insert_iterator.html
 	{
