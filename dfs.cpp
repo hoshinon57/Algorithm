@@ -51,11 +51,20 @@ using namespace std;
  * 連想配列を使う場合のグラフの定義方法は、このフォルダにあるgraph.cppを参考のこと。
  */
 
-
-// 以下は基本パターンでの実装。
-// 2つの頂点s->tへのパスが存在するかを判定する。
-
 using Graph = vector<vector<int>>;
+
+// 実装テンプレートやライブラリ一覧
+void dfs(Graph &graph, int v);  // [実装テンプレート]頂点vから深さ優先探索する
+void dfs_tree(Graph &g, int v, int p);  // [実装テンプレート]木であるグラフにてDFS
+void dfs_tree_depth(Graph &grp, vector<int> &d, int v, int p, int now);  // [ライブラリ]各頂点の深さを計算
+int dfs_tree_subnum(Graph &grp, vector<int> &n, int v, int p);  // [ライブラリ]各頂点vを部分木としたときの頂点数計算
+// [ライブラリ]有向グラフにてサイクル検索
+bool dfs_cycle_detection_directed(Graph &g, int v, vector<bool> &seen, vector<bool> &finished, vector<int> &history);
+// [ライブラリ]無向グラフにてサイクル検索
+bool dfs_cycle_detection_undirected(Graph &g, int v, int p /* =-1 */, vector<bool> &seen, vector<bool> &finished, vector<int> &history);
+// [ライブラリ]二部グラフか判定
+bool dfs_bipartite(Graph &g, int v, vector<int> &col, int cur);
+
 vector<bool> seen;  // seen[i]:頂点iが探索済みならtrue
 
 // 頂点vから深さ優先探索する
@@ -244,6 +253,8 @@ int main(void)
 		graph[b].push_back(a);  // 無向グラフの場合
 	}
 
+	// 以下は基本パターンでの実装。
+	// 2つの頂点s->tへのパスが存在するかを判定する。
 	seen.assign(N, false);  // 全頂点を未探索に初期化
 	int s = 0;  // 始点
 	int t = N-1;  // 終点
