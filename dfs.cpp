@@ -59,6 +59,8 @@ void dfs(Graph &graph, int v);  // [実装テンプレート]頂点vから深さ
 void dfs_tree(Graph &g, int v, int p);  // [実装テンプレート]木であるグラフにてDFS
 void dfs_tree_depth(Graph &grp, vector<int> &d, int v, int p, int now);  // [ライブラリ]各頂点の深さを計算
 int dfs_tree_subnum(Graph &grp, vector<int> &n, int v, int p);  // [ライブラリ]各頂点vを部分木としたときの頂点数計算
+// [ライブラリ]頂点s,tのパス上の頂点一覧を求める
+bool dfs_tree_path(Graph &grp, int s, int t, vector<int> &path, int rev, int p);
 // [ライブラリ]有向グラフにてサイクル検索
 bool dfs_cycle_detection_directed(Graph &g, int v, vector<bool> &seen, vector<bool> &finished, vector<int> &history);
 // [ライブラリ]無向グラフにてサイクル検索
