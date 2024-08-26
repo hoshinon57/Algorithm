@@ -134,6 +134,33 @@ int dfs_tree_subnum(Graph &grp, vector<int> &n, int v, int p = -1)
 	return n[v];
 }
 
+// [verify]ABC267-F
+// 木であるグラフについて、頂点s,tのパスを探索し通る頂点一覧をpath[]に設定する
+// 呼び出し元からは dfs(g, s, t, path) のように呼び出す
+// 初回呼び出し時にs,tをswapするため(※)、もし有向グラフにて使いたい場合はrev=0として呼び出すこと
+// (※)探索アルゴリズムより、pathにはt->s方向のパスが格納されるため
+// s-tパスが存在しない場合は、pathに変化なし
+// p:sの親
+bool dfs_tree_path(Graph &grp, int s, int t, vector<int> &path, int rev = 1, int p = -1)
+{
+	if(rev == 1) swap(s, t);
+	if(s == t)
+	{
+		path.push_back(s);
+		return true;
+	}
+	for(auto &e : grp[s])
+	{
+		if(e == p) continue;
+		if(dfs_tree_path(grp, e, t, path, 0, s))
+		{
+			path.push_back(s);
+			return true;
+		}
+	}
+	return false;
+}
+
 // 有向グラフにて、頂点vを起点にDFS.
 // サイクルを見つけたらtrueを返す。その場合、vからサイクル終端までをhistoryに保持する。
 //   historyの例：0->1->2->3->4->2  サイクルは2-3-4の部分。末尾の2が2回出てくることに注意すること。
