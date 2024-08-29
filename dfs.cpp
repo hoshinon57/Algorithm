@@ -136,7 +136,7 @@ int dfs_tree_subnum(Graph &grp, vector<int> &n, int v, int p = -1)
 	return n[v];
 }
 
-// [verify]ABC267-F
+// [verify]ABC267-F, ABC152-F
 // 木であるグラフについて、頂点s,tのパスを探索し通る頂点一覧をpath[]に設定する
 // 呼び出し元からは dfs(g, s, t, path) のように呼び出す
 // 初回呼び出し時にs,tをswapするため(※)、もし有向グラフにて使いたい場合はrev=0として呼び出すこと
