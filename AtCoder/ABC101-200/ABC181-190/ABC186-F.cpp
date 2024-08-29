@@ -1,66 +1,45 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <iomanip>
 #include <functional>  // function
 #include <limits>  // numeric_limits
-#include <cassert>
 using namespace std;
 typedef long long ll;
-const ll INF64 = 1LL << 60;
+// const ll INF64 = 1LL << 60;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// 抽象化版セグメント木のメモや実装
-// ★注意★ #include <functional> を忘れずに。ローカル環境では無くてもビルドが通るが、AtCoderではCEになる。
+// ABC186 https://atcoder.jp/contests/abc186
 
 /*
- * [ざっくり概要]
- * ・区間上の値を更新する
- * ・任意の区間における最小値や合計値を取得する
- * といった処理をO(logN)でできるデータ構造。
- * 要素には任意のモノイドを用いることができる(抽象化)。
+ * 自力で解けず、解説をチラ見した。セグメントツリーを用いて解く。
+ *   https://atcoder.jp/contests/abc186/editorial/400
+ *   https://drken1215.hatenablog.com/entry/2020/12/20/111600
+ *   https://fairy-lettuce.hatenadiary.com/entry/2020/12/19/224002
  * 
- * SegmentTree:
- *   以下の操作をO(logN)で処理できる。
- *   (1)Update(x, val) : 要素xをvalで更新する
- *   (2)Query(a, b) : 区間[a,b)にある要素のモノイド積を返す
- *   0-indexed, および半開区間で処理する。
- *   コンストラクタには (size:要素数, fx_:二項演算, ex_:単位元) を指定する。
- *   ★代表的なfx,exはmain()に記述している。
+ * 以下、0-indexedで記載する。また入力のX,Yを反転している(直感と反対だったため)。
  * 
- * [Tips]
- * ・木の最下段のノード数は、問題文にて指定されるsize以上の2のべき乗。
- *   これをNとすると、最下段のノード数はN, それより上の段のノードは全部でN-1.
- *   よって木全体で必要なノード数は 2N-1 となる。
- * ・要素xをnode[]の添字番号に変換する場合：N-1を加算する
- * ・親から子へ行く場合、 k -> 2k+1, 2k+2
- * ・子から親へ行く場合、 k -> (k-1)/2  (切り捨て)
+ * 各種解説とは少し異なる方針になったと思われる。
+ * 各行ごと見ていき、「下右の順で行けるマス」「下右の順では行けず、右下の順では行けるマス」をカウントしていく。
  * 
- * [参考資料]
- *   https://algo-logic.info/segment-tree/
- *   https://tsutaj.hatenablog.com/entry/2017/03/29/204841
+ * gyou[y]={x1,x2,x3,...}を、y行目にある障害物のx座標とする。実装では各行に番兵を入れている。
+ * 前述のカウントを以下のように計算していく。
+ * (1)下右の順で行けるマス
+ *   X座標が [0, gyou[y][0]) の半開区間であるマスが対象。単純にO(1)で足せばよい。
+ * (2)下右の順では行けず、右下の順では行けるマス
+ *   これまでの行で(今見ている行も含む)障害物があったX座標には、行けない。
+ *   よってセグ木で要素iを「X=iにこれまで障害物があったかどうか」で管理すれば、
+ *   [gyou[y][0], W) の半開区間にて行けるマスは求めることができる。
  * 
- * [関連する問題 / verifyした問題]
- * AOJ DSL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
- * ABC125-C
- * ABC140-E
- * ABC157-E
- * ABC186-F
- * ABC223-F
- * ABC231-F
- * ABC254-F GCD
- * ABC276-F
- * ABC283-F セグ木4本
- * ABC285-F
- * ABC306-F
- * ABC331-F
- * ABC334-F
- * ABC339-E
- * ABC341-E
- * ABC343-F
- * ABC351-F 平面走査
- * ABC353-G
- * 典型90-37
+ * 0行目に障害物があるケースと、0列目に障害物があるケースに注意。
+ * 前者は、そこより右の全マスに障害物があると処理すれば楽。
+ * 後者は、そこより下の全マスに障害物があると処理すれば楽。
+ * それぞれ、y0_xmin, x0_yminを参照。
  */
 
 // (1)Update(x, val) : 要素xをvalで更新する
@@ -220,134 +199,45 @@ public:
 	}
 };
 
-void Test(void)
-{
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	vector<int> v = {3, 1, 4, 1, 5, 9};
-	SegmentTree<T> seg(v.size(), fx, ex);
-	for(int i = 0; i < (int)v.size(); i++)
-	{
-		seg.Set(i, v[i]);
-	}
-	seg.Build();
-
-	assert(seg.Query(0, 6) == 1);
-	assert(seg.Query(0, 3) == 1);
-	assert(seg.Query(3, 4) == 1);
-	assert(seg.Query(4, 5) == 5);
-	seg.Update(6, -1);
-	seg.Update(2, 0);
-	assert(seg.Query(0, 7) == -1);
-	assert(seg.Query(1, 4) == 0);
-	for(int i = 0; i < (int)v.size(); i++)
-	{
-		assert(seg.Get(i) ==  seg.Query(i, i+1));
-	}
-
-	// Find_Leftmost(),Find_Rightmost()のテスト
-	{
-		vector<int> a = {3, 1, 4, 1, 5, 9, 2};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(1, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 7, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 0) == 7);
-		assert(seg2.Find_Leftmost(2, 3, 4) == 2);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 10) == 0);
-		assert(seg2.Find_Rightmost(0, 7, 1) == 3);
-		assert(seg2.Find_Rightmost(0, 4, 1) == 3);
-		assert(seg2.Find_Rightmost(0, 3, 1) == 1);
-		assert(seg2.Find_Rightmost(0, 7, 0) == -1);
-		assert(seg2.Find_Rightmost(0, 7, 10) == 6);
-	}
-	{
-		vector<int> a = {1, 1, 1};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 3, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 2);
-		assert(seg2.Find_Leftmost(0, 2, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(0, 3, -1) == 3);
-		assert(seg2.Find_Rightmost(0, 3, 1) == 2);
-		assert(seg2.Find_Rightmost(2, 3, 1) == 2);
-		assert(seg2.Find_Rightmost(0, 1, 1) == 0);
-		assert(seg2.Find_Rightmost(0, 3, -1) == -1);
-	}	
-}
-
 int main(void)
 {
-	/*
-	[代表的なfx,exの例]
-	Range Minimum Query(RMQ)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	---------------
-
-	Range Sum Query(RSQ)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return x1+x2; };
-	T ex = 0;
-	---------------
-
-	Range OR Query(ABC157-E)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return x1|x2; };
-	T ex = 0;
-	---------------
-
-	Range GCD Query(ABC125-C)
-	---------------
-	using T = ll;
-	auto fx = gcd;
-	T ex = 0;  // gcd(a,0)=a のため
-	---------------
-	*/
-	Test();
-
-	// 以下は AOJ DSL_2_A のもの
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	int n, q;
-	cin >> n >> q;
-	SegmentTree<T> seg(n, fx, ex);
-	for(int i = 0; i < n; i++) seg.Set(i, (1UL<<31)-1);
-	seg.Build();
-
-	int c, x, y;
-	while(q > 0)
+	// 0-indexed
+	// 入力とX,Y反転する
+	int i;
+	int H, W, M; cin >> H >> W >> M;
+	vector<vector<int>> gyou(H);  // gyou[y]={x1,x2,x3,...} y行目にある障害物のx座標
+	int x0_ymin = INF32;  // X=0に障害物がある行の、最も小さいYの値
+	int y0_xmin = INF32;  // Y=0に障害物がある列の、最も小さいXの値
+	for(i = 0; i < M; i++)
 	{
-		cin >> c >> x >> y;
-		if(c == 0)  // update
-		{
-			seg.Update(x, y);
-		}
-		else  // find
-		{
-			cout << seg.Query(x, y+1) << endl;  // 閉区間->半開区間への変換
-		}
-		q--;
+		int y, x; cin >> y >> x;
+		y--; x--;
+		gyou[y].push_back(x);
+		if(x == 0) chmin(x0_ymin, y);
+		if(y == 0) chmin(y0_xmin, x);
 	}
+	for(i = y0_xmin+1; i < W; i++) gyou[0].push_back(i);  // 0行目に障害物がある場合、そこより右は全て障害物があるとしてしまう
+	for(i = x0_ymin+1; i < H; i++) gyou[i].push_back(0);
+	for(auto &e : gyou)
+	{
+		e.push_back(W);  // 各行に番兵
+		sort(e.begin(), e.end());
+	}
+
+	using T = int;
+	auto fx = [](T x1, T x2) -> T { return x1+x2; };  // RSQ
+	T ex = 0;
+	SegmentTree<T> seg(W+5, fx, ex);  // 要素i:これまでの行で、i列目に障害物があったなら1
+	ll ans = 0;
+	for(auto &e1 : gyou)
+	{
+		// 下右の順で行けるマス
+		ans += e1[0];
+		// 下右の順では行けず、右下の順では行けるマス
+		for(auto &e2 : e1) seg.Update(e2, 1);  // まず、障害物がある列番号を1に
+		ans += (W-e1[0]) - seg.Query(e1[0], W);  // [e1[0],W) の区間について、セグ木から引いた値が、行けるマス
+	}
+	cout << ans << endl;
 
 	return 0;
 }
