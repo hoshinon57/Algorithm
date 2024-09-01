@@ -1,67 +1,47 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <iomanip>
 #include <functional>  // function
 #include <limits>  // numeric_limits
-#include <cassert>
 using namespace std;
 typedef long long ll;
-const ll INF64 = 1LL << 60;
+// const ll INF64 = 1LL << 60;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// 抽象化版セグメント木のメモや実装
-// ★注意★ #include <functional> を忘れずに。ローカル環境では無くてもビルドが通るが、AtCoderではCEになる。
+// ABC369 https://atcoder.jp/contests/abc369
 
 /*
- * [ざっくり概要]
- * ・区間上の値を更新する
- * ・任意の区間における最小値や合計値を取得する
- * といった処理をO(logN)でできるデータ構造。
- * 要素には任意のモノイドを用いることができる(抽象化)。
+ * 自力で解けず、Twitterの「セグ木で解いた」というツイートやsnuke氏の実装を見たりした。
+ * 平面走査の考え方、とのこと。
+ *   https://atcoder.jp/contests/abc369/submissions/57337651
  * 
- * SegmentTree:
- *   以下の操作をO(logN)で処理できる。
- *   (1)Update(x, val) : 要素xをvalで更新する
- *   (2)Query(a, b) : 区間[a,b)にある要素のモノイド積を返す
- *   0-indexed, および半開区間で処理する。
- *   コンストラクタには (size:要素数, fx_:二項演算, ex_:単位元) を指定する。
- *   ★代表的なfx,exはmain()に記述している。
+ * コインを上から順、同じ行なら左から順に見ていく。
+ * すると座標(r,c)にあるコインを取る際、それが最大で何枚目であるかは
+ *   列が[0,c+1)の範囲にて取れる最大の枚数+1
+ * となる。
  * 
- * [Tips]
- * ・木の最下段のノード数は、問題文にて指定されるsize以上の2のべき乗。
- *   これをNとすると、最下段のノード数はN, それより上の段のノードは全部でN-1.
- *   よって木全体で必要なノード数は 2N-1 となる。
- * ・要素xをnode[]の添字番号に変換する場合：N-1を加算する
- * ・親から子へ行く場合、 k -> 2k+1, 2k+2
- * ・子から親へ行く場合、 k -> (k-1)/2  (切り捨て)
+ * よってセグ木のi番目の要素として、
+ *   列iにてコインを取ったとして、{それまでに取れるコインの最大枚数, 最後に取ったコインの番号}
+ * という情報を乗せれば上手くいく。
+ * 最後に取った～は、出力時の復元に必要。
+ * また、pre_idx[i]に、i番目のコインを取るとして、その手前に取るべきコインの番号 として定義しておく。
  * 
- * [参考資料]
- *   https://algo-logic.info/segment-tree/
- *   https://tsutaj.hatenablog.com/entry/2017/03/29/204841
+ * コインを最後まで見ながらセグ木を更新していくと、
+ * seg.Query(0, W+1) にて最大枚数と最後に取ったコイン番号が得られる。
+ * 後者とpre_idxを使って経路を復元していく。
+ * 詳細は実装を参照。
  * 
- * [関連する問題 / verifyした問題]
- * AOJ DSL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
- * ABC125-C
- * ABC140-E
- * ABC157-E
- * ABC186-F
- * ABC223-F
- * ABC231-F
- * ABC254-F GCD
- * ABC276-F
- * ABC283-F セグ木4本
- * ABC285-F
- * ABC306-F
- * ABC331-F
- * ABC334-F
- * ABC339-E
- * ABC341-E
- * ABC343-F
- * ABC351-F 平面走査
- * ABC353-G
- * ABC369-F 平面走査
- * 典型90-37
+ * [どう思考すれば解法にたどり着けるか]
+ * ・セグ木系は思い浮かんだが、遅延セグ木で実装を進めてしまい、また復元の方針も立たなかった。
+ *   セグ木には「コインを取得した部分のみ」値を更新すれば十分であった。
+ * ・経路復元として、最後の地点的な要素はきっと簡単に分かるので、そこから手前へ戻っていく方針を考える。
+ *   pre[idx]といった形で、取ったコインの手前をたどれるようにする手法を覚えておく。
  */
 
 // (1)Update(x, val) : 要素xをvalで更新する
@@ -221,134 +201,62 @@ public:
 	}
 };
 
-void Test(void)
-{
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	vector<int> v = {3, 1, 4, 1, 5, 9};
-	SegmentTree<T> seg(v.size(), fx, ex);
-	for(int i = 0; i < (int)v.size(); i++)
-	{
-		seg.Set(i, v[i]);
-	}
-	seg.Build();
-
-	assert(seg.Query(0, 6) == 1);
-	assert(seg.Query(0, 3) == 1);
-	assert(seg.Query(3, 4) == 1);
-	assert(seg.Query(4, 5) == 5);
-	seg.Update(6, -1);
-	seg.Update(2, 0);
-	assert(seg.Query(0, 7) == -1);
-	assert(seg.Query(1, 4) == 0);
-	for(int i = 0; i < (int)v.size(); i++)
-	{
-		assert(seg.Get(i) ==  seg.Query(i, i+1));
-	}
-
-	// Find_Leftmost(),Find_Rightmost()のテスト
-	{
-		vector<int> a = {3, 1, 4, 1, 5, 9, 2};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(1, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 7, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 0) == 7);
-		assert(seg2.Find_Leftmost(2, 3, 4) == 2);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 10) == 0);
-		assert(seg2.Find_Rightmost(0, 7, 1) == 3);
-		assert(seg2.Find_Rightmost(0, 4, 1) == 3);
-		assert(seg2.Find_Rightmost(0, 3, 1) == 1);
-		assert(seg2.Find_Rightmost(0, 7, 0) == -1);
-		assert(seg2.Find_Rightmost(0, 7, 10) == 6);
-	}
-	{
-		vector<int> a = {1, 1, 1};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 3, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 2);
-		assert(seg2.Find_Leftmost(0, 2, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(0, 3, -1) == 3);
-		assert(seg2.Find_Rightmost(0, 3, 1) == 2);
-		assert(seg2.Find_Rightmost(2, 3, 1) == 2);
-		assert(seg2.Find_Rightmost(0, 1, 1) == 0);
-		assert(seg2.Find_Rightmost(0, 3, -1) == -1);
-	}	
-}
-
 int main(void)
 {
-	/*
-	[代表的なfx,exの例]
-	Range Minimum Query(RMQ)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	---------------
+	using T = pair<int,int>;  // {コイン枚数, 最後に取ったコインの番号}
+	auto fx = [](T x1, T x2) -> T { return max(x1, x2); };
+	T ex = {0, -1};
+	// -----
+	int i;
+	int H, W, N; cin >> H >> W >> N;
+	vector<pair<int,int>> rc(N);  // {r, c};
+	for(auto &[r,c] : rc) {cin >> r >> c; r--; c--;}
+	sort(rc.begin(), rc.end());
+	SegmentTree<T> seg(W+5, fx, ex);
 
-	Range Sum Query(RSQ)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return x1+x2; };
-	T ex = 0;
-	---------------
-
-	Range OR Query(ABC157-E)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return x1|x2; };
-	T ex = 0;
-	---------------
-
-	Range GCD Query(ABC125-C)
-	---------------
-	using T = ll;
-	auto fx = gcd;
-	T ex = 0;  // gcd(a,0)=a のため
-	---------------
-	*/
-	Test();
-
-	// 以下は AOJ DSL_2_A のもの
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	int n, q;
-	cin >> n >> q;
-	SegmentTree<T> seg(n, fx, ex);
-	for(int i = 0; i < n; i++) seg.Set(i, (1UL<<31)-1);
-	seg.Build();
-
-	int c, x, y;
-	while(q > 0)
+	vector<int> pre_idx(N, -1);  // pre[i]:i番目のコインを取るとき、その手前に取るべきコインの番号 -1はこのコインが1枚目
+	for(i = 0; i < N; i++)
 	{
-		cin >> c >> x >> y;
-		if(c == 0)  // update
-		{
-			seg.Update(x, y);
-		}
-		else  // find
-		{
-			cout << seg.Query(x, y+1) << endl;  // 閉区間->半開区間への変換
-		}
-		q--;
+		auto [r,c] = rc[i];
+		auto [val, idx] = seg.Query(0, c+1);
+		val++;
+		pre_idx[i] = idx;
+		seg.Update(c, {val, i});
 	}
+
+	// 経路復元
+	string ans;
+	// 番号がpre->nxtの順にコインを取るとき、その経路をansへ格納
+	auto mov = [&](int pre, int nxt) -> void
+	{
+		int y1, x1;
+		if(pre == -1) x1 = y1 = 0;  // スタート地点
+		else
+		{
+			x1 = rc[pre].second;
+			y1 = rc[pre].first;
+		}
+		int y2, x2;
+		if(nxt == -1) {y2 = H-1; x2 = W-1;}  // ゴール地点
+		else
+		{
+			x2 = rc[nxt].second;
+			y2 = rc[nxt].first;
+		}
+		while(x1<x2) {ans.push_back('R'); x1++;}
+		while(y1<y2) {ans.push_back('D'); y1++;}
+	};
+	auto [val, idx] = seg.Query(0, W+1);
+	mov(idx, -1);  // 最後のコインからゴールへ
+	while(idx != -1)
+	{
+		int pre = pre_idx[idx];
+		mov(pre, idx);
+		idx = pre;
+	}
+	reverse(ans.begin(), ans.end());  // 末尾から復元したため
+	cout << val << endl;
+	cout << ans << endl;
 
 	return 0;
 }
