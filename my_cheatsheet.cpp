@@ -505,6 +505,11 @@ void _vector_(void)
 	vector dp(X, vector(Y, vector<ll>(Z, -1)));
 	四次元の場合は以下 dp[A][B][C][D]
 	vector dp(A, vector(B, vector(C, vector<ll>(D, -1))));
+
+	【注意】
+	多次元にしすぎると生配列に比べ速度がだいぶ落ちそう。
+	三次元ぐらいまでに抑えておいて、それ以上はグローバル変数にて生配列で定義するのが良いかなあ。
+	参考：ABC264-F.cppの解説
 	*/
 	/*
 	vectorの要素数変更
