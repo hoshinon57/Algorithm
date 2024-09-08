@@ -664,6 +664,9 @@ void _set_multiset_(void)
 	// s={1,5};
 	settest(s, "---2---");
 
+	// イテレータの移動
+	// --,++に加え、prev,nextが使える。_stl_()を参照。
+
 	s.insert(10);
 	s.insert(15);
 	s.insert(20);
@@ -1477,6 +1480,17 @@ void _stl_(void)
 	assert(count(str.begin(), str.end(), 'e') == 3);  // "e"だとエラー
 	a_v = {1, 2, 3, 4, 5, 4, 4, 3};
 	assert(count(a_v.begin(), a_v.end(), 4) == 3);
+
+	// 前後のイテレータを返す:std::prev, std::next
+	// prev(itr):1つ前のイテレータを返す
+	// prev(itr, k):k個前のイテレータを返す
+	// 引数に渡したイテレータ自体は変化しない
+	// 手前の要素を参照したいとき、itr-- が不要になり実装が少し簡易になるかも。
+	set<int> s;
+	s.insert(1); s.insert(3); s.insert(5); s.insert(7);
+	auto itr = s.lower_bound(3);
+	if(itr != s.begin()) s.erase(*std::prev(itr));  // 3より1つ手前の要素を取得する
+	assert(*s.begin() == 3);
 
 	// max,minは、以下の記述により3つ以上の要素を取ることができる(C++11より)
 	// initializer_list と呼ぶらしい
