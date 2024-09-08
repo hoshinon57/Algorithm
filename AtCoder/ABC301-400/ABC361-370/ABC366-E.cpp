@@ -91,7 +91,7 @@ int main(void)
 	for(auto &e : xsum)
 	{
 		// xsum[*]+ysum[idx]<=D となるまでずらしていく
-		while(e + ysum[idx] > D && idx >= 0) idx--;
+		while(idx >= 0 && e + ysum[idx] > D) idx--;
 		if(idx < 0) break;
 		ans += idx+1;  // ysumは[0,idx]の範囲で条件を満たす
 	}
