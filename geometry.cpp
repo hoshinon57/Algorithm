@@ -4,10 +4,15 @@
 #include <cassert>
 using namespace std;
 
-// 幾何に関する関数やまとめ
-
 /*
+ * 幾何に関するまとめやライブラリ
+ * ・直線に対して点がどちらの位置にあるか point_position
+ * ・ベクトルa,bの外積のZ成分 cross_product
+ * ・3点が同一直線上にあるか IsColliniar
+ * ・3点の外心の位置 circumcenter
+ * 
  * [関連する問題]
+ * ABC151-F
  * ABC266-C
  */
 
@@ -65,40 +70,66 @@ bool IsColliniar(int dx1, int dy1, int dx2, int dy2)
 	return dx1*dy2 == dx2*dy1;
 }
 
+// 3点の外心の位置を返す
+// [制約]
+// (1)3点は同一線分上にないこと (呼び出し元でチェックすること)
+// (2)|x|,|y|<=10^6程度 途中計算にて3乗まで出るため
+//    それ以上の値を扱いたい場合、引数とローカル変数をdoubleに変更する形か(未検証)
+// [参考]https://qiita.com/tatesuke/items/59133758ec25146766c3
+pair<double,double> circumcenter(long long x1, long long y1, long long x2, long long y2, long long x3, long long y3)
+{
+	long long x1_2 = x1*x1;
+	long long y1_2 = y1*y1;
+	long long x2_2 = x2*x2;
+	long long y2_2 = y2*y2;
+	long long x3_2 = x3*x3;
+	long long y3_2 = y3*y3;
+	double y = (double)((x3-x1)*(x1_2+y1_2-x2_2-y2_2) - (x2-x1)*(x1_2+y1_2-x3_2-y3_2))
+				/ (2*(x3-x1)*(y1-y2) - 2*(x2-x1)*(y1-y3));
+	double x;
+	if(x1 == x2) x = (double)(2*(y1-y3)*y - x1_2 - y1_2 + x3_2 + y3_2) / (2*(x3-x1));
+	else         x = (double)(2*(y1-y2)*y - x1_2 - y1_2 + x2_2 + y2_2) / (2*(x2-x1));
+	return {x, y};
+}
+
 int main(void)
 {
-	double x0, y0, x1, y1;
-	double tmp1, tmp2;
-	x0 = 1;
-	y0 = 1;
-	x1 = 2;
-	y1 = 4;
-	// 2点(1,1),(2,4)を通る直線に対して、点(3,3)と(0,3)は異なる側にある。
-	tmp1 = point_position(x0, y0, x1, y1, 3, 3);
-	tmp2 = point_position(x0, y0, x1, y1, 0, 3);
-	if(tmp1 * tmp2 < 0)  // 異なる側 -> 戻り値の符号が異なる -> 積は負
 	{
-		cout << "test:point_position" << endl;
+		double x0, y0, x1, y1;
+		double tmp1, tmp2;
+		x0 = 1;
+		y0 = 1;
+		x1 = 2;
+		y1 = 4;
+		// 2点(1,1),(2,4)を通る直線に対して、点(3,3)と(0,3)は異なる側にある。
+		tmp1 = point_position(x0, y0, x1, y1, 3, 3);
+		tmp2 = point_position(x0, y0, x1, y1, 0, 3);
+		if(tmp1 * tmp2 < 0)  // 異なる側 -> 戻り値の符号が異なる -> 積は負
+		{
+			cout << "test:point_position" << endl;
+		}
 	}
 
-	int ax, ay, bx, by, cx, cy;
-	// A(1,1),B(3,0),C(2,4)のとき、ベクトルABとACのなす角は180度未満。
-	// ただしBからCへ反時計回りに見る。
-	ax = 1; ay = 1;
-	bx = 3; by = 0;
-	cx = 2; cy = 4;
-	if(cross_product(bx-ax, by-ay, cx-ax, cy-ay) > 0)
 	{
-		cout << "test:cross_product 1" << endl;
-	}
-	// A(1,1),B(3,0),C(2,-4)のとき、ベクトルABとACのなす角は180度より大きい。
-	// ただしBからCへ反時計回りに見る。
-	ax = 1; ay = 1;
-	bx = 3; by = 0;
-	cx = 2; cy = -4;  // 先ほどの例からcyのみ変更
-	if(cross_product(bx-ax, by-ay, cx-ax, cy-ay) < 0)
-	{
-		cout << "test:cross_product 2" << endl;
+		int ax, ay, bx, by, cx, cy;
+		// A(1,1),B(3,0),C(2,4)のとき、ベクトルABとACのなす角は180度未満。
+		// ただしBからCへ反時計回りに見る。
+		ax = 1; ay = 1;
+		bx = 3; by = 0;
+		cx = 2; cy = 4;
+		if(cross_product(bx-ax, by-ay, cx-ax, cy-ay) > 0)
+		{
+			cout << "test:cross_product 1" << endl;
+		}
+		// A(1,1),B(3,0),C(2,-4)のとき、ベクトルABとACのなす角は180度より大きい。
+		// ただしBからCへ反時計回りに見る。
+		ax = 1; ay = 1;
+		bx = 3; by = 0;
+		cx = 2; cy = -4;  // 先ほどの例からcyのみ変更
+		if(cross_product(bx-ax, by-ay, cx-ax, cy-ay) < 0)
+		{
+			cout << "test:cross_product 2" << endl;
+		}
 	}
 
 	/*
@@ -112,6 +143,26 @@ int main(void)
 	assert(IsColliniar(1, 2, 3, 6));
 	assert(!IsColliniar(1, 2, 3, 5));
 	assert(IsColliniar(1, 2, -5, -10));
+
+	{
+		auto circumcenter_test = []
+		(long long x1, long long y1, long long x2, long long y2, long long x3, long long y3, double cx, double cy) -> void
+		{
+			const double EPS = 1e-8;
+			auto d = circumcenter(x1, y1, x2, y2, x3, y3);
+			// cout << std::fixed << std::setprecision(15);
+			// cout << d.first << " " << d.second << endl;
+			assert(abs(d.first-cx)  < EPS);
+			assert(abs(d.second-cy) < EPS);
+		};
+		// https://keisan.casio.jp/exec/user/1511355526 を用いた
+		circumcenter_test(0, 0, 1, 1, 0, 1, 0.5, 0.5);  // (0,0),(1,1),(0,1)を順繰りに3つ
+		circumcenter_test(1, 1, 0, 1, 0, 0, 0.5, 0.5);
+		circumcenter_test(0, 1, 0, 0, 1, 1, 0.5, 0.5);
+		circumcenter_test(0, 0, -1, 0, 1, 1, -0.5, 1.5);
+		circumcenter_test(5, 0, 1, 3, 1, 0, 3.0, 1.5);
+		circumcenter_test(1000000, 999999, -500000, -999999, 12345, 54321, 2949515.1865181730, -2024638.4145270443);
+	}
 
 	return 0;
 }
