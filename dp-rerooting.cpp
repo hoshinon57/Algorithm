@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iomanip>
 #include <functional>  // function
+#include <numeric>
 using namespace std;
 typedef long long ll;
 const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
@@ -16,13 +17,15 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
 // ★注意★ #include <functional> を忘れずに。ローカル環境では無くてもビルドが通るが、AtCoderではCEになる。
 
 // memo/todo:
-// 木の直径を解いてみる
+// [済]木の直径を解いてみる
 // EDPC-V
 // ABC222-F
 
 /*
  * [ざっくり概要]
  * ToDo:書く
+ * 
+ * ★代表的なmerge,add_root等はmain()に記述している。
  * 
  * [メソッド等説明]
  * ・T : DPの型 基本はint,llなどで、上位2つの値を保持するならpair<int,int>など
@@ -42,6 +45,9 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  *   https://trap.jp/post/1161/
  *   https://drken1215.hatenablog.com/entry/2019/12/26/225500
  *   https://ei1333.hateblo.jp/entry/2018/12/21/004022
+ * 
+ * [関連する問題 / verifyした問題]
+ * ・典型90-003 https://atcoder.jp/contests/typical90/tasks/typical90_c 木の直径
  */
 
 // 全方位木DPのライブラリ
@@ -57,7 +63,7 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
 // https://algo-logic.info/tree-dp/
 template <typename T>
 struct Rerooting {
-#if 1  // 問題ごとに書き換え -> 全ての頂点について、それを根とした時の最も遠い点までの距離、を求めてみる
+#if 1  // 問題ごとに書き換え
 	function<T(T,T)> merge = [](T x1, T x2) -> T {
 		return T(max(x1, x2));
 	};
@@ -123,8 +129,8 @@ struct Rerooting {
 		}
 
 		// 答出力 問題ごとに書き換え (add_rootは不要、など)
-		// ans[v] = add_root(val_l[deg]);
-		ans[v] = val_l[deg];
+		ans[v] = add_root(val_l[deg]);
+		// ans[v] = val_l[deg];
 
 		for(i = 0; i < deg; i++)
 		{
@@ -140,8 +146,45 @@ struct Rerooting {
 	}
 };
 
+// https://atcoder.jp/contests/typical90/tasks/typical90_c
+void Test_Tenkei90_003(void)
+{
+/*	
+	(1)merge,add_root,Edgeは以下を設定	
+	(2)dfs2()にてans[v]へは以下を設定
+	   ans[v] = add_root(val_l[deg]);
+	-------
+	function<T(T,T)> merge = [](T x1, T x2) -> T {
+		return T(max(x1, x2));
+	};
+	function<T(T)> add_root = [](T x) -> T {
+		return T(x + 1);
+	};
+	struct Edge {
+		int to;
+		ll w;  // 辺の重み(重み無しは1)
+	};
+	-------
+*/
+	int i;
+	using T = int;
+	T identity = 0;
+	int N; cin >> N;
+	Rerooting<T> reroot(N, identity);
+	for(i = 0; i < N-1; i++)
+	{
+		int a, b; cin >> a >> b;
+		a--; b--;
+		reroot.add_edge(a, {b, 1});
+		reroot.add_edge(b, {a, 1});
+	}
+	reroot.build();
+	cout << *max_element(reroot.ans.begin(), reroot.ans.end()) << endl;
+}
+
 int main(void)
 {
+/*
 	int i;
 	int N; cin >> N;
 	using T = ll;
@@ -159,6 +202,34 @@ int main(void)
 	for(i = 0; i < N; i++)
 	{
 		cout << reroot.ans[i] << endl;
+	}
+*/
+	/*
+	[代表的なmerge,add_root等の例]
+	各頂点から最も遠い頂点までの距離
+	---------------
+	function<T(T,T)> merge = [](T x1, T x2) -> T {
+		return T(max(x1, x2));
+	};
+	function<T(T)> add_root = [](T x) -> T {
+		return T(x + 1);
+	};
+	struct Edge {
+		int to;
+		ll w;  // 辺の重み(重み無しは1)
+	};
+	---
+	dfs2()にて :
+	ans[v] = val_l[deg];
+	---
+	呼び出し元にて :
+	using T = int;
+	---------------
+	*/
+
+	const int mode = 0;
+	if(mode == 0) {
+		Test_Tenkei90_003();
 	}
 
 	return 0;
