@@ -51,6 +51,8 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * ・典型90-003 https://atcoder.jp/contests/typical90/tasks/typical90_c 木の直径
  */
 
+vector<ll> d;  // ABC222-F用
+
 // 全方位木DPのライブラリ
 // [事前準備]
 //   T:DPの型
@@ -68,9 +70,10 @@ struct Rerooting {
 	function<T(T,T)> merge = [](T x1, T x2) -> T {
 		return T(max(x1, x2));
 	};
-	function<T(T)> add_root = [](T x) -> T {
+	function<T(T,int)> add_root = [](T x, int v) -> T {
 //		return T(x + 1);
-		return T(x);
+		// return T(x);
+		return max(x, T(d[v]));
 	};
 	struct Edge {
 		int to;
@@ -121,14 +124,14 @@ struct Rerooting {
 		dp[v].resize(deg, identity);
 		for(int i = 0; i < deg; i++)
 		{
-			int u = g[v][i].to;
+			int u = g[v][i].to;  // v->u
 			if(u == p) continue;
 			dp[v][i] = dfs1(u, v);
 			// test add_edge
 			dp[v][i] += g[v][i].w;
 			dpcum = merge(dpcum, dp[v][i]);
 		}
-		return add_root(dpcum);
+		return add_root(dpcum, v);
 	}
 	// vの親方向における辺のDP値
 	void dfs2(int v, const T &val_p, int p = -1) {
@@ -144,17 +147,20 @@ struct Rerooting {
 		}
 
 		// 答出力 問題ごとに書き換え (add_rootは不要、など)
-		ans[v] = add_root(val_l[deg]);
-		// ans[v] = val_l[deg];
+		// ans[v] = add_root(val_l[deg], v);
+		ans[v] = val_l[deg];
 
 		for(i = 0; i < deg; i++)
 		{
-			int u = g[v][i].to;
+			int u = g[v][i].to;  // v->u
 			if(u == p) continue;
 			T tmp = merge(val_l[i], val_r[deg-i-1]);
+			// v->uへの順序としては、"vまでの辺", "頂点v", "v->uへの辺"であるので、この順に操作
+//			dfs2(u, add_root(tmp, v), v);
+			tmp = add_root(tmp, v);
 			// test add_edge
 			tmp += g[v][i].w;
-			dfs2(u, add_root(tmp), v);
+			dfs2(u, tmp, v);
 		}
 	}
 	void build(void) {
@@ -197,6 +203,41 @@ void Test_Tenkei90_003(void)
 	}
 	reroot.build();
 	cout << *max_element(reroot.ans.begin(), reroot.ans.end()) << endl;
+}
+
+void Test_ABC222_F_Expensive_Expense(void)
+{
+	int i;
+	int N; cin >> N;
+	using T = ll;
+	T identity = 0;
+	Rerooting<T> reroot(N, identity);
+	for(i = 0; i < N-1; i++)
+	{
+		int a, b;
+		ll c;
+		cin >> a >> b >> c;
+		a--; b--;
+		reroot.add_edge(a, {b, c});
+		reroot.add_edge(b, {a, c});
+	}
+	d.resize(N);
+	for(i = 0; i < N; i++) {cin >> d[i];}
+	reroot.build();
+	for(i = 0; i < N; i++)
+	{
+		cout << reroot.ans[i] << endl;
+	}
+	return;
+	cout << "---" << endl;
+	for(int v = 0; v < N; v++)  // 頂点v
+	{
+		cout << v+1 << ":" << endl;
+		for(auto &e : reroot.dp[v])
+		{
+			cout << "  " << e << endl;
+		}
+	}
 }
 
 int main(void)
@@ -244,7 +285,7 @@ int main(void)
 	---------------
 	*/
 
-#if 1
+#if 0
 	// 辺に重みがあり、頂点ごと最長の距離
 	/*
 	input:
@@ -286,9 +327,17 @@ int main(void)
 	}	
 #endif
 
-	const int mode = 0;
+	const int mode = 2;
 	if(mode == 0) {
 		Test_Tenkei90_003();
+	}
+	else if(mode == 1)
+	{
+		// Test_EDPC_V_Subtree();
+	}
+	else if(mode == 2)
+	{
+		Test_ABC222_F_Expensive_Expense();
 	}
 
 	return 0;
