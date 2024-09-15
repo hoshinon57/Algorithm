@@ -19,7 +19,7 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
 // memo/todo:
 // [済]木の直径を解いてみる
 // EDPC-V
-// ABC222-F
+// [済]ABC222-F
 // 2024/6ごろABC-Eの、直径で解く問題を全方位木DPで
 
 /*
@@ -59,7 +59,7 @@ vector<ll> d;  // ABC222-F用
 //   先頭のmerge,add_root,Edgeを問題に応じて書き換える。
 //   dfs2()でのans[]への設定を、問題に応じて書き換える。
 // [使い方]
-//   (1)add_edge()でグラフを構築
+//   (1)make_edge()でグラフを構築
 //   (2)build()で全方位木DPを計算
 //   (3)ans[]を出力
 // 以下URLをほぼそのまま持ってきている
@@ -115,7 +115,7 @@ struct Rerooting {
 		dp.resize(N);
 		ans.resize(N, identity);
 	}
-	void add_edge(int v, Edge e) {
+	void make_edge(int v, Edge e) {
 		g[v].push_back(e);
 	}
 	T dfs1(int v, int p = -1) {
@@ -127,7 +127,7 @@ struct Rerooting {
 			int u = g[v][i].to;  // v->u
 			if(u == p) continue;
 			dp[v][i] = dfs1(u, v);
-			// test add_edge
+			// test make_edge
 			dp[v][i] += g[v][i].w;
 			dpcum = merge(dpcum, dp[v][i]);
 		}
@@ -158,7 +158,7 @@ struct Rerooting {
 			// v->uへの順序としては、"vまでの辺", "頂点v", "v->uへの辺"であるので、この順に操作
 //			dfs2(u, add_root(tmp, v), v);
 			tmp = add_root(tmp, v);
-			// test add_edge
+			// test make_edge
 			tmp += g[v][i].w;
 			dfs2(u, tmp, v);
 		}
@@ -198,8 +198,8 @@ void Test_Tenkei90_003(void)
 	{
 		int a, b; cin >> a >> b;
 		a--; b--;
-		reroot.add_edge(a, {b, 1});
-		reroot.add_edge(b, {a, 1});
+		reroot.make_edge(a, {b, 1});
+		reroot.make_edge(b, {a, 1});
 	}
 	reroot.build();
 	cout << *max_element(reroot.ans.begin(), reroot.ans.end()) << endl;
@@ -218,8 +218,8 @@ void Test_ABC222_F_Expensive_Expense(void)
 		ll c;
 		cin >> a >> b >> c;
 		a--; b--;
-		reroot.add_edge(a, {b, c});
-		reroot.add_edge(b, {a, c});
+		reroot.make_edge(a, {b, c});
+		reroot.make_edge(b, {a, c});
 	}
 	d.resize(N);
 	for(i = 0; i < N; i++) {cin >> d[i];}
@@ -252,8 +252,8 @@ int main(void)
 	{
 		int u, v; cin >> u >> v;
 		u--; v--;
-		reroot.add_edge(u, {v, 1});
-		reroot.add_edge(v, {u, 1});
+		reroot.make_edge(u, {v, 1});
+		reroot.make_edge(v, {u, 1});
 	}
 	reroot.build();
 
@@ -315,8 +315,8 @@ int main(void)
 		{
 			int u, v, edge_w; cin >> u >> v >> edge_w;
 			u--; v--;
-			reroot.add_edge(u, {v, edge_w});
-			reroot.add_edge(v, {u, edge_w});
+			reroot.make_edge(u, {v, edge_w});
+			reroot.make_edge(v, {u, edge_w});
 		}
 		reroot.build();
 		for(i = 0; i < N; i++)
