@@ -20,6 +20,7 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
 // [済]木の直径を解いてみる
 // EDPC-V
 // ABC222-F
+// 2024/6ごろABC-Eの、直径で解く問題を全方位木DPで
 
 /*
  * [ざっくり概要]
@@ -68,11 +69,23 @@ struct Rerooting {
 		return T(max(x1, x2));
 	};
 	function<T(T)> add_root = [](T x) -> T {
+//		return T(x + 1);
+		return T(x);
+	};
+	struct Edge {
+		int to;
+		ll w;  // 辺の重み(重み無しは0)
+	};
+#elif 0
+	function<T(T,T)> merge = [](T x1, T x2) -> T {
+		return T(max(x1, x2));
+	};
+	function<T(T)> add_root = [](T x) -> T {
 		return T(x + 1);
 	};
 	struct Edge {
 		int to;
-		ll w;  // 辺の重み(重み無しは1)
+		ll w;  // 辺の重み(重み無しは0)
 	};
 #else  // 各頂点について、その頂点を根としたときに(自身を含め)頂点がいくつあるかを求める場合 もちろん答えは全てN.
 	const T identity = 0;
@@ -111,6 +124,8 @@ struct Rerooting {
 			int u = g[v][i].to;
 			if(u == p) continue;
 			dp[v][i] = dfs1(u, v);
+			// test add_edge
+			dp[v][i] += g[v][i].w;
 			dpcum = merge(dpcum, dp[v][i]);
 		}
 		return add_root(dpcum);
@@ -137,6 +152,8 @@ struct Rerooting {
 			int u = g[v][i].to;
 			if(u == p) continue;
 			T tmp = merge(val_l[i], val_r[deg-i-1]);
+			// test add_edge
+			tmp += g[v][i].w;
 			dfs2(u, add_root(tmp), v);
 		}
 	}
@@ -162,7 +179,7 @@ void Test_Tenkei90_003(void)
 	};
 	struct Edge {
 		int to;
-		ll w;  // 辺の重み(重み無しは1)
+		ll w;  // 辺の重み(重み無しは0)
 	};
 	-------
 */
@@ -226,6 +243,48 @@ int main(void)
 	using T = int;
 	---------------
 	*/
+
+#if 1
+	// 辺に重みがあり、頂点ごと最長の距離
+	/*
+	input:
+	7
+	1 2 1
+	2 3 2
+	3 4 4
+	3 5 2
+	2 7 5
+	1 6 5
+	output:
+	1:7
+	2:6
+	3:8
+	4:12
+	5:10
+	6:12
+	7:11
+	*/
+	{
+		int i;
+		using T = int;
+		T identity = 0;
+		int N; cin >> N;
+		Rerooting<T> reroot(N, identity);
+		for(i = 0; i < N-1; i++)
+		{
+			int u, v, edge_w; cin >> u >> v >> edge_w;
+			u--; v--;
+			reroot.add_edge(u, {v, edge_w});
+			reroot.add_edge(v, {u, edge_w});
+		}
+		reroot.build();
+		for(i = 0; i < N; i++)
+		{
+			cout << i+1 << ":" << reroot.ans[i] << endl;
+		}
+		return 0;
+	}	
+#endif
 
 	const int mode = 0;
 	if(mode == 0) {
