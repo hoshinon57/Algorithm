@@ -1,17 +1,15 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <cmath>
-#include <iomanip>
 #include <functional>  // function
-#include <numeric>
+#include <array>
+#include <cassert>
 using namespace std;
 typedef long long ll;
 const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
 template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
 template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
-#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
 // 全方位木DPのメモやライブラリ
 // ★注意★ #include <functional> を忘れずに。ローカル環境では無くてもビルドが通るが、AtCoderではCEになる。
@@ -76,42 +74,6 @@ struct Edge {
 // https://algo-logic.info/tree-dp/
 template <typename T>
 struct Rerooting {
-#if 0  // 問題ごとに書き換え
-	function<T(T,T)> merge = [](T x1, T x2) -> T {
-		return T(max(x1, x2));
-	};
-	function<T(T,int)> add_root = [](T x, int v) -> T {
-//		return T(x + 1);
-		// return T(x);
-		return max(x, T(d[v]));
-	};
-	struct Edge {
-		int to;
-		ll w;  // 辺の重み(重み無しは0)
-	};
-#elif 0
-	function<T(T,T)> merge = [](T x1, T x2) -> T {
-		return T(max(x1, x2));
-	};
-	function<T(T)> add_root = [](T x) -> T {
-		return T(x + 1);
-	};
-	struct Edge {
-		int to;
-		ll w;  // 辺の重み(重み無しは0)
-	};
-#elif 0  // 各頂点について、その頂点を根としたときに(自身を含め)頂点がいくつあるかを求める場合 もちろん答えは全てN.
-	const T identity = 0;
-	function<T(T,T)> merge = [](T x1, T x2) -> T {
-		return T(x1 + x2);
-	};
-	function<T(T)> add_root = [](T x) -> T {
-		return T(x + 1);
-	};
-	struct Edge {
-		int to;
-	};
-#endif  // 問題ごとに書き換え
 	const T identity;
 	using Graph = vector<vector<Edge>>;
 
@@ -265,103 +227,82 @@ void Test_ABC222_F_Expensive_Expense(void)
 	}
 }
 
-int main(void)
+// 全方位木DPテスト用
+// 辺に重みがあり、頂点ごとに最長の距離を求める
+// Rerooting::dfs2()におけるans[]は以下を設定する
+// ans[v] = val_l[deg];
+void Test_edge_weight_longest(void)
 {
-/*
-	int i;
-	int N; cin >> N;
-	using T = ll;
-	T identity = 0;
-	Rerooting<T> reroot(N, identity);
-	for(i = 0; i < N-1; i++)
-	{
-		int u, v; cin >> u >> v;
-		u--; v--;
-		reroot.make_edge(u, {v, 1});
-		reroot.make_edge(v, {u, 1});
-	}
-	reroot.build();
+	// テストケース
+	const int N = 7;
+	const vector<array<int,3>> edge = {{1,2,1}, {2,3,2}, {3,4,4}, {3,5,2}, {2,7,5}, {1,6,5}};  // {u,v,weight}
+	const vector<int> ans = {7, 6, 8, 12, 10, 12, 11};
 
-	for(i = 0; i < N; i++)
-	{
-		cout << reroot.ans[i] << endl;
-	}
-*/
-	/*
-	[代表的なmerge,add_root等の例]
-	各頂点から最も遠い頂点までの距離
-	---------------
-	function<T(T,T)> merge = [](T x1, T x2) -> T {
+	cout << "Test start : Test_edge_weight_longest()" << endl;
+	int i;
+	using T = int;
+	auto merge = [](T x1, T x2) -> T {
 		return T(max(x1, x2));
 	};
-	function<T(T)> add_root = [](T x) -> T {
-		return T(x + 1);
+	auto add_edge = [](T x, Edge e) -> T {
+		return x+e.w;
 	};
-	struct Edge {
-		int to;
-		ll w;  // 辺の重み(重み無しは1)
+	auto add_root = [&](T x, int v) -> T {
+		return x;  // 頂点の重み無し
 	};
-	---
-	dfs2()にて :
-	ans[v] = val_l[deg];
-	---
-	呼び出し元にて :
-	using T = int;
-	---------------
-	*/
-
-#if 0
-	// 辺に重みがあり、頂点ごと最長の距離
-	/*
-	input:
-	7
-	1 2 1
-	2 3 2
-	3 4 4
-	3 5 2
-	2 7 5
-	1 6 5
-	output:
-	1:7
-	2:6
-	3:8
-	4:12
-	5:10
-	6:12
-	7:11
-	*/
+	T identity = 0;
+	Rerooting<T> reroot(N, identity, merge, add_edge, add_root);
+	for(i = 0; i < N-1; i++)
 	{
-		int i;
-		using T = int;
-		auto merge = [](T x1, T x2) -> T {
-			return T(max(x1, x2));
-		};
-		auto add_edge = [](T x, Edge e) -> T {
-			return x+e.w;
-		};
-		auto add_root = [&](T x, int v) -> T {
-			return x;  // 頂点の重み無し
-		};
-		T identity = 0;
-		int N; cin >> N;
-		Rerooting<T> reroot(N, identity, merge, add_edge, add_root);
-		for(i = 0; i < N-1; i++)
-		{
-			int u, v, edge_w; cin >> u >> v >> edge_w;
-			u--; v--;
-			reroot.make_edge(u, {v, edge_w});
-			reroot.make_edge(v, {u, edge_w});
-		}
-		reroot.build();
-		for(i = 0; i < N; i++)
-		{
-			cout << i+1 << ":" << reroot.ans[i] << endl;
-		}
-		return 0;
-	}	
-#endif
+		auto [u,v,edge_w] = edge[i];
+		u--; v--;
+		reroot.make_edge(u, {v, edge_w});
+		reroot.make_edge(v, {u, edge_w});
+	}
+	reroot.build();
+	for(i = 0; i < N; i++) assert(reroot.ans[i] == ans[i]);
+	cout << "Test end : Test_edge_weight_longest()" << endl;
+}
 
-	const int mode = 2;
+// 全方位木DPテスト用
+// 頂点ごとに子の頂点数を返す もちろん答は全てN-1
+// Rerooting::dfs2()におけるans[]は以下を設定する
+// ans[v] = val_l[deg];
+void Test_count_child(void)
+{
+	// テストケース
+	const int N = 8;
+	const vector<array<int,2>> edge = {{1,2}, {2,3}, {3,4}, {3,5}, {2,7}, {7,8}, {1,6}};  // {u,v}
+
+	cout << "Test start : Test_count_child()" << endl;
+	int i;
+	using T = int;
+	auto merge = [](T x1, T x2) -> T {
+		return T(x1+x2);
+	};
+	auto add_edge = [](T x, Edge e) -> T {
+		return x;  // 辺の重み無し
+	};
+	auto add_root = [&](T x, int v) -> T {
+		return x+1;
+	};
+	T identity = 0;
+	Rerooting<T> reroot(N, identity, merge, add_edge, add_root);
+	for(i = 0; i < N-1; i++)
+	{
+		auto [u,v] = edge[i];
+		u--; v--;
+		reroot.make_edge(u, {v, 0});
+		reroot.make_edge(v, {u, 0});
+	}
+	reroot.build();
+	for(i = 0; i < N; i++) assert(reroot.ans[i] == N-1);
+	cout << "Test end : Test_count_child()" << endl;
+}
+
+int main(void)
+{
+	const int mode = 4;
 	if(mode == 0) {
 		Test_Tenkei90_003();
 	}
@@ -372,6 +313,14 @@ int main(void)
 	else if(mode == 2)
 	{
 		Test_ABC222_F_Expensive_Expense();
+	}
+	else if(mode == 3)
+	{
+		Test_edge_weight_longest();
+	}
+	else if(mode == 4)
+	{
+		Test_count_child();
 	}
 
 	return 0;
