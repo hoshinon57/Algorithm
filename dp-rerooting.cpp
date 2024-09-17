@@ -18,9 +18,8 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
 // dfs1,dfs2をコメント等整理
 // [済]抽象化 add_edge
 // [済]木の直径を解いてみる
-// EDPC-V
+// [済]EDPC-V
 // [済]ABC222-F
-// 2024/6ごろABC-Eの、直径で解く問題を全方位木DPで -> これはいいか
 // ABC348-E
 // ABC220-F(Distance Sums 2)
 // ABC160-F(Distributing Integers) 挑戦
@@ -74,9 +73,14 @@ struct Edge {
 // https://algo-logic.info/tree-dp/
 template <typename T>
 struct Rerooting {
-	const T identity;
+public:
 	using Graph = vector<vector<Edge>>;
+	vector<vector<T>> dp;  // dp[v][i]:頂点vを根として考えたときに、i番目の有効辺に対応する値
+	vector<T> ans;  // ans[v]:頂点vに対する答
+	Graph g;
 
+private:  // add_edgeとmake_edgeを取り違えるという理由でprivateにて…
+	const T identity;
 	using f1 = function<T(T,T)>; // merge
 	using f2 = function<T(T,Edge)>;  // add_edge(T,e):DP値に頂点root->childへの辺を加える
 	using f3 = function<T(T,int)>;  // add_root(DP,v):DP値に根(頂点v)を加える
@@ -84,10 +88,7 @@ struct Rerooting {
 	f2 add_edge;
 	f3 add_root;
 
-	vector<vector<T>> dp;  // dp[v][i]:頂点vを根として考えたときに、i番目の有効辺に対応する値
-	vector<T> ans;  // ans[v]:頂点vに対する答
-	Graph g;
-
+public:
 	// 頂点数N,単位元idntで初期化
 	Rerooting(int N, T idnt, f1 merge_, f2 add_edge_, f3 add_root_) : identity(idnt), merge(merge_), add_edge(add_edge_), add_root(add_root_) {
 		g.resize(N);
@@ -97,6 +98,11 @@ struct Rerooting {
 	void make_edge(int v, Edge e) {
 		g[v].push_back(e);
 	}
+	void build(void) {
+		dfs1(0);
+		dfs2(0, identity);
+	}
+private:
 	T dfs1(int v, int p = -1) {
 		T dpcum = identity;
 		int deg = g[v].size();
@@ -144,10 +150,6 @@ struct Rerooting {
 			dfs2(u, tmp, v);
 		}
 	}
-	void build(void) {
-		dfs1(0);
-		dfs2(0, identity);
-	}
 };
 
 // https://atcoder.jp/contests/typical90/tasks/typical90_c
@@ -178,6 +180,44 @@ void Test_Tenkei90_003(void)
 	}
 	reroot.build();
 	cout << *max_element(reroot.ans.begin(), reroot.ans.end())+1 << endl;
+}
+
+/*
+ * https://atcoder.jp/contests/dp/tasks/dp_v
+ * dp[v][i]を、v->iへの有向辺(vは除く)にて、頂点iが黒で合法な通り数とする。
+ * 頂点i以下が白のケースはadd_root()にて加算される。
+ * merge()は各辺の積となることもあり、identity=1が適切。
+ * 
+ * 最初、mergeにて(x1+1)*(x2+1)とやっていて計算が合わなかった。
+ * 上記だとモノイドになっていない。(左右からの結合則が成り立たない)
+ */
+void Test_EDPC_V_Subtree(void)
+{
+	ll N, M; cin >> N >> M;
+	using T = ll;
+	auto merge = [&](T x1, T x2) -> T {
+		return x1*x2%M;
+	};
+	auto add_edge = [](T x, Edge e) -> T {
+		return x;
+	};
+	auto add_root = [&](T x, int v) -> T {
+		return x+1;  // v以下の頂点が全て白のケースで+1
+	};
+	// Rerooting::dfs2()におけるans[]は以下を設定する
+	// ans[v] = val_l[deg];
+	T identity = 1;
+	Rerooting<T> reroot(N, identity, merge, add_edge, add_root);
+	int i;
+	for(i = 0; i < N-1; i++)
+	{
+		int x, y; cin >> x >> y;
+		x--; y--;
+		reroot.make_edge(x,{y,0});
+		reroot.make_edge(y,{x,0});
+	}
+	reroot.build();
+	for(i = 0; i < N; i++) cout << reroot.ans[i] << endl;
 }
 
 void Test_ABC222_F_Expensive_Expense(void)
@@ -302,13 +342,13 @@ void Test_count_child(void)
 
 int main(void)
 {
-	const int mode = 4;
+	const int mode = 1;
 	if(mode == 0) {
 		Test_Tenkei90_003();
 	}
 	else if(mode == 1)
 	{
-		// Test_EDPC_V_Subtree();
+		Test_EDPC_V_Subtree();
 	}
 	else if(mode == 2)
 	{
