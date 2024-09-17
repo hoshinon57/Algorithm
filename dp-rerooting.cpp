@@ -15,7 +15,7 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
 // ★注意★ #include <functional> を忘れずに。ローカル環境では無くてもビルドが通るが、AtCoderではCEになる。
 
 // memo/todo:
-// dfs1,dfs2をコメント等整理
+// [済]dfs1,dfs2をコメント等整理
 // [済]抽象化 add_edge
 // [済]木の直径を解いてみる
 // [済]EDPC-V
@@ -29,19 +29,23 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * [ざっくり概要]
  * ToDo:書く
  * 
- * ★代表的なmerge,add_root等はmain()に記述している。
+ * ★代表的なmerge,add_root等はTest関数を参照。
  * 
  * [メソッド等説明]
  * ・T : DPの型 基本はint,llなどで、上位2つの値を保持するならpair<int,int>など
- * ・identity : 単位元的なやつ、らしい
+ * ・identity : 単位元e merge()にて e*a=a*e=e であるような値
  * ・Edge : 辺の型 基本はto,wで良いと思われる
  * 
- * ・merge(x1,x2) : 2つのDP値に対する二項演算
- * ・add_root(x) : DP値に根を追加する
- * ・Rerooting(N,idnt) : 頂点数N,単位元idntで初期化
- * ・add_edge(v,e) : 頂点vに辺eを追加
+ * ・dp[v][i] :
+ *     頂点vを根として考えたときに、i番目の有効辺に対応する値
+ *     頂点v自体はDP値に含まれない点に注意
+ * 
+ * ・Rerooting(N,idnt) : 頂点数N, 単位元idnt, そしてmerge(),add_edge(),add_root()で初期化
+ * ・merge(x1,x2) : 2つの辺(DP値)に対する二項演算
+ * ・add_edge(DP,edge) : DP値に頂点root->childへの辺を加える
+ * ・add_root(DP,v) : DP値に根(頂点v)を加える
  * ・dfs1(v) : DFS1回目 まずはvを根として通常の木DPを行う
- * ・dfs2() : DFS2回目 全方位木DPを行う
+ * ・dfs2(v, dp_p) : DFS2回目 頂点vに対して全方向に木DPを行う
  * ・build() : DFS1,2回目を実施
  * 
  * [参考資料]
@@ -52,25 +56,27 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * 
  * [関連する問題 / verifyした問題]
  * ・典型90-003 https://atcoder.jp/contests/typical90/tasks/typical90_c 木の直径
+ * ・EDPC-V(Subtree)
+ * ・ABC222-F(Expensive Expense)
  */
 
 // 問題ごとに必要なら書き換え
 struct Edge {
 	int to;
-	ll w;  // 辺の重み(重み無しは0)
+	long long w;  // 辺の重み(重み無しは0)
 };
 
 // 全方位木DPのライブラリ
 // [事前準備]
-//   T:DPの型
-//   先頭のmerge,add_root,Edgeを問題に応じて書き換える。
+//   T:DPの型を決める。
+//   merge(),add_edge(),add_root(),および単位元identityを定義し、
+//   頂点数をNとして以下のように定義する。
+//     Rerooting<T> reroot(N, identity, merge, add_edge, add_root);
 //   dfs2()でのans[]への設定を、問題に応じて書き換える。
 // [使い方]
 //   (1)make_edge()でグラフを構築
 //   (2)build()で全方位木DPを計算
-//   (3)ans[]を出力
-// 以下URLをほぼそのまま持ってきている
-// https://algo-logic.info/tree-dp/
+//   (3)ans[]を出力、または呼び出し元でdp[v][i]を全マージして必要ならadd_root()するなど
 template <typename T>
 struct Rerooting {
 public:
@@ -80,8 +86,8 @@ public:
 	Graph g;
 private:  // add_edgeとmake_edgeを取り違えるという理由でprivateにて…
 	const T identity;
-	using f1 = function<T(T,T)>; // merge
-	using f2 = function<T(T,Edge)>;  // add_edge(T,e):DP値に頂点root->childへの辺を加える
+	using f1 = function<T(T,T)>; // merge(x1,x2):2つの辺(DP値)に対する二項演算
+	using f2 = function<T(T,Edge)>;  // add_edge(DP,e):DP値に頂点root->childへの辺を加える
 	using f3 = function<T(T,int)>;  // add_root(DP,v):DP値に根(頂点v)を加える
 	f1 merge;
 	f2 add_edge;
@@ -102,9 +108,9 @@ public:
 		dfs2(0, identity);
 	}
 private:
-	// 頂点0を根とし、初回の木DP
+	// DFS1回目 まずはvを根として通常の木DPを行う
 	// 頂点vの部分木について、辺ごとにDP値を求める -> dp[v][i]
-	// 頂点v以下(vを含む)の部分木のDP値を返す
+	// 戻り値:頂点v以下(vを含む)の部分木のDP値
 	T dfs1(int v, int p = -1) {
 		T dpcum = identity;
 		int deg = g[v].size();
@@ -122,12 +128,12 @@ private:
 		return add_root(dpcum, v);
 	}
 	// 頂点vに対して全方向に木DP
-	// val_p:vの親方向における辺のDP値
-	void dfs2(int v, const T &val_p, int p = -1) {
+	// dp_p:vの親方向における辺のDP値
+	void dfs2(int v, const T &dp_p, int p = -1) {
 		int i;
 		int deg = g[v].size();
 		for(i = 0; i < deg; i++) {
-			if(g[v][i].to == p) dp[v][i] = val_p;
+			if(g[v][i].to == p) dp[v][i] = dp_p;
 		}
 		vector<T> val_l(deg+1, identity), val_r(deg+1, identity);
 		for(i = 0; i < deg; i++) {
@@ -220,6 +226,7 @@ void Test_EDPC_V_Subtree(void)
 	for(i = 0; i < N; i++) cout << reroot.ans[i] << endl;
 }
 
+// https://atcoder.jp/contests/abc222/tasks/abc222_f
 void Test_ABC222_F_Expensive_Expense(void)
 {
 	int i;
@@ -342,7 +349,7 @@ void Test_count_child(void)
 
 int main(void)
 {
-	const int mode = 1;
+	const int mode = 2;
 	if(mode == 0) {
 		Test_Tenkei90_003();
 	}
