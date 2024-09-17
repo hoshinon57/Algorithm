@@ -78,7 +78,6 @@ public:
 	vector<vector<T>> dp;  // dp[v][i]:頂点vを根として考えたときに、i番目の有効辺に対応する値
 	vector<T> ans;  // ans[v]:頂点vに対する答
 	Graph g;
-
 private:  // add_edgeとmake_edgeを取り違えるという理由でprivateにて…
 	const T identity;
 	using f1 = function<T(T,T)>; // merge
@@ -103,6 +102,9 @@ public:
 		dfs2(0, identity);
 	}
 private:
+	// 頂点0を根とし、初回の木DP
+	// 頂点vの部分木について、辺ごとにDP値を求める -> dp[v][i]
+	// 頂点v以下(vを含む)の部分木のDP値を返す
 	T dfs1(int v, int p = -1) {
 		T dpcum = identity;
 		int deg = g[v].size();
@@ -111,15 +113,16 @@ private:
 		{
 			int u = g[v][i].to;  // v->u
 			if(u == p) continue;
+			// dp[v][i]を求めるにあたり、頂点u以下(uを含む)の部分木のDP値に、v->uへの辺を追加する
+			// それを全辺についてマージしておき、最後に頂点vを追加する
 			dp[v][i] = dfs1(u, v);
-			// test make_edge
 			dp[v][i] = add_edge(dp[v][i], g[v][i]);
-			// dp[v][i] += g[v][i].w;
 			dpcum = merge(dpcum, dp[v][i]);
 		}
 		return add_root(dpcum, v);
 	}
-	// vの親方向における辺のDP値
+	// 頂点vに対して全方向に木DP
+	// val_p:vの親方向における辺のDP値
 	void dfs2(int v, const T &val_p, int p = -1) {
 		int i;
 		int deg = g[v].size();
@@ -132,22 +135,19 @@ private:
 			val_r[i+1] = merge(val_r[i], dp[v][deg-i-1]);  // val_r[i]:右からi個のマージ
 		}
 
-		// 答出力 問題ごとに書き換え (add_rootは不要、など)
-		// ans[v] = add_root(val_l[deg], v);
+		// 答出力 問題ごとに書き換え
 		ans[v] = val_l[deg];
+		// ans[v] = add_root(val_l[deg], v);
 
-		for(i = 0; i < deg; i++)
+		for(i = 0; i < deg; i++)  // i番目の辺へ向かって再帰
 		{
 			int u = g[v][i].to;  // v->u
 			if(u == p) continue;
-			T tmp = merge(val_l[i], val_r[deg-i-1]);
-			// v->uへの順序としては、"vまでの辺", "頂点v", "v->uへの辺"であるので、この順に操作
-//			dfs2(u, add_root(tmp, v), v);
-			tmp = add_root(tmp, v);
-			// test make_edge
-			tmp = add_edge(tmp, g[v][i]);
-			// tmp += g[v][i].w;
-			dfs2(u, tmp, v);
+			// 以下、v->uへの順序としては "vまでの辺", "頂点v", "v->uへの辺"であるので、この順に操作
+			T t = merge(val_l[i], val_r[deg-i-1]);  // "v->uへ向かう辺" 以外の辺を統合
+			t = add_root(t, v);  // 頂点v追加
+			t = add_edge(t, g[v][i]);  // v->uへの辺追加
+			dfs2(u, t, v);
 		}
 	}
 };
@@ -346,20 +346,16 @@ int main(void)
 	if(mode == 0) {
 		Test_Tenkei90_003();
 	}
-	else if(mode == 1)
-	{
+	else if(mode == 1) {
 		Test_EDPC_V_Subtree();
 	}
-	else if(mode == 2)
-	{
+	else if(mode == 2) {
 		Test_ABC222_F_Expensive_Expense();
 	}
-	else if(mode == 3)
-	{
+	else if(mode == 3) {
 		Test_edge_weight_longest();
 	}
-	else if(mode == 4)
-	{
+	else if(mode == 4) {
 		Test_count_child();
 	}
 
