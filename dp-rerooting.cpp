@@ -20,7 +20,7 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
 // [済]木の直径を解いてみる
 // [済]EDPC-V
 // [済]ABC222-F
-// ABC348-E
+// [済]ABC348-E
 // ABC220-F(Distance Sums 2)
 // ABC160-F(Distributing Integers) 挑戦
 // TDPC-N(木) 挑戦 https://atcoder.jp/contests/tdpc/tasks/tdpc_tree
@@ -42,7 +42,7 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * 
  * ・Rerooting(N,idnt) : 頂点数N, 単位元idnt, そしてmerge(),add_edge(),add_root()で初期化
  * ・merge(x1,x2) : 2つの辺(DP値)に対する二項演算
- * ・add_edge(DP,edge) : DP値に頂点root->childへの辺を加える
+ * ・add_edge(DP,edge) : DP値に頂点parent->childへの辺を加える
  * ・add_root(DP,v) : DP値に根(頂点v)を加える
  * ・dfs1(v) : DFS1回目 まずはvを根として通常の木DPを行う
  * ・dfs2(v, dp_p) : DFS2回目 頂点vに対して全方向に木DPを行う
@@ -58,6 +58,7 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * ・典型90-003 https://atcoder.jp/contests/typical90/tasks/typical90_c 木の直径
  * ・EDPC-V(Subtree)
  * ・ABC222-F(Expensive Expense)
+ * ・ABC348-E(Minimize Sum of Distances)
  */
 
 // 問題ごとに必要なら書き換え
@@ -158,7 +159,18 @@ private:
 	}
 };
 
-// https://atcoder.jp/contests/typical90/tasks/typical90_c
+/*
+ * https://atcoder.jp/contests/typical90/tasks/typical90_c
+ * 想定解法は木の直径だが、全方位木DPで解いてみた版。
+ * dp[v][i]を、頂点vからのi番目の有向辺以下の部分木にて(vは除く)、その辺の本数と定義する。
+ * dp[v][*]を全mergeしたものが、頂点vから最も遠い頂点までの距離。
+ * 全頂点についての最大値+1,が答となる。 (問題文より、サイクルを作ってそこも通るため)
+ * 
+ * merge:2辺のmax
+ * add_edge:1加算
+ * add_root:何もしない (頂点に重みは無いため)
+ * とすると上手くいく。
+ */
 void Test_Tenkei90_003(void)
 {
 	int i;
@@ -167,10 +179,10 @@ void Test_Tenkei90_003(void)
 		return T(max(x1, x2));
 	};
 	auto add_edge = [](T x, Edge e) -> T {
-		return x;  // 辺の重み無し
+		return x+1;
 	};
 	auto add_root = [](T x, int v) -> T {
-		return T(x + 1);
+		return x;
 	};
 	// Rerooting::dfs2()におけるans[]は以下を設定する
 	// ans[v] = val_l[deg];
@@ -226,7 +238,23 @@ void Test_EDPC_V_Subtree(void)
 	for(i = 0; i < N; i++) cout << reroot.ans[i] << endl;
 }
 
-// https://atcoder.jp/contests/abc222/tasks/abc222_f
+/*
+ * https://atcoder.jp/contests/abc222/tasks/abc222_f
+ * dp[v][i]を、頂点vからのi番目の有向辺以下の部分木にて(vは除く)、
+ *   u:vから出る有向辺の先の頂点として、
+ *   町vからuの方向へ見たときの、旅費の最大値
+ * と定義する。
+ * dp[0][*]の全mergeが答。
+ * 
+ * merge:2辺のmax
+ * add_edge:
+ *   頂点v->uのコストを加算
+ *   頂点uから親v方向へコストを加算するイメージ
+ * add_root:
+ *   DP値とD[v]のmax
+ *   子方向のコストと、自身vのみのコストを比較するイメージ
+ * とすると上手くいく。
+ */
 void Test_ABC222_F_Expensive_Expense(void)
 {
 	int i;
@@ -262,16 +290,56 @@ void Test_ABC222_F_Expensive_Expense(void)
 	{
 		cout << reroot.ans[i] << endl;
 	}
-	return;
-	cout << "---" << endl;
-	for(int v = 0; v < N; v++)  // 頂点v
+}
+
+/*
+ * https://atcoder.jp/contests/abc348/tasks/abc348_e
+ * dp[v][i]を、頂点vからのi番目の有向辺以下の部分木にて(vは除く)、
+ *   u:vから出る有向辺の先の頂点として、
+ *   {f(u), Cの総和}
+ * と定義する。
+ * dp[0][*]の全mergeが答。
+ * 
+ * merge:DP値を単純加算
+ * add_edge:firstにsecondを加算、つまりf(u)にv->u間の分のCを加算
+ * add_root:secondにc[v]を加算
+ * とすると上手くいく。
+ */
+void Test_ABC348_E_Minimize_Sum_of_Distances(void)
+{
+	int i;
+	int N; cin >> N;
+	vector<ll> c(N);
+	using T = pair<ll,ll>;
+	auto merge = [](T x1, T x2) -> T {
+		T ret;
+		ret.first = x1.first + x2.first;
+		ret.second = x1.second + x2.second;
+		return ret;
+	};
+	auto add_edge = [](T x, Edge e) -> T {
+		return T(x.first+x.second, x.second);
+	};
+	auto add_root = [&](T x, int v) -> T {
+		return T(x.first, x.second + c[v]);
+	};
+	T identity = {0,0};
+	Rerooting<T> reroot(N, identity, merge, add_edge, add_root);
+	for(i = 0; i < N-1; i++)
 	{
-		cout << v+1 << ":" << endl;
-		for(auto &e : reroot.dp[v])
-		{
-			cout << "  " << e << endl;
-		}
+		int a, b; cin >> a >> b;
+		a--; b--;
+		reroot.make_edge(a, {b, 0});
+		reroot.make_edge(b, {a, 0});
 	}
+	for(i = 0; i < N; i++) {cin >> c[i];}
+	reroot.build();
+	ll ans = INF64;
+	for(i = 0; i < N; i++)
+	{
+		chmin(ans, reroot.ans[i].first);
+	}
+	cout << ans << endl;
 }
 
 // 全方位木DPテスト用
@@ -349,7 +417,7 @@ void Test_count_child(void)
 
 int main(void)
 {
-	const int mode = 2;
+	const int mode = 0;
 	if(mode == 0) {
 		Test_Tenkei90_003();
 	}
@@ -360,9 +428,12 @@ int main(void)
 		Test_ABC222_F_Expensive_Expense();
 	}
 	else if(mode == 3) {
-		Test_edge_weight_longest();
+		Test_ABC348_E_Minimize_Sum_of_Distances();
 	}
 	else if(mode == 4) {
+		Test_edge_weight_longest();
+	}
+	else if(mode == 5) {
 		Test_count_child();
 	}
 
