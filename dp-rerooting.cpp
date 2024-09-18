@@ -14,15 +14,6 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
 // 全方位木DPのメモやライブラリ
 // ★注意★ #include <functional> を忘れずに。ローカル環境では無くてもビルドが通るが、AtCoderではCEになる。
 
-// memo/todo:
-// [済]dfs1,dfs2をコメント等整理
-// [済]抽象化 add_edge
-// [済]木の直径を解いてみる
-// [済]EDPC-V
-// [済]ABC222-F
-// [済]ABC348-E
-// ABC220-F(Distance Sums 2)
-
 /*
  * [ざっくり概要]
  * 全方位木DPのライブラリ。
