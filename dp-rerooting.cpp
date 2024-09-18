@@ -20,7 +20,7 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * 辺の統合merge, 子u->親vへの辺追加add_edge, 頂点v追加add_root などを定義することで、
  * 全方位木DPを解けるようにしている。
  * 
- * ★代表的なmerge,add_root等はTest関数を参照。
+ * ★代表的なmerge,add_root等は各Test関数やmain()を参照。
  * 
  * [考え方]
  * ・dp[v][i] :
@@ -61,6 +61,7 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * [関連する問題 / verifyした問題]
  * ・典型90-003 https://atcoder.jp/contests/typical90/tasks/typical90_c 木の直径
  * ・EDPC-V(Subtree)
+ * ・TDPC-N(木)
  * ・ABC222-F(Expensive Expense)
  * ・ABC348-E(Minimize Sum of Distances)
  */
@@ -441,5 +442,25 @@ int main(void)
 		Test_count_child();
 	}
 
+/*
+	その他の問題における定義は以下。
+	TDPC-N(木)  https://atcoder.jp/contests/tdpc/tasks/tdpc_tree
+	-----------
+	using T = pair<ll,ll>;  // {辺数, 通り数}
+	auto merge = [](T x1, T x2) -> T {
+		T ret;
+		ret.first = x1.first + x2.first;
+		ret.second = nCk(x1.first+x2.first, x1.first) * x1.second % MOD * x2.second % MOD;
+		return ret;
+	};
+	auto add_edge = [](T x, Edge e) -> T {
+		return T(x.first+1, x.second);
+	};
+	auto add_root = [&](T x, int v) -> T {
+		return x;
+	};
+	T identity = {0,1};
+	-----------
+ */
 	return 0;
 }
