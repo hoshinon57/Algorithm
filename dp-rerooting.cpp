@@ -22,23 +22,36 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
 // [済]ABC222-F
 // [済]ABC348-E
 // ABC220-F(Distance Sums 2)
-// ABC160-F(Distributing Integers) 挑戦
-// TDPC-N(木) 挑戦 https://atcoder.jp/contests/tdpc/tasks/tdpc_tree
 
 /*
  * [ざっくり概要]
- * ToDo:書く
+ * 全方位木DPのライブラリ。
+ * 辺の統合merge, 子u->親vへの辺追加add_edge, 頂点v追加add_root などを定義することで、
+ * 全方位木DPを解けるようにしている。
  * 
  * ★代表的なmerge,add_root等はTest関数を参照。
+ * 
+ * [考え方]
+ * ・dp[v][i] :
+ *     頂点vを根として考えたときに、i番目の有効辺に対応する値、として定義する
+ *     頂点v自体はDP値に含まれない点に注意
+ * ・1回目のDFSにて、親v->子uを考えたときに、
+ *     再帰でuの部分木(uを含む)のDP値を求め、
+ *     v->uの辺を加え、
+ *     v以下の辺をマージし、
+ *     最後に頂点vを加える
+ *   というイメージ。
+ * ・2回目のDFSにて、頂点vから全方向に木DPを考えたときに、親v->子uにて
+ *     v->u"以外" の辺をマージし、
+ *     頂点vを加え、
+ *     v->uの辺を加え(マージではない点に注意)、
+ *     頂点uへDP値を渡す
+ *   というイメージ。
  * 
  * [メソッド等説明]
  * ・T : DPの型 基本はint,llなどで、上位2つの値を保持するならpair<int,int>など
  * ・identity : 単位元e merge()にて e*a=a*e=e であるような値
  * ・Edge : 辺の型 基本はto,wで良いと思われる
- * 
- * ・dp[v][i] :
- *     頂点vを根として考えたときに、i番目の有効辺に対応する値
- *     頂点v自体はDP値に含まれない点に注意
  * 
  * ・Rerooting(N,idnt) : 頂点数N, 単位元idnt, そしてmerge(),add_edge(),add_root()で初期化
  * ・merge(x1,x2) : 2つの辺(DP値)に対する二項演算
