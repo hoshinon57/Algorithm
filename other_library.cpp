@@ -12,6 +12,7 @@ typedef long long ll;
 /*
  * その他のライブラリ
  * ・床関数,天井関数 floor_div, ceil_div
+ * ・二分探索でidxと要素数を返す bi_idxnum_miman, 他
  * ・bビット目の確認、ビットON/OFF isbiton, setbit, unbit
  * ・桁数を返す cal_digit
  * ・p^0～p^(n-1)を事前計算 cal_pow_inadv
@@ -32,6 +33,16 @@ typedef long long ll;
 template <typename T> T floor_div(T a, T b){ if(b<0){a=-a; b=-b;} if(a>0){return a/b;} else {return (a-b+1)/b;}}
 // a/b以上の最小の整数(天井関数) ceil(5,2)=3, ceil(-5,2)=-2
 template <typename T> T ceil_div(T a, T b){ if(b<0) {a=-a; b=-b;} if(a>0){return (a+b-1)/b;} else {return a/b;}}
+
+// ソート済のvector<T>a に対して、(未満,以下,より大きい,以上)となるidxと要素数を返す
+// {val未満の最右のidx, val未満の要素数} 要素が無ければidx=-1
+template<typename T> pair<int,int> bi_idxnum_miman(vector<T> &a, T val) {int idx=lower_bound(a.begin(),a.end(),val)-a.begin(); return{idx-1,idx};}
+// {val以下の最右のidx, val以下の要素数} 要素が無ければidx=-1
+template<typename T> pair<int,int> bi_idxnum_ika(vector<T> &a, T val)   {int idx=upper_bound(a.begin(),a.end(),val)-a.begin(); return{idx-1,idx};}
+// {valより大きい最左のidx, valより大きい要素数} 要素が無ければidx=N
+template<typename T> pair<int,int> bi_idxnum_koeru(vector<T> &a, T val) {int idx=upper_bound(a.begin(),a.end(),val)-a.begin(); return{idx,(int)a.size()-idx};}
+// {val以上の最左のidx, val以上の要素数} 要素が無ければidx=N
+template<typename T> pair<int,int> bi_idxnum_ijou(vector<T> &a, T val)  {int idx=lower_bound(a.begin(),a.end(),val)-a.begin(); return{idx,(int)a.size()-idx};}
 
 // 以下、bは0-indexed
 bool isbiton(ll x, int b) { return ((x>>b)&1); }  // xのbビット目が立っていればtrue (bは0-indexed)
@@ -415,6 +426,22 @@ int main(void)
 	assert(ceil_div( 5, -1) == -5);
 	assert(ceil_div( 1000000000000000000, 60000000000) ==  16666667);  // 10^18 / 6^10
 	assert(ceil_div(-1000000000000000000, 30000000000) == -33333333);  // -10^18 / 3^10
+
+	{
+		vector<int> a = {1,3,3,4,5};
+		assert(bi_idxnum_miman(a,4) == make_pair(2,3));  // 4未満の最右はa[2], 要素数は3
+		assert(bi_idxnum_miman(a,0) == make_pair(-1,0));  // 0未満の最右はa[-1](該当なし), 要素数は0
+		assert(bi_idxnum_miman(a,10) == make_pair(4,5));
+		assert(bi_idxnum_ika(a,4) == make_pair(3,4));
+		assert(bi_idxnum_ika(a,0) == make_pair(-1,0));
+		assert(bi_idxnum_ika(a,10) == make_pair(4,5));
+		assert(bi_idxnum_koeru(a,4) == make_pair(4,1));  // 4より大きい最左はa[4], 要素数は1
+		assert(bi_idxnum_koeru(a,0) == make_pair(0,5));
+		assert(bi_idxnum_koeru(a,10) == make_pair(5,0));  // 10より大きい最左はa[5](該当なし), 要素数は0
+		assert(bi_idxnum_ijou(a,4) == make_pair(3,2));
+		assert(bi_idxnum_ijou(a,0) == make_pair(0,5));
+		assert(bi_idxnum_ijou(a,10) == make_pair(5,0));
+	}
 
 	ll x = 0b1000;
 	assert(!isbiton(x, 4));
