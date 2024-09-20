@@ -12,6 +12,7 @@
 #include <numeric>
 using namespace std;
 
+void _lambda_(void);
 void _vector_(void);
 void _string_(void);
 void _set_multiset_(void);
@@ -36,6 +37,7 @@ void _value_with_index_(void);
 
 int main(void)
 {
+	_lambda_();
 	_vector_();
 	_priority_queue_();
 	_set_multiset_();
@@ -446,6 +448,7 @@ int main(void)
 
 void _lambda_(void)
 {
+	cout << "-----lambda-----" << endl;
 	/*
 	ラムダ式の書き方メモ
 	参考：
@@ -459,13 +462,22 @@ void _lambda_(void)
 		return a + b;
 	};
 	// 最後に ; が必要
-
-	cout << func(10,20) << endl;
+	assert(func(10,20) == 30);
 	
 	// ラムダ式の外にある変数を使いたい場合、コピーキャプチャか参照キャプチャを使う
 	// 前者は[=], 後者は[&]
 	// また特定の変数のみを使いたい場合は[&num1, num2]など。
 	// 基本的には[&]を使うことになりそう
+
+	// C++14以降、以下の形で自己再帰を書ける
+	// https://yohhoy.hatenadiary.jp/entry/20211025/p1
+	auto func2 = [&](auto &self, int n) -> int
+	{
+		if(n == 1) return 1;
+		return n + self(self, n-1);  // n+(n-1)+(n-2)+...
+	};
+	assert(func2(func2, 1) == 1);
+	assert(func2(func2, 4) == 10);	
 }
 
 // a,bの最大公約数を返す
