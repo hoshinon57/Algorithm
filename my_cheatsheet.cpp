@@ -271,7 +271,7 @@ int main(void)
 	s2=a0+a1
 	s3=a0+a1+a2
 	sN=a0+a1+a2+...+a(N-1)
-	★0-indexedとして、s[i]はaの先頭i個の総和をイメージする。
+	★0-indexedとして、a[]の先頭i個の総和がs[i]になる。
 	
 	するとa[]の[l,r)の半開区間の和は a_sum[r] - a_sum[l] で計算できる。
 	[3,5)であれば a_sum[5] - a_sum[3] で、a[3]+a[4]の意味になる。
