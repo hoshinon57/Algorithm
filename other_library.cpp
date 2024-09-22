@@ -175,7 +175,7 @@ vector<vector<T>> rotate_2_rev(vector<vector<T>> &a)
 	return a_r;
 }
 
-// [verify]ABC336-C, ABC234-C
+// [verify]ABC336-C, ABC234-C, ABC372-B
 // nをbase進法で表したときの値を返す (n=0が変換後も0に対応する)
 // 戻り値は、一番下の桁から順に[0],[1],... と格納される
 vector<int> chg_base(ll n, int base)
