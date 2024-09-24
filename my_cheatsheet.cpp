@@ -238,8 +238,9 @@ int main(void)
 	考え方として、dp[i][j]を "i個目まで見て、長さjであるLISの末尾の値の最小値" というのを覚えておく。
 	ABC237-FのYouTube公式解説にて。
 
-	[in-place DP, 参考問題]
+	[in-place DP(inline DP), 参考問題]
 	ABC203-E
+	ABC372-F
 
 	[DPの復元、参考問題]
 	ABC200-D (ただし想定解法は異なる)
@@ -434,6 +435,13 @@ int main(void)
 	#include <atcoder/all>
 	using namespace atcoder;
 
+	modintのみを使う場合
+	https://atcoder.github.io/ac-library/master/document_ja/modint.html
+	#include <atcoder/modint>
+	using namespace atcoder;
+	using mint = modint998244353;
+	-> or modint1000000007, modint(modがfixedでない場合)
+
 	[中国剰余定理]
 	crt()
 	https://atcoder.github.io/ac-library/production/document_ja/math.html
@@ -442,6 +450,7 @@ int main(void)
 	[使用した問題]
 	ABC286-F crt(中国剰余定理)
 	ABC362-G suffix array
+	modint:ABC372-F, (多いので横方向に列挙していく)
 	*/
 	return 0;
 }
