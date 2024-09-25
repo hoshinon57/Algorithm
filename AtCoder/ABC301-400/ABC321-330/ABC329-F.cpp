@@ -32,6 +32,16 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * ・データ構造のマージは「マージテク」で計算量を減らすことを考える。 [典型]
  */
 
+// マージテク(※)を用いて、from->toへ要素をマージする
+// (※)サイズが小さい方から大きい方へマージするようにすることで、クエリ全体でO(NlogN)に抑えられる
+// [注意]fromは空にはしないが、swapにより中身が変化する可能性があるため使わない方が良い
+template <typename T>
+void set_merge(set<T> &from, set<T> &to)
+{
+	if(from.size() > to.size()) swap(from, to);
+	for(auto &e : from) to.insert(e);
+}
+
 int main(void)
 {
 	// 0-indexed
@@ -49,11 +59,7 @@ int main(void)
 		Q--;
 		int a, b; cin >> a >> b;  // a->b
 		a--; b--;
-		if(box[a].size() > box[b].size()) swap(box[a], box[b]);  // 箱aの方を少なくする
-		for(auto &e : box[a])
-		{
-			box[b].insert(e);
-		}
+		set_merge(box[a], box[b]);
 		box[a].clear();
 		cout << box[b].size() << endl;
 	}
