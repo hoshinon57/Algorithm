@@ -6,6 +6,7 @@
 #include <array>
 #include <random>  // rng_64
 #include <chrono>  // rng_64
+#include <set>
 using namespace std;
 typedef long long ll;
 
@@ -21,6 +22,7 @@ typedef long long ll;
  * ・N*N配列を回転 rotate
  * ・Y*X配列を回転 rotate_2, rotate_2_rev
  * ・nをbase進法で表したときの値 chg_base
+ * ・2つのsetをマージ(マージテク使用) set_merge
  * ・大文字小文字を反転 revLowUp
  * ・尺取り法 shakutori
  * ・extgcd
@@ -187,6 +189,17 @@ vector<int> chg_base(ll n, int base)
 		n /= base;
 	}
 	return a;
+}
+
+// [verify]ABC372-E,ABC329-F
+// マージテク(※)を用いて、from->toへ要素をマージする
+// (※)サイズが小さい方から大きい方へマージするようにすることで、クエリ全体でO(NlogN)に抑えられる
+// [注意]fromは空にはしないが、swapにより中身が変化する可能性があるため使わない方が良い
+template <typename T>
+void set_merge(set<T> &from, set<T> &to)
+{
+	if(from.size() > to.size()) swap(from, to);
+	for(auto &e : from) to.insert(e);
 }
 
 // [verify]ABC350-F
