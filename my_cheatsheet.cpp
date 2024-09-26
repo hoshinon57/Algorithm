@@ -1889,11 +1889,17 @@ void _largest_rectangle_histogram_(void)
 	・ans[]はどのタイミングで決定するか forループの先頭か末尾か、またはスタック操作中か
 
 	[参考]
+	http://algorithms.blog55.fc2.com/blog-entry-132.html
+	https://zenn.dev/k41531/articles/22df24117c1a15
+	最大長方形問題は、上方向に何マスOKかを事前計算しておき、行ごとにヒストグラム問題を解く
+	  https://lets-csharp.com/max-rectangle/
+	  https://algorithmbeginner.blogspot.com/2020/06/blog-post.html
 
 	[関連する問題]
 	ABC359-E
 	ABC372-D
 	AOJ DPL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_3_C
+	AOJ DPL_3_B https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_3_B 最大長方形
 	*/
 
 	/*
