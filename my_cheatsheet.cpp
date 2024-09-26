@@ -1873,9 +1873,15 @@ void _zobrist_hash_(void)
 }
 
 // "ヒストグラム中の最大正方形問題"のメモ
+// 合わせてスライド最小値(最大値)についても記載する
 void _largest_rectangle_histogram_(void)
 {
+	// ヒストグラム中の最大正方形問題
+	// スライド最小値(最大値)
+	// の順に記載する
+
 	/*
+	[ヒストグラム中の最大正方形問題]
 	[概要]
 	各iについて考えたときに、見るべき要素が単調増加(減少)になっていて、iをずらしていく場合、stackを用いて処理する。
 	もしくは、「その時点までの単調」を管理するのにstackを用いる、という考え方。
@@ -1900,10 +1906,8 @@ void _largest_rectangle_histogram_(void)
 	ABC372-D
 	AOJ DPL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_3_C
 	AOJ DPL_3_B https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_3_B 最大長方形
-	*/
 
-	/*
-	// [疑似コード]
+	[疑似コード]
 	// 単調増加、前から見ていく、横方向の情報を保持必要 のケース
 	h.push_back(0);  // 末尾番兵
 	stack<pair<ll,ll>> st;
@@ -1934,6 +1938,47 @@ void _largest_rectangle_histogram_(void)
 		// スタックに積む
 		st.push(h[i]);
 
+	}
+	*/
+
+	/*
+	[スライド最小値(最大値)]
+	[概要]
+	配列内の長さKの各区間について、最小値を求める問題。
+	最小値に(今後含め)なりうる要素を、deque内に単調増加になるよう積んでいく。これにより
+	  現在のウィンドウの最小値
+	  (ウィンドウはスライドしていくので)将来の最小値の候補
+	が昇順に並ぶことになる。
+	ここでdeque内の要素で、後から入ってきたa[i]より大きいものが存在する場合、それは最小値にはなりえない。
+	つまりdequeから取り除くことができる。
+
+	dequeへの出し入れは各要素ごと高々1回なので、全体でO(N)で抑えられる。
+
+	[実装方針]
+	・"ヒストグラム中の最大正方形問題"と同様と思われる。
+	・ウィンドウをスライドしていく形なので、入れた要素は必ず一定期間で取り除かれる。
+	  取り除く判定のため、要素番号の情報が必要。
+	  ⇒a[idx]ではなくidxをdequeに持たせるというテクニック。
+
+	[参考]
+	https://perogram.hateblo.jp/entry/2020/09/24/075511
+	https://qiita.com/kuuso1/items/318d42cd089a49eeb332
+
+	[関連する問題]
+	AOJ DSL_3_D https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_D
+
+	[疑似コード]
+	// dequeにa[i]ではなくidxを積む実装
+	for(i = 0; i < N; i++)  // a[i]を加え、a[i-L]を取り除く
+	{
+		// a[i-L]を取り除く
+		if(i-L >= 0 && de.front() == i-L) de.pop_front();
+
+		// デックが単調増加になるよう積んでいく
+		while(de.size() > 0 && a[de.back()] > a[i]) de.pop_back();
+		de.push_back(i);
+
+		if(i >= L-1) ans.push_back(a[de.front()]);
 	}
 	*/
 }
