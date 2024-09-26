@@ -1886,16 +1886,39 @@ void _largest_rectangle_histogram_(void)
 	・要素を前から見ていくか、後ろから見ていくか
 	・横方向の位置は保持必要か、不要か
 	  (最大正方形問題なら横幅の情報が必要のため、必要)
+	・ans[]はどのタイミングで決定するか forループの先頭か末尾か、またはスタック操作中か
 
 	[参考]
 
 	[関連する問題]
 	ABC359-E
 	ABC372-D
+	AOJ DPL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_3_C
 	*/
 
 	/*
 	// [疑似コード]
+	// 単調増加、前から見ていく、横方向の情報を保持必要 のケース
+	h.push_back(0);  // 末尾番兵
+	stack<pair<ll,ll>> st;
+	st.push({0, -1});  // 先頭番兵
+	ll ans = 0;
+	for(i = 0; i < (int)h.size(); i++)
+	{
+		int x = i;
+		// スタックにh[i]を入れたときに単調増加になるよう、h[i]より大きいものを削除していく
+		// 合わせてansと横方向の情報を更新
+		while(st.top().first > h[i])
+		{
+			auto [hh,xx] = st.top();
+			st.pop();
+			chmax(ans, (i-xx)*hh);
+			x = xx;
+		}
+		// スタックに積む
+		st.push({h[i], x});
+	}
+
 	// 単調増加、後ろから見ていく、横方向の情報は保持不要 のケース
 	// ans[]への設定はループ内の先頭か末尾か、問題に応じて
 	for(i = N-1; i >= 0; i--)  // 逆方向から見ていく
@@ -1906,6 +1929,5 @@ void _largest_rectangle_histogram_(void)
 		st.push(h[i]);
 
 	}
-
 	*/
 }
