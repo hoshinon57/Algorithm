@@ -38,13 +38,13 @@ template <typename T> T ceil_div(T a, T b){ if(b<0) {a=-a; b=-b;} if(a>0){return
 
 // ソート済のvector<T>a に対して、(未満,以下,より大きい,以上)となるidxと要素数を返す
 // {val未満の最右のidx, val未満の要素数} 要素が無ければidx=-1
-template<typename T> pair<int,int> bi_idxnum_miman(vector<T> &a, T val) {int idx=lower_bound(a.begin(),a.end(),val)-a.begin(); return{idx-1,idx};}
+template<typename T> pair<ll,ll> bi_idxnum_miman(vector<T> &a, T val) {ll idx=lower_bound(a.begin(),a.end(),val)-a.begin(); return{idx-1,idx};}
 // {val以下の最右のidx, val以下の要素数} 要素が無ければidx=-1
-template<typename T> pair<int,int> bi_idxnum_ika(vector<T> &a, T val)   {int idx=upper_bound(a.begin(),a.end(),val)-a.begin(); return{idx-1,idx};}
+template<typename T> pair<ll,ll> bi_idxnum_ika(vector<T> &a, T val)   {ll idx=upper_bound(a.begin(),a.end(),val)-a.begin(); return{idx-1,idx};}
 // {valより大きい最左のidx, valより大きい要素数} 要素が無ければidx=N
-template<typename T> pair<int,int> bi_idxnum_koeru(vector<T> &a, T val) {int idx=upper_bound(a.begin(),a.end(),val)-a.begin(); return{idx,(int)a.size()-idx};}
+template<typename T> pair<ll,ll> bi_idxnum_koeru(vector<T> &a, T val) {ll idx=upper_bound(a.begin(),a.end(),val)-a.begin(); return{idx,(ll)a.size()-idx};}
 // {val以上の最左のidx, val以上の要素数} 要素が無ければidx=N
-template<typename T> pair<int,int> bi_idxnum_ijou(vector<T> &a, T val)  {int idx=lower_bound(a.begin(),a.end(),val)-a.begin(); return{idx,(int)a.size()-idx};}
+template<typename T> pair<ll,ll> bi_idxnum_ijou(vector<T> &a, T val)  {ll idx=lower_bound(a.begin(),a.end(),val)-a.begin(); return{idx,(ll)a.size()-idx};}
 
 // 以下、bは0-indexed
 bool isbiton(ll x, int b) { return ((x>>b)&1); }  // xのbビット目が立っていればtrue (bは0-indexed)
@@ -442,18 +442,18 @@ int main(void)
 
 	{
 		vector<int> a = {1,3,3,4,5};
-		assert(bi_idxnum_miman(a,4) == make_pair(2,3));  // 4未満の最右はa[2], 要素数は3
-		assert(bi_idxnum_miman(a,0) == make_pair(-1,0));  // 0未満の最右はa[-1](該当なし), 要素数は0
-		assert(bi_idxnum_miman(a,10) == make_pair(4,5));
-		assert(bi_idxnum_ika(a,4) == make_pair(3,4));
-		assert(bi_idxnum_ika(a,0) == make_pair(-1,0));
-		assert(bi_idxnum_ika(a,10) == make_pair(4,5));
-		assert(bi_idxnum_koeru(a,4) == make_pair(4,1));  // 4より大きい最左はa[4], 要素数は1
-		assert(bi_idxnum_koeru(a,0) == make_pair(0,5));
-		assert(bi_idxnum_koeru(a,10) == make_pair(5,0));  // 10より大きい最左はa[5](該当なし), 要素数は0
-		assert(bi_idxnum_ijou(a,4) == make_pair(3,2));
-		assert(bi_idxnum_ijou(a,0) == make_pair(0,5));
-		assert(bi_idxnum_ijou(a,10) == make_pair(5,0));
+		assert(bi_idxnum_miman(a,4) == make_pair(2LL,3LL));  // 4未満の最右はa[2], 要素数は3
+		assert(bi_idxnum_miman(a,0) == make_pair(-1LL,0LL));  // 0未満の最右はa[-1](該当なし), 要素数は0
+		assert(bi_idxnum_miman(a,10) == make_pair(4LL,5LL));
+		assert(bi_idxnum_ika(a,4) == make_pair(3LL,4LL));
+		assert(bi_idxnum_ika(a,0) == make_pair(-1LL,0LL));
+		assert(bi_idxnum_ika(a,10) == make_pair(4LL,5LL));
+		assert(bi_idxnum_koeru(a,4) == make_pair(4LL,1LL));  // 4より大きい最左はa[4], 要素数は1
+		assert(bi_idxnum_koeru(a,0) == make_pair(0LL,5LL));
+		assert(bi_idxnum_koeru(a,10) == make_pair(5LL,0LL));  // 10より大きい最左はa[5](該当なし), 要素数は0
+		assert(bi_idxnum_ijou(a,4) == make_pair(3LL,2LL));
+		assert(bi_idxnum_ijou(a,0) == make_pair(0LL,5LL));
+		assert(bi_idxnum_ijou(a,10) == make_pair(5LL,0LL));
 	}
 
 	ll x = 0b1000;
