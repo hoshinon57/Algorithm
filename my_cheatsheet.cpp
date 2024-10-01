@@ -262,6 +262,7 @@ int main(void)
 	A[i]=xまで見たとき、xが前回登場した位置をpre[x]とすると、
 	  dp[i] = dp[pre[x]]～dp[i-1]までの総和
 	であり、これは累積和を逐次求めていくことでO(1)で計算できる。
+	※pre[x]はmapで求めるのが楽。logが付くがTLEになるケースはほぼ無いと思われる。
 	https://atcoder.jp/contests/abc214/editorial/2440
 	https://qiita.com/drken/items/a207e5ae3ea2cf17f4bd
 	https://scrapbox.io/ngmemo/%E9%83%A8%E5%88%86%E5%88%97DP
