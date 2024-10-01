@@ -458,12 +458,17 @@ int main(void)
 	#include <atcoder/all>
 	using namespace atcoder;
 
+	[modint]
 	modintのみを使う場合
 	https://atcoder.github.io/ac-library/master/document_ja/modint.html
 	#include <atcoder/modint>
 	using namespace atcoder;
 	using mint = modint998244353;
 	-> or modint1000000007, modint(modがfixedでない場合)
+
+	2つのmodint m1,m2の和を出力するときは
+	(m1+m2).val()
+	で良い。
 
 	[中国剰余定理]
 	crt()
@@ -473,7 +478,7 @@ int main(void)
 	[使用した問題]
 	ABC286-F crt(中国剰余定理)
 	ABC362-G suffix array
-	modint:ABC372-F, (多いので横方向に列挙していく)
+	modint:ABC372-F, ABC160-F, (多いので横方向に列挙していく)
 	*/
 	return 0;
 }
