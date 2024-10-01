@@ -195,18 +195,6 @@ int main(void)
 	としてまず考える。
 	それを踏まえ、もらう/配るのどちらを選んだかによって、遷移を考えていく。
 
-	期待値DPについて：
-	後ろから求めていくのが良さそう。
-	  dp[i]:iの状態からNになるまでの回数の期待値
-	  dp[N]=0
-	  dp[1]を最終的に求めたい
-	のような感じで。
-	また、もらうDPで解くのが良さそう。
-	ABC263-Eを「前から、配るDP」で解こうとしたら、どうしても上手くいかなかった。
-	参考問題：
-	  https://atcoder.jp/contests/dp/tasks/dp_j
-	  https://atcoder.jp/contests/abc263/tasks/abc263_e
-	
 	ABC265-E問題(https://atcoder.jp/contests/abc265/tasks/abc265_e)のように
 	各フェーズの結果を配列ではなく連想配列で持つ場合にて、
 	  vector<map<pair<ll, ll>, ll>> dp;
@@ -226,6 +214,18 @@ int main(void)
 	  ABC270-D
 	  ABC298-E
 
+	[期待値DP]
+	後ろから求めていくのが良さそう。
+	  dp[i]:iの状態からNになるまでの回数の期待値
+	  dp[N]=0
+	  dp[1]を最終的に求めたい
+	のような感じで。
+	また、もらうDPで解くのが良さそう。
+	ABC263-Eを「前から、配るDP」で解こうとしたら、どうしても上手くいかなかった。
+	[参考問題]
+	EDPC-J
+	ABC263-E
+	
 	[確率DP、参考問題]
 	ABC184-D
 	ABC275-E
