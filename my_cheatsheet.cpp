@@ -254,6 +254,20 @@ int main(void)
 	[過去いくつかの状態を持ち、スライドさせていくようなDP]
 	ABC359-D
 	JOI Pasta https://atcoder.jp/contests/joi2012yo/tasks/joi2012yo_d
+
+	[部分列DP]
+	dp[i]:i番目まで見て、i番目の文字を使うときの部分列の総数 として定義すると、dp[*]の総和が答。
+	S="abac"なら"ac"は2通りの方法で作れるが、重複を除外する必要がある点が厄介。
+	ある文字列を作りたいとき、先頭から貪欲に選んでいくことを考えると、重複を省ける。
+	A[i]=xまで見たとき、xが前回登場した位置をpre[x]とすると、
+	  dp[i] = dp[pre[x]]～dp[i-1]までの総和
+	であり、これは累積和を逐次求めていくことでO(1)で計算できる。
+	https://atcoder.jp/contests/abc214/editorial/2440
+	https://qiita.com/drken/items/a207e5ae3ea2cf17f4bd
+	https://scrapbox.io/ngmemo/%E9%83%A8%E5%88%86%E5%88%97DP
+	[参考問題]
+	ABC214-F
+	Library Checker(Number of Subsequences) https://judge.yosupo.jp/problem/number_of_subsequences
 	*/
 
 	/*
