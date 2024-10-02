@@ -34,6 +34,7 @@ void _bitset_(void);
 void _mex_(void);
 void _math_(void);
 void _value_with_index_(void);
+void _shakutori_(void);
 void _zobrist_hash_(void);
 void _largest_rectangle_histogram_(void);
 
@@ -1869,6 +1870,39 @@ void _value_with_index_(void)
 		vector<int> after_idx(N);
 		for(i = 0; i < N; i++) after_idx[a_idx[i]] = i;  // {4, 0, 2, 1, 3}
 	}
+}
+
+/*
+ * 尺取り法の実装テンプレート
+ * https://qiita.com/drken/items/ecd1a472d3a0e7db8dce
+ * 
+ * [関連する問題]
+ * ABC358-D
+ * ABC366-E 難しかったが良問
+ */
+void _shakutori_(void)
+{
+	// 書きかけ
+
+	// 上記と異なる方針の問題として、ABC358-Dのようなケースでは以下
+	// 参考：ABC358-D.cpp
+#if 0
+	int a_idx = 0;
+	// a[M], b[N]
+	for(i = 0; i < N; i++) { // b[i]
+		// 条件を満たすまでa_idxを移動
+		while(a_idx < M && (条件を満たさない場合) ) a_idx++;
+
+		if(a_idx == M) {
+			// 条件を満たさないまま、a[]の末尾まで来てしまった
+			break;
+		}
+		
+		// ここに来れば、a[a_idx]とb[i]の関係は条件を満たしている
+		// ex: ans+=a[a_idx];
+		a_idx++;
+	}
+#endif
 }
 
 // Zobrist Hashのメモ

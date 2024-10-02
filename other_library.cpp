@@ -24,7 +24,6 @@ typedef long long ll;
  * ・nをbase進法で表したときの値 chg_base
  * ・2つのsetをマージ(マージテク使用) set_merge
  * ・大文字小文字を反転 revLowUp
- * ・尺取り法 shakutori
  * ・extgcd
  * ・SCC
  * ・3x3のマス目について縦/横/斜めがそろったかを判定 -> ABC349-E.cppを参照
@@ -208,38 +207,6 @@ void set_merge(set<T> &from, set<T> &to)
 char revLowUp(char c) {
 	if(islower(c)) return toupper(c);
 	else return tolower(c);
-}
-
-/*
- * 尺取り法の実装テンプレート
- * https://qiita.com/drken/items/ecd1a472d3a0e7db8dce
- * 
- * [関連する問題]
- * ABC358-D
- * ABC366-E 難しかったが良問
- */
-void shakutori(void) {
-	// 書きかけ
-
-	// 上記と異なる方針の問題として、ABC358-Dのようなケースでは以下
-	// 参考：ABC358-D.cpp
-#if 0
-	int a_idx = 0;
-	// a[M], b[N]
-	for(i = 0; i < N; i++) { // b[i]
-		// 条件を満たすまでa_idxを移動
-		while(a_idx < M && (条件を満たさない場合) ) a_idx++;
-
-		if(a_idx == M) {
-			// 条件を満たさないまま、a[]の末尾まで来てしまった
-			break;
-		}
-		
-		// ここに来れば、a[a_idx]とb[i]の関係は条件を満たしている
-		// ex: ans+=a[a_idx];
-		a_idx++;
-	}
-#endif
 }
 
 // x,yについての一次不定方程式 ax+by=c が整数解を持つ条件：
