@@ -1881,10 +1881,11 @@ void _value_with_index_(void)
  * [関連する問題]
  * ABC032-C 基本問題
  * ABC038-C 数え上げの基本問題
- * ARC022-B
- * AOJ DSL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_C
+ * ABC098-D
  * ABC358-D 条件を満たすまで移動、という処理
  * ABC366-E 難しかったが良問
+ * ARC022-B
+ * AOJ DSL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_C
  */
 void _shakutori_(void)
 {
