@@ -1883,6 +1883,7 @@ void _value_with_index_(void)
  * ABC032-C 基本問題
  * ABC038-C 数え上げの基本問題
  * ABC098-D
+ * ABC302-D
  * ABC358-D 条件を満たすまで移動、という処理
  * ABC366-E 難しかったが良問
  * ARC022-B
