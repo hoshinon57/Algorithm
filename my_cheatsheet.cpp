@@ -1875,14 +1875,50 @@ void _value_with_index_(void)
 /*
  * 尺取り法の実装テンプレート
  * https://qiita.com/drken/items/ecd1a472d3a0e7db8dce
+ * https://scrapbox.io/pocala-kyopro/%E3%81%97%E3%82%83%E3%81%8F%E3%81%A8%E3%82%8A%E6%B3%95
+ * https://hedwig1001.hatenablog.com/entry/2022/08/31/212951
  * 
  * [関連する問題]
+ * ABC032-C 基本問題
+ * ABC038-C 数え上げの基本問題
+ * ARC022-B
+ * AOJ DSL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_C
  * ABC358-D
  * ABC366-E 難しかったが良問
  */
 void _shakutori_(void)
 {
-	// 書きかけ
+	/*
+	[概要]
+	・「条件」を満たす区間 (連続する部分列) のうち、最小or最大の長さを求める
+	・「条件」を満たす区間 (連続する部分列) を数え上げる
+	といった問題にて使える可能性があるテクニック。
+
+	区間は半開区間[l,r)で扱うと実装しやすい。
+
+	尺取り法を適用するには、以下を満たしている必要がある。
+	・区間 [l,r) が「条件」を満たすなら、それに含まれる区間、例えば [l+1,r) や [l,r-1) も「条件」を満たす。
+	・区間 [l,r) が「条件」を満たすなら、それを含む区間、例えば [l,r+1) も「条件」を満たす。
+	*/
+
+	// [実装テンプレート]
+#if 0
+	int l, r;  // 要素a[*]を[l,r)で扱う
+	r = 0;
+	for(l = 0; l < N; l++)
+	{
+		while(r < N && (rを1つ進めても条件を満たすか)) {  // a[r]を使うことが多い
+			ex: sum += a[r];
+			r++;
+		}
+		// この時点で、[l,r)は条件を満たしている
+		ex: chmax(ans, r-l);
+		ex: ans += r-l;
+		// l++するための準備
+		if(l == r) r++;  // 例えば[3,3)が[4,3)になると破綻するので、rを加算しておく
+		else ex: sum -= a[l];  // a[l]を区間から除外する
+	}
+#endif
 
 	// 上記と異なる方針の問題として、ABC358-Dのようなケースでは以下
 	// 参考：ABC358-D.cpp
