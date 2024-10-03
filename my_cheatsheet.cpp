@@ -1883,7 +1883,7 @@ void _value_with_index_(void)
  * ABC038-C 数え上げの基本問題
  * ARC022-B
  * AOJ DSL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_C
- * ABC358-D
+ * ABC358-D 条件を満たすまで移動、という処理
  * ABC366-E 難しかったが良問
  */
 void _shakutori_(void)
@@ -1924,13 +1924,14 @@ void _shakutori_(void)
 	// 参考：ABC358-D.cpp
 #if 0
 	int a_idx = 0;
-	// a[M], b[N]
-	for(i = 0; i < N; i++) { // b[i]
+	// a[N], b[M]
+	for(i = 0; i < M; i++) { // b[i]
 		// 条件を満たすまでa_idxを移動
-		while(a_idx < M && (条件を満たさない場合) ) a_idx++;
+		while(a_idx < N && (条件を満たさない場合) ) a_idx++;
 
-		if(a_idx == M) {
+		if(a_idx == N) {
 			// 条件を満たさないまま、a[]の末尾まで来てしまった
+			// ex: ok = false;
 			break;
 		}
 		
