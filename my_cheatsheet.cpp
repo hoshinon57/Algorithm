@@ -479,7 +479,7 @@ int main(void)
 	[使用した問題]
 	ABC286-F crt(中国剰余定理)
 	ABC362-G suffix array
-	modint:ABC372-F, ABC160-F, (多いので横方向に列挙していく)
+	modint:ABC372-F, ABC160-F, ABC017-D, (多いので横方向に列挙していく)
 	*/
 	return 0;
 }
@@ -1879,6 +1879,7 @@ void _value_with_index_(void)
  * https://hedwig1001.hatenablog.com/entry/2022/08/31/212951
  * 
  * [関連する問題]
+ * ABC017-D 難しかった lではなくrでループする
  * ABC032-C 基本問題
  * ABC038-C 数え上げの基本問題
  * ABC098-D
