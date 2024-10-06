@@ -18,6 +18,7 @@ typedef long long ll;
  * ・桁数を返す cal_digit
  * ・p^0～p^(n-1)を事前計算 cal_pow_inadv
  * ・k乗根 kth_root_integer
+ * ・2点の距離の2乗 dist_squared
  * ・乱数生成 rng_64
  * ・N*N配列を回転 rotate
  * ・Y*X配列を回転 rotate_2, rotate_2_rev
@@ -103,6 +104,14 @@ uint64_t kth_root_integer(uint64_t a, int k) {
 		if (check(ret | (1u << i))) ret |= 1u << i;
 	}
 	return ret;
+}
+
+// 2点(x1,y1),(x2,y2)の距離の "2乗" を返す
+// 実距離を求めたい場合は呼び出し元で sqrt(dist_squared()) など行うこと
+// 引数はlong longにしているが、2乗の関係で引数が10^9を超えるとオーバーフローするため注意 (10^9を超える問題はあまり出ないと思うが)
+ll dist_squared(ll x1, ll y1, ll x2, ll y2) {
+	ll dx = x1-x2, dy = y1-y2;
+	return dx*dx+dy*dy;
 }
 
 // [使用した問題]ABC367-F
@@ -459,6 +468,14 @@ int main(void)
 		assert(p[7] == 28);  // 128
 		assert(p[10] == 24);  // 1024
 		assert(p.size() == (int)11);
+	}
+
+	// dist_squared
+	{
+		assert(dist_squared(0LL, 0LL, 1LL, 2LL) == 5);
+		assert(dist_squared(5LL, 10LL, 10005LL, 110LL) == 100000000+10000);
+		assert(dist_squared(-10005LL, -110LL, -5LL, -10LL) == 100000000+10000);
+		assert(dist_squared(-110LL, -10005LL, -10LL, -5LL) == 100000000+10000);
 	}
 	
 	// rng_64

@@ -17,6 +17,7 @@ using namespace std;
  * ABC328-E M個の辺からN-1個を選ぶ
  * ABC345-D
  * ABC371-C 難しかったが良問
+ * ABC374-D
  */
 
 /*
@@ -51,7 +52,7 @@ int main(void)
 	int count = 0;  // 生成した順列の数
 	do
 	{
-		for(i = 0; i < N; i++)
+		for(i = 0; i < N; i++)  // a[i]:i番目に見るべき要素の番号
 		{
 			cout << a[i] << " ";
 		}
