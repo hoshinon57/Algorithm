@@ -16,6 +16,7 @@ using namespace std;
  * ABC302-C 
  * ABC328-E M個の辺からN-1個を選ぶ
  * ABC345-D
+ * ABC369-E ワーシャルフロイド, bit全探索と絡めた良問
  * ABC371-C 難しかったが良問
  * ABC374-D
  */
