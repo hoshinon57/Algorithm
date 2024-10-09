@@ -60,6 +60,7 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * 
  * [関連する問題 / verifyした問題]
  * ・典型90-003 https://atcoder.jp/contests/typical90/tasks/typical90_c 木の直径
+ * ・AOJ 1595 https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1595 基本問題
  * ・EDPC-V(Subtree)
  * ・TDPC-N(木)
  * ・ABC160-F(Distributing Integers)
