@@ -64,6 +64,7 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * ・EDPC-V(Subtree)
  * ・TDPC-N(木)
  * ・ABC160-F(Distributing Integers)
+ * ・ABC220-F(Distance Sums 2) 公式解説は「頂点ごとの差分をO(1)で求める」
  * ・ABC222-F(Expensive Expense)
  * ・ABC348-E(Minimize Sum of Distances)
  */
