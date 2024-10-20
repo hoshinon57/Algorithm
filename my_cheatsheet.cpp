@@ -398,6 +398,7 @@ int main(void)
 	  時計回り：b-a
 	  反時計回り：a+N-b
 	となる。(2つを加算するとNになる)
+	円環上の距離や移動、公差判定のライブラリ: other_library.cpp - move_on_ring
 	*/
 
 	/*
