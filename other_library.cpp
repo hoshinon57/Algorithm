@@ -382,7 +382,7 @@ void Test_AOJ_GRL_3_C(void)
 
 /*
  * 円環上の距離や移動、公差判定のライブラリ
- * [verify]ABC376-B
+ * [verify]ABC376-B, ABC376-F
  * [使い方]
  * コンストラクタ、またはset_n()にて1周の長さを指定する。
  *   move_on_ring ring(N);
