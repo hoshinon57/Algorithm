@@ -19,6 +19,7 @@ typedef long long ll;
  * ・p^0～p^(n-1)を事前計算 cal_pow_inadv
  * ・k乗根 kth_root_integer
  * ・2点の距離の2乗 dist_squared
+ * ・非負mod smod
  * ・乱数生成 rng_64
  * ・N*N配列を回転 rotate
  * ・Y*X配列を回転 rotate_2, rotate_2_rev
@@ -113,6 +114,15 @@ uint64_t kth_root_integer(uint64_t a, int k) {
 ll dist_squared(ll x1, ll y1, ll x2, ll y2) {
 	ll dx = x1-x2, dy = y1-y2;
 	return dx*dx+dy*dy;
+}
+
+// n%mを計算し、非負つまり[0,m)の範囲で返す
+// 参考：https://atcoder.jp/contests/abc376/submissions/58995270 (ecottea氏のテンプレート)
+template<typename T>
+T smod(T n, T m) {
+	n %= m;
+	if(n < 0) n += m;
+	return n;
 }
 
 // [使用した問題]ABC367-F
@@ -536,6 +546,17 @@ int main(void)
 		assert(dist_squared(5LL, 10LL, 10005LL, 110LL) == 100000000+10000);
 		assert(dist_squared(-10005LL, -110LL, -5LL, -10LL) == 100000000+10000);
 		assert(dist_squared(-110LL, -10005LL, -10LL, -5LL) == 100000000+10000);
+	}
+
+	// smod
+	{
+		assert(smod(5, 3) == 2);
+		assert(smod(-2, 3) == 1);
+		assert(smod(-3, 3) == 0);
+		assert(smod(-4, 3) == 2);
+		assert(smod(-1000, 222) == 110);
+		assert(smod(0, 3) == 0);
+		assert(smod(3, 3) == 0);
 	}
 	
 	// rng_64
