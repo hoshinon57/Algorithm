@@ -1,27 +1,41 @@
 #include <iostream>
 #include <vector>
-#include <cassert>
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
+#include <map>
 using namespace std;
+typedef long long ll;
+// const ll INF64 = 1LL << 60;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
+const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// ローリングハッシュのライブラリ
+// ABC377 https://atcoder.jp/contests/abc377
 
 /*
- * [参考URL]
- *   https://ei1333.github.io/library/string/rolling-hash.hpp  ほぼこのままの実装
- *   https://kyoroid.github.io/algorithm/string/rolling_hash.html
- *   https://qiita.com/hirominn/items/80464ee381c8d400725f
- *   https://trap.jp/post/1036/
- *   https://tjkendev.github.io/procon-library/python/string/rolling_hash.html
+ * 自力で解けず、解説を見た。
+ * 公式解説とは異なるが、ローリングハッシュを用いて解く。
+ *   https://atcoder.jp/contests/abc377/editorial/11249
  * 
- * [ざっくり概要]
- * 文字列や数列のハッシュを計算することで、要素同士の比較をO(1)で可能とする。
+ * 入力Sに対し、先頭からi文字までの連続部分文字列S'を考え、
+ *   map[S']=|S|
+ * となるようなmapをSの各iについて求めることを考える。
  * 
- * [関連する問題 / verifyした問題]
- * AOJ ALDS1_14_B https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_14_B&lang=ja
- * ABC141-E
- * ABC284-F
- * ABC331-F このライブラリは使っていないが、ローリングハッシュの考え方
- * ABC377-G 想定解とは異なる
+ * Sについての答は、Sの先頭j文字まで残し、他の文字列を加える操作を考えて、
+ *   (|S|-j) + (map[S']-j)
+ * を各jについて計算した最小値となる。
+ * ※いらないゴミを削り、他のSになるよう追加していくイメージ。
+ * 
+ * ただしこれを単純な map<string,int> でやるとTLE.
+ * |S|=2*10^5 である文字列から連続部分文字列を作ると文字列長の総和は O(|S|^2) のオーダーになり、
+ * mapでのハッシュ計算が間に合わないと思われる。（実際にTLEした）
+ * そこで、mapには文字列ではなくローリングハッシュのハッシュ値を用いるようにすると、間に合う。
+ * 
+ * ※自作のローリングハッシュライブラリが、Query()にて空文字列は選べない点に注意。
+ *   ansの初期値を|S|にして対策した。
  */
 
 /*
@@ -130,59 +144,34 @@ public:
 	}
 };
 
-// 以下はAOJ ALDS1_14_Bを解く内容
-// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_14_B&lang=ja
-void solve_AOJ_ALDS1_14_B(void)
-{
-	string t, p; cin >> t >> p;
-	RollingHash rh;
-	int len1 = (int)t.size();
-	int len2 = (int)p.size();
-	auto h1 = rh.build(t);
-	auto h2 = rh.build(p);
-	auto q2 = rh.query(h2);
-	for(int i = 0; i+len2 <= len1; i++)
-	{
-		auto q1 = rh.query(h1, i, i+len2);
-		if(q1 == q2)
-		{
-			cout << i << endl;
-		}
-	}
-}
-
 int main(void)
 {
+	int i, j;
+	int N; cin >> N;
+	RollingHash rh;
+	map<uint64_t, int> hmap;  // hmap[val]=(先頭からの連続部分文字列のハッシュがvalのうち、|S|が最小のもの)
+	for(i = 0; i < N; i++)
 	{
-		using hash_type = vector<uint64_t>;  // buildの戻り値 ただautoで受けた方が楽かな
-		RollingHash rh;
-		string str1 = "abcdefghijklmnabcdefghijklmn";
-		string str2 = "cdefg";
-		int len1 = (int)str1.size();
-		int len2 = (int)str2.size();
-		hash_type h1 = rh.build(str1);
-		hash_type h2 = rh.build(str2);
-		int i;
-		vector<int> ans;
-		for(i = 0; i+len2 <= len1; i++)
+		string s; cin >> s;
+		auto hash = rh.build(s);
+		int len = (int)s.size();
+		int ans = len;  // 空文字にするケース
+		for(j = 1; j <= len; j++)  // sの先頭j文字まで残す
 		{
-			uint64_t hash1 = rh.query(h1, i, i+len2);
-			uint64_t hash2 = rh.query(h2);  // 全体のハッシュ
-			if(hash1 == hash2) ans.push_back(i);
+			auto q = rh.query(hash, 0, j);  // [0,j)のハッシュq
+			if(hmap.count(q) != 0)  // sの先頭j文字が、すでに存在する場合
+			{
+				int cnt = (len-j) + (hmap[q]-j);  // 入力Sを削るコストと、そこから他のSになるよう文字を足していくコスト、の和
+				chmin(ans, cnt);
+				chmin(hmap[q], len);
+			}
+			else
+			{
+				hmap[q] = len;
+			}
 		}
-		assert(ans == vector<int>({2, 16}));
+		cout << ans << endl;
 	}
 
-	{
-		// str1,str2の指定区間で、先頭から何文字一致しているか
-	    string str1 = "abcdefghijklmnabcdefghijklmnabcdefghijklmn";
-	    string str2 = "bcdefzzz";
-		RollingHash rh;
-		auto hash1 = rh.build(str1);
-		auto hash2 = rh.build(str2);
-		assert(rh.lcp(hash1, 1, str1.size(), hash2, 0, str2.size()) == 5);
-	}
-	
-	// solve_AOJ_ALDS1_14_B();
 	return 0;
 }
