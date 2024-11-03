@@ -322,6 +322,18 @@ int main(void)
 	T ex = 0;  // gcd(a,0)=a のため
 	---------------
 	*/
+	/*
+	特定の要素を加減算したい場合、以下のラムダ式を使うと楽かも
+	ex)seg_add(seg, idx, 1);  // idx番目の要素を+1
+	計算量はO(logN). seg.Get()はO(1)で作ってるのでseg.Update()の分。
+	※T=pairではコンパイルエラーになるのでクラスメソッドには入れられない
+	---------------
+	auto seg_add = [](SegmentTree<T> &seg_, int idx_, T val_) -> void
+	{
+		seg_.Update(idx_, seg_.Get(idx_)+val_);
+	};
+	---------------
+	*/
 	Test();
 
 	// 以下は AOJ DSL_2_A のもの
