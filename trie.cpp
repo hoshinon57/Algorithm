@@ -35,7 +35,7 @@ struct Trie {
 private:
 	struct Node {
 		vector<int> next;  // next[ch]:文字chである子の頂点番号 存在しなければ-1
-		vector<int> accept;  // 末端がこの頂点である文字列の頂点番号たち
+		vector<int> accept;  // 末端がこの頂点である文字列のidたち
 		int c;  // この頂点が持つ文字を、base基点で数値で表したもの 'A'なら0, 'B'なら1, など
 		int depth;  // 根からの距離
 		int common;  // この頂点を共有している文字列の個数
@@ -48,8 +48,9 @@ private:
 
 	// 単語wordをid番目として追加
 	void insert(const string &word, int id)	{
-		int node_id = 0;
+		int node_id = 0;  // node_id=0は根(文字が入っていない)であることに注意
 		for(int i = 0; i < (int)word.size(); i++) {
+			// 以下、node_idから文字cへたどった先がnext_idになる
 			int c = (int)(word[i] - base);
 			int &next_id = nodes[node_id].next[c];
 			if(next_id == -1) {  // 文字cが木に存在しなければ追加
