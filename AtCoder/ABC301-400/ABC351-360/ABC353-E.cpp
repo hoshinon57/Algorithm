@@ -1,29 +1,30 @@
 #include <iostream>
 #include <vector>
-#include <cassert>
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
 using namespace std;
 typedef long long ll;
+// const ll INF64 = 1LL << 60;
 const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
+
+// ABC353 https://atcoder.jp/contests/abc353
 
 /*
- * トライ木のライブラリ
- * 基本的には、問題ごとにsearch()を書き換える必要がありそう
+ * 公式解説の通り、Trie木で解いてみた版。
+ *   https://atcoder.jp/contests/abc353/editorial/9969
  * 
- * [ざっくり概要]
- * ・文字列の接頭辞(prefix)の共通部分を共有して保存することで、文字列の長さをMとしてO(M)での検索が可能。
- * ・1つの頂点が1つの文字を表す。
- * ・ルートには空の文字列が対応する。
+ * Trie木ライブラリにて、insert()を改造する。
+ * 文字列が追加される際、文字ごとに「この文字が使われている数」をansに加算していけばよい。
+ * "ABC353-E"というコメントがある行が、ライブラリから追加した部分。
  * 
- * [参考資料]
- *   https://algo-logic.info/trie-tree/
- *   https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%A9%E3%82%A4_(%E3%83%87%E3%83%BC%E3%82%BF%E6%A7%8B%E9%80%A0)
- *   https://ei1333.github.io/luzhiled/snippets/structure/trie.html
- * 
- * [関連する問題 / verifyした問題]
- * ABC287-E search()にてcommon>=2となるうちの最も深い(depth)頂点を探索
- * ABC353-E insert()にてcommonをansへ加算
  */
+
+ll ans = 0;
 
 // https://algo-logic.info/trie-tree/
 // Trie<26, 'A'> trie; のように定義する
@@ -60,6 +61,7 @@ private:
 			}
 			nodes[node_id].common++;
 			node_id = next_id;
+			ans += nodes[next_id].common;  // ABC353-E
 		}
 		nodes[node_id].common++;
 		nodes[node_id].accept.push_back(id);
@@ -105,18 +107,15 @@ public:
 
 int main(void)
 {
-	Trie<26, 'A'> trie;
-	trie.insert("FIRE");
-	assert( trie.search("FIRE"));
-	assert(!trie.search("FI"));
-	assert( trie.search("FI", true));  // "FI"をprefixに持つ単語は存在する
-	assert(!trie.search("FIREMAN", true));
-	trie.insert("FIREMAN");
-	assert( trie.search("FIREMAN"));
-	assert(!trie.search("FIREMA"));
-	assert( trie.search("FIREMA", true));
-	assert(trie.word_count() == 2);
-	trie.insert("FILE");
-	assert(trie.size() == 9+1);  // FIREMAN + LE + 1(root)
+	int i;
+	int N; cin >> N;
+	Trie<26, 'a'> trie;
+	for(i = 0; i < N; i++)
+	{
+		string s; cin >> s;
+		trie.insert(s);
+	}
+	cout << ans << endl;
+
 	return 0;
 }
