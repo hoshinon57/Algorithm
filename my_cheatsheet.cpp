@@ -1905,6 +1905,7 @@ void _value_with_index_(void)
  * ABC358-D 条件を満たすまで移動、という処理
  * ABC366-E 難しかったが良問
  * ABC369-C
+ * ABC377-D
  * ARC022-B
  * AOJ DSL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_C
  */
