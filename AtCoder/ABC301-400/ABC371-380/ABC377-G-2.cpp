@@ -1,29 +1,26 @@
 #include <iostream>
 #include <vector>
-#include <cassert>
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
 using namespace std;
 typedef long long ll;
+// const ll INF64 = 1LL << 60;
 const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
+
+// ABC377 https://atcoder.jp/contests/abc377
 
 /*
- * トライ木のライブラリ
- * 基本的には、問題ごとにsearch()を書き換える必要がありそう
+ * Trie木を用いて解く。公式解説の考え方。
+ *   https://atcoder.jp/contests/abc377/editorial/11244
  * 
- * [ざっくり概要]
- * ・文字列の接頭辞(prefix)の共通部分を共有して保存することで、文字列の長さをMとしてO(M)での検索が可能。
- * ・1つの頂点が1つの文字を表す。
- * ・ルートには空の文字列が対応する。
- * 
- * [参考資料]
- *   https://algo-logic.info/trie-tree/
- *   https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%A9%E3%82%A4_(%E3%83%87%E3%83%BC%E3%82%BF%E6%A7%8B%E9%80%A0)
- *   https://ei1333.github.io/luzhiled/snippets/structure/trie.html
- * 
- * [関連する問題 / verifyした問題]
- * ABC287-E search()にてcommon>=2となるうちの最も深い(depth)頂点を探索
- * ABC353-E insert()にてcommonをansへ加算
- * ABC377-G Nodeにlen_minを追加、insert()にて文字ごとに最小コストを計算
+ * 考え方はローリングハッシュを用いたABC377-G.cppと同じ。
+ * Trie木のNodeに "この頂点を使っている文字列Sのうち、|S|のmin" を追加し、
+ * 文字列を追加する関数insert()にて、文字ごとに最小コストを計算する処理を追加した。
  */
 
 // https://algo-logic.info/trie-tree/
@@ -41,7 +38,8 @@ private:
 		int c;  // この頂点が持つ文字を、base基点で数値で表したもの 'A'なら0, 'B'なら1, など
 		int depth;  // 根からの距離
 		int common;  // この頂点を共有している文字列の個数
-		Node(int c_, int dep_) : c(c_), depth(dep_), common(0) {
+		int len_min;  // この頂点を使っている文字列Sのうち、|S|のmin  // ABC377-G
+		Node(int c_, int dep_) : c(c_), depth(dep_), common(0), len_min(INF32) {  // ABC377-G
 			next.assign(char_size, -1);
 		}
 	};
@@ -49,8 +47,10 @@ private:
 	int root;  // 根 (コンストラクタでしか使わないが、明示的に)
 
 	// 単語wordをid番目として追加
-	void insert(const string &word, int id)	{
+	int insert(const string &word, int id)	{
 		int node_id = 0;  // node_id=0は根(文字が入っていない)であることに注意
+		int len = (int)word.size();  // ABC377-G
+		int ans = len;  // ABC377-G 初期値はSを空文字にするコスト
 		for(int i = 0; i < (int)word.size(); i++) {
 			// 以下、node_idから文字cへたどった先がnext_idになる
 			int c = (int)(word[i] - base);
@@ -61,9 +61,18 @@ private:
 			}
 			nodes[node_id].common++;
 			node_id = next_id;
+
+			// ABC377-G
+			// word自身の 今の位置～|S| まで削除し、
+			// 今の頂点を用いる最短長の文字列まで追加する、ときのコストをtmpへ計算
+			int tmp = len - (i+1);
+			tmp += nodes[node_id].len_min - (i+1);
+			chmin(ans, tmp);
+			chmin(nodes[node_id].len_min, len);
 		}
 		nodes[node_id].common++;
 		nodes[node_id].accept.push_back(id);
+		return ans;  // ABC377-G
 	}
 
 public:
@@ -71,8 +80,8 @@ public:
 		nodes.push_back(Node(root, 0));  // 始めは根のみ
 	}
 	// wordをトライ木に追加
-	void insert(const string &word) {
-		insert(word, nodes[0].common);
+	int insert(const string &word) {
+		return insert(word, nodes[0].common);
 	}
 	// wordの探索
 	// prefix=false : wordがTrie木に存在すればtrue
@@ -106,18 +115,15 @@ public:
 
 int main(void)
 {
-	Trie<26, 'A'> trie;
-	trie.insert("FIRE");
-	assert( trie.search("FIRE"));
-	assert(!trie.search("FI"));
-	assert( trie.search("FI", true));  // "FI"をprefixに持つ単語は存在する
-	assert(!trie.search("FIREMAN", true));
-	trie.insert("FIREMAN");
-	assert( trie.search("FIREMAN"));
-	assert(!trie.search("FIREMA"));
-	assert( trie.search("FIREMA", true));
-	assert(trie.word_count() == 2);
-	trie.insert("FILE");
-	assert(trie.size() == 9+1);  // FIREMAN + LE + 1(root)
+	int i;
+	int N; cin >> N;
+	Trie<26, 'a'> trie;
+	for(i = 0; i < N; i++)
+	{
+		string s; cin >> s;
+		int ans = trie.insert(s);
+		cout << ans << endl;
+	}
+
 	return 0;
 }
