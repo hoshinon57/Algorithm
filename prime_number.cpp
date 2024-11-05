@@ -19,6 +19,16 @@ bool isPrime(long long N)
 	return true;
 }
 
+/*
+ * [memo]エラトステネスの篩を用いた高速素因数分解について
+ * 1以上N以下の全整数を素因数分解する場合、愚直にやると O(N√N) かかる。(整数1個辺り√N, が全部でN個)
+ * これをO(NlogN)で求める方法。
+ * けんちょん氏の以下URL, 4-1章を参照。
+ * https://qiita.com/drken/items/3beb679e54266f20ab63
+ * これを用いてABC368-Fを高速に解くことができた。
+ * https://atcoder.jp/contests/abc368/submissions/59467484
+ */
+
 // 素数列挙(エラトステネスの篩)
 // N以下の素数を列挙してprime_listに入れる
 // 計算量はO(NloglogN)とのこと。以下2つの記事を参考。
