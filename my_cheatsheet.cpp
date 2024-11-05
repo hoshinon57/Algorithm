@@ -421,6 +421,7 @@ int main(void)
 	  https://kyopro-friends.hatenablog.com/entry/2023/04/12/195012  xorとなる理由
 	[関連する問題]
 	典型90-31
+	ABC368-F
 	*/
 
 	/*
