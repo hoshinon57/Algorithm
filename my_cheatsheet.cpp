@@ -2024,6 +2024,7 @@ void _largest_rectangle_histogram_(void)
 	[関連する問題]
 	ABC359-E
 	ABC372-D
+	ABC379-F
 	AOJ DPL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_3_C
 	AOJ DPL_3_B https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_3_B 最大長方形
 
