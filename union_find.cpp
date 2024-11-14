@@ -98,6 +98,23 @@ struct UnionFind
 	{
 		return siz[root(x)];
 	}
+
+	// 連結成分ごとに頂点をvector<int>で返す
+	// ex) 頂点0,1,3と2,5が同一グループの場合、 {{0,1,3},{2,5},{4}} といった形で返す
+	// 連結成分単位での順番は不定になると思われる
+	// 計算量は頂点数をNとしてO(N)
+	vector<vector<int>> groups(void) {
+		vector<vector<int>> member(parent.size());  // member[v]:要素vを親とするグループ
+		for(int v = 0; v < (int)parent.size(); v++) {
+			member[root(v)].push_back(v);
+		}
+		// memberの空要素を削除して返す
+		vector<vector<int>> res;
+		for(auto &e : member) {
+			if(!e.empty()) res.push_back(e);
+		}
+		return res;
+	}
 };
 
 // [verify]ABC328-F,ABC373-D
@@ -200,6 +217,22 @@ int main(void)
 	uf.unite(5,6);  // {0}, {1,2,3}, {4}, {5,6}
 	assert( uf.issame(1,3));
 	assert(!uf.issame(2,5));
+	{  // groups
+		auto grp = uf.groups();
+		vector<vector<int>> ans = {{0},{1,2,3},{4},{5,6}};
+		// groups()の連結成分単位での順番は不定のはずなので、grp,ansともにソートしておく
+		sort(grp.begin(), grp.end());
+		for(auto &e : grp) sort(e.begin(), e.end());
+		sort(ans.begin(), ans.end());
+		for(auto &e : grp) sort(e.begin(), e.end());
+		assert(grp == ans);
+	}
+	{
+		UnionFind uf2(4);
+		vector<vector<int>> ans = {{0},{1},{2},{3}};
+		auto grp = uf2.groups();
+		assert(grp == ans);
+	}
 
 	uf.unite(1,5);  // {0}, {1,2,3,5,6}, {4}
 	assert(uf.issame(1,3));  // 今度はtrue
