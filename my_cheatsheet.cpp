@@ -1486,6 +1486,8 @@ void _stl_(void)
 	  vectorに対する範囲for内で、push_back()操作など。
 	  範囲forでなくとも、itr = a.begin() などのイテレータ操作時も同様。
 	  map/setではイテレータ破壊は起きないかも？(後述 ※)
+	    ⇒ 削除した要素を指すイテレータのみ、が無効化されるとのこと
+		   https://atcoder.jp/contests/apg4b/tasks/APG4b_ai?lang=ja
 	参考：
 	  https://qiita.com/izmktr/items/0c95aff5ba7554afcaa7
 	  https://dixq.net/forum/viewtopic.php?t=11823
