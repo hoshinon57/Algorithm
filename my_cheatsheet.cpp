@@ -215,6 +215,7 @@ int main(void)
 	  ABC201-D
 	  ABC270-D
 	  ABC298-E
+	  ABC380-F
 
 	[期待値DP]
 	後ろから求めていくのが良さそう。
