@@ -24,6 +24,7 @@ typedef long long ll;
  * ・N*N配列を回転 rotate
  * ・Y*X配列を回転 rotate_2, rotate_2_rev
  * ・nをbase進法で表したときの値 chg_base
+ * ・配列を1つの値にエンコード/デコード enc_VecToNum, dec_ValToVec
  * ・2つのsetをマージ(マージテク使用) set_merge
  * ・大文字小文字を反転 revLowUp
  * ・extgcd
@@ -208,6 +209,33 @@ vector<int> chg_base(ll n, int base)
 		n /= base;
 	}
 	return a;
+}
+
+// vector<int>の配列を1つの値にエンコード/デコードする関数
+// 配列の値が[0,x), 要素数がpのとき、組み合わせの状態数は x^p となる。これを1つの値にエンコードする
+// エンコードした値をDPの添え字に使う想定
+// [verify]ABC380-F
+const int ENC_VECTONUM_BASE_DEFAULT = 0;	// enc_VecToNum(), dec_ValToVec()で指定する基数のデフォルト 問題内で基数が変わることも無さそうなので、これで指定すれば呼び出し時の指定を省ける
+// 要素の値が[0,base)の範囲であるstateについて、[0]から順にbase進法としてみなして1つの整数値にまとめる(変換する)
+// 例：state={0,3,2,1}, base=4であれば、0*4^0+3*4^1+2*4^2+1*4^3 を返す
+// 戻り値をDPの添え字に使うことを想定しているため、int型
+int enc_VecToNum(vector<int> &state, int base = ENC_VECTONUM_BASE_DEFAULT) {
+	int ans = 0, p = 1;
+	for(int i = 0; i < (int)state.size(); i++) {
+		ans += p*state[i];
+		p *= base;
+	}
+	return ans;
+}
+// enc_VecToNum()での戻り値からvector<int>に変換して返す
+// siz:vector<int>の要素数
+vector<int> dec_ValToVec(int n, int siz, int base = ENC_VECTONUM_BASE_DEFAULT) {
+	vector<int> ret(siz);
+	for(int i = 0; i < siz; i++) {
+		ret[i] = n % base;
+		n /= base;
+	}
+	return ret;
 }
 
 // [verify]ABC372-E,ABC329-F
@@ -619,6 +647,14 @@ int main(void)
 		c2 = rotate_2_rev<char>(c2);
 		c2 = rotate_2_rev<char>(c2);
 		assert(c2 == d);
+	}
+
+	{
+		vector<int> v = {3, 2, 1, 0, 2};
+		int n = enc_VecToNum(v, 4);  // 3*4^0+2*4^1+1*4^2+0*4^3+2*4^4
+		assert(n == 539);
+		auto v2 = dec_ValToVec(n, 5, 4);
+		assert(v == v2);
 	}
 
 	{
