@@ -212,9 +212,10 @@ vector<int> chg_base(ll n, int base)
 }
 
 // vector<int>の配列を1つの値にエンコード/デコードする関数
-// 配列の値が[0,x), 要素数がpのとき、組み合わせの状態数は x^p となる。これを1つの値にエンコードする
+// 配列の値が[0,base), 要素数がpのとき、組み合わせの状態数は base^p となる。これを1つの値にエンコードする
 // エンコードした値をDPの添え字に使う想定
-// [verify]ABC380-F
+// ★★ENC_VECTONUM_BASE_DEFAULTに値を設定すること★★
+// [verify]ABC380-F,ABC322-E
 const int ENC_VECTONUM_BASE_DEFAULT = 0;	// enc_VecToNum(), dec_ValToVec()で指定する基数のデフォルト 問題内で基数が変わることも無さそうなので、これで指定すれば呼び出し時の指定を省ける
 // 要素の値が[0,base)の範囲であるstateについて、[0]から順にbase進法としてみなして1つの整数値にまとめる(変換する)
 // 例：state={0,3,2,1}, base=4であれば、0*4^0+3*4^1+2*4^2+1*4^3 を返す
