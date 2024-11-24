@@ -28,6 +28,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ・Y*X配列を回転 rotate_2, rotate_2_rev
  * ・nをbase進法で表したときの値 chg_base
  * ・配列を1つの値にエンコード/デコード enc_VecToNum, dec_ValToVec
+ * ・ランレングス圧縮 rle
  * ・2つのsetをマージ(マージテク使用) set_merge
  * ・大文字小文字を反転 revLowUp
  * ・extgcd
@@ -249,6 +250,21 @@ vector<int> dec_ValToVec(int n, int siz, int base = ENC_VECTONUM_BASE_DEFAULT) {
 	for(int i = 0; i < siz; i++) {
 		ret[i] = n % base;
 		n /= base;
+	}
+	return ret;
+}
+
+// 文字列strをランレングス圧縮して {文字,長さ} のpairの列挙で返す
+// auto enc = rle<char>(s); といった形で呼び出す
+// for(auto [c,len] : enc) が使い方の一例
+// [参考]https://algo-logic.info/run-length/  [verify]ABC019-B,ABC380-B
+template <typename T> vector<pair<T,int>> rle(string &str) {
+	vector<pair<T,int>> ret;
+	int n = str.size();
+	for(int l = 0, r = 0; l < n; ) {  // 尺取り法っぽく [l,r)が条件を満たす
+		while(r < n && str[l] == str[r]) r++;
+		ret.push_back({str[l], r-l});
+		l = r;
 	}
 	return ret;
 }
@@ -683,6 +699,27 @@ int main(void)
 		assert(n == 539);
 		auto v2 = dec_ValToVec(n, 5, 4);
 		assert(v == v2);
+	}
+
+	{
+		{
+			string s = "aaabccc00011";
+			vector<pair<char,int>> a = {{'a',3}, {'b',1}, {'c',3}, {'0',3}, {'1',2}};
+			auto enc = rle<char>(s);
+			assert(enc == a);
+		}
+		{
+			string s = "0";
+			vector<pair<char,int>> a = {{'0',1}};
+			auto enc = rle<char>(s);
+			assert(enc == a);
+		}
+		{
+			string s = "01";
+			vector<pair<char,int>> a = {{'0',1}, {'1',1}};
+			auto enc = rle<char>(s);
+			assert(enc == a);
+		}
 	}
 
 	{
