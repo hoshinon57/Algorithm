@@ -9,11 +9,14 @@
 #include <set>
 using namespace std;
 typedef long long ll;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
+const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
 
 /*
  * その他のライブラリ
  * ・床関数,天井関数 floor_div, ceil_div
  * ・二分探索でidxと要素数を返す bi_idxnum_miman, 他
+ * ・二分探索で位置st以降でnum個目の登場位置(の次の位置)を返す bi_nextpos
  * ・bビット目の確認、ビットON/OFF isbiton, setbit, unbit
  * ・桁数を返す cal_digit
  * ・p^0～p^(n-1)を事前計算 cal_pow_inadv
@@ -48,6 +51,17 @@ template<typename T> pair<ll,ll> bi_idxnum_ika(vector<T> &a, T val)   {ll idx=up
 template<typename T> pair<ll,ll> bi_idxnum_koeru(vector<T> &a, T val) {ll idx=upper_bound(a.begin(),a.end(),val)-a.begin(); return{idx,(ll)a.size()-idx};}
 // {val以上の最左のidx, val以上の要素数} 要素が無ければidx=N
 template<typename T> pair<ll,ll> bi_idxnum_ijou(vector<T> &a, T val)  {ll idx=lower_bound(a.begin(),a.end(),val)-a.begin(); return{idx,(ll)a.size()-idx};}
+
+// 要素の登場位置を列挙しているposについて、位置st以降でnum個目の登場位置の"次の位置"を返す (num個なければINF)
+// ⇒よって戻り値は"次に見るべき位置"となる
+// 登場位置や個数を扱うので、型はいずれもintにしている
+// [使用例]ABC381-E, ABC381-F
+int bi_nextpos(vector<int> &pos_, int st, int num) {
+	if(num == 0) return st;  // 1個も取らないならstから変わらず
+	auto idx = lower_bound(pos_.begin(), pos_.end(), st) - pos_.begin();  // 1個目
+	idx = idx + num - 1;  // num個目の登場位置
+	return ((idx < (int)pos_.size()) ? pos_[idx]+1 : INF32);
+};
 
 // 以下、bは0-indexed
 bool isbiton(ll x, int b) { return ((x>>b)&1); }  // xのbビット目が立っていればtrue (bは0-indexed)
@@ -529,6 +543,19 @@ int main(void)
 		assert(bi_idxnum_ijou(a,4) == make_pair(3LL,2LL));
 		assert(bi_idxnum_ijou(a,0) == make_pair(0LL,5LL));
 		assert(bi_idxnum_ijou(a,10) == make_pair(5LL,0LL));
+	}
+
+	{
+		vector<int> pos = {2, 5, 6, 7, 10, 12};  // 要素の登場位置を列挙している、と考える
+		assert(bi_nextpos(pos, 1, 4) == 8);  // 1以降で要素が4つ登場したときの、次の位置
+		assert(bi_nextpos(pos, 5, 2) == 7);
+		assert(bi_nextpos(pos, 10, 3) == INF32);  // 10以降に要素3つは存在しない
+		assert(bi_nextpos(pos, 12, 1) == 13);
+		assert(bi_nextpos(pos, 13, 1) == INF32);
+		assert(bi_nextpos(pos, 0, 6) == 13);
+		assert(bi_nextpos(pos, 0, 7) == INF32);
+		assert(bi_nextpos(pos, 4, 0) == 4);  // 取る個数が0
+		assert(bi_nextpos(pos, 5, 0) == 5);
 	}
 
 	ll x = 0b1000;
