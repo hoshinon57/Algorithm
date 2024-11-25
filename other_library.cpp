@@ -255,11 +255,13 @@ vector<int> dec_ValToVec(int n, int siz, int base = ENC_VECTONUM_BASE_DEFAULT) {
 }
 
 // 文字列strをランレングス圧縮して {文字,長さ} のpairの列挙で返す
+// [補足]配列に対して扱いたい場合、引数をstring->vectorに変えるだけで良い
+//       "長さ"は呼び出し元で乗算する可能性があるため、オーバーフロー防止でll型としている (ABC369-C)
 // auto enc = rle<char>(s); といった形で呼び出す
 // for(auto [c,len] : enc) が使い方の一例
 // [参考]https://algo-logic.info/run-length/  [verify]ABC019-B,ABC380-B
-template <typename T> vector<pair<T,int>> rle(string &str) {
-	vector<pair<T,int>> ret;
+template <typename T> vector<pair<T,ll>> rle(string &str) {
+	vector<pair<T,ll>> ret;
 	int n = str.size();
 	for(int l = 0, r = 0; l < n; ) {  // 尺取り法っぽく [l,r)が条件を満たす
 		while(r < n && str[l] == str[r]) r++;
@@ -704,19 +706,19 @@ int main(void)
 	{
 		{
 			string s = "aaabccc00011";
-			vector<pair<char,int>> a = {{'a',3}, {'b',1}, {'c',3}, {'0',3}, {'1',2}};
+			vector<pair<char,ll>> a = {{'a',3}, {'b',1}, {'c',3}, {'0',3}, {'1',2}};
 			auto enc = rle<char>(s);
 			assert(enc == a);
 		}
 		{
 			string s = "0";
-			vector<pair<char,int>> a = {{'0',1}};
+			vector<pair<char,ll>> a = {{'0',1}};
 			auto enc = rle<char>(s);
 			assert(enc == a);
 		}
 		{
 			string s = "01";
-			vector<pair<char,int>> a = {{'0',1}, {'1',1}};
+			vector<pair<char,ll>> a = {{'0',1}, {'1',1}};
 			auto enc = rle<char>(s);
 			assert(enc == a);
 		}
