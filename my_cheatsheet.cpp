@@ -1910,6 +1910,7 @@ void _value_with_index_(void)
  * ABC366-E 難しかったが良問
  * ABC369-C
  * ABC377-D
+ * ABC381-D 2個ずつ動く尺取り 勉強になった
  * ARC022-B
  * AOJ DSL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_C
  */
