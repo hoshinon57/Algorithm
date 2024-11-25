@@ -15,6 +15,7 @@ using namespace std;
  * ABC310-D https://atcoder.jp/contests/abc310/tasks/abc310_d (これ、コンテスト中に解けなかったのは反省)
  * ABC318-D https://atcoder.jp/contests/abc318/tasks/abc318_d (ペアを作る＆Nが奇数のケース有, 解けなかったが良問)
  * ABC328-E https://atcoder.jp/contests/abc328/tasks/abc328_e (M個の辺からN-1個を選ぶ recursive_dfs_3()が参考)
+ * ABC367-C https://atcoder.jp/contests/abc367/tasks/abc367_c
  */
 
 const int NUM = 3;
