@@ -112,74 +112,6 @@ struct Matrix {
 
 int main(void)
 {
-#if 0
-	Matrix<int> a(2,2), b(2,2), c;
-	a[0][0] = 1;
-	a[0][1] = 2;
-	a[1][0] = 3;
-	a[1][1] = 4;
-	b[0][0] = 100;
-	a -= b;
-	a = a-b;
-#endif
-#if 0
-	int N, M, K; cin >> N >> M >> K;
-	using namespace atcoder;
-	using mint = modint998244353;
-	Matrix<mint> a(N, M), b(M, K);
-	int i, j, k;
-	for(i = 0; i < N; i++)
-	{
-		for(j = 0; j < M; j++)
-		{
-			int tmp; cin >> tmp;
-			a[i][j] = tmp;
-		}
-	}
-	for(j = 0; j < M; j++)
-	{
-		for(k = 0; k < K; k++)
-		{
-			int tmp; cin >> tmp;
-			b[j][k] = tmp;
-		}
-	}
-	Matrix<mint> r = a*b;
-	for(i = 0; i < N; i++)
-	{
-		for(k = 0; k < K; k++)
-		{
-			cout << r[i][k].val();
-			if(k != K-1) cout << " ";
-		}
-		cout << endl;
-	}
-#endif
-#if 0
-	ll N, K; cin >> N >> K;
-	using namespace atcoder;
-	using mint = modint998244353;
-	Matrix<mint> a(N);
-	int i, j;
-	for(i = 0; i < N; i++)
-	{
-		for(j = 0; j < N; j++)
-		{
-			int tmp; cin >> tmp;
-			a[i][j] = tmp;
-		}
-	}
-	a = a.pow(K);
-	for(i = 0; i < N; i++)
-	{
-		for(j = 0; j < N; j++)
-		{
-			cout << a[i][j].val();
-			if(j != N-1) cout << " ";
-		}
-		cout << endl;
-	}
-#endif
 	Matrix<int> a(2,2), b(2,2);
 	a[0] = {1,3};
 	a[1] = {5,7};
@@ -190,6 +122,5 @@ int main(void)
 	assert((a*b).a == vector<vector<int>>({ {10, 100}, {50, 500} }) );
 	assert(a.pow(5).a == vector<vector<int>>({ {10816, 17088}, {28480, 44992} }) );
 	
-
 	return 0;
 }
