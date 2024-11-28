@@ -1,0 +1,195 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cassert>
+using namespace std;
+typedef long long ll;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
+const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+
+/*
+ * 行列計算のライブラリ
+ * 
+ * [ざっくり概要]
+ * ・行列同士の演算 +,-,*, +=,-=,*= が可能。
+ * ・pow()にて行列累乗が可能。
+ * ・要素の型にatcoder/modintを使用可能。
+ *   ただし入力時はいったん別変数を仲介必要。また出力時は .val() が必要。
+ * 
+ * [関連する問題 / verifyした問題]
+ * [Library Checker]Matrix Product https://judge.yosupo.jp/problem/matrix_product
+ * [Library Checker]Pow of Matrix  https://judge.yosupo.jp/problem/pow_of_matrix
+ * 
+ * [参考資料]
+ *   https://ei1333.github.io/luzhiled/snippets/math/matrix.html
+ *   https://qiita.com/gnbrganchan/items/47118d45b3af9d5ae9a4
+ *   https://github.com/atcoder/live_library/blob/master/mat.cpp
+ * 
+ * 
+ * ToDo
+ * rot(回転)
+ */
+
+// #include <cassert> が必要
+// https://ei1333.github.io/luzhiled/snippets/math/matrix.html
+// Matrix<int> a(H,W), b(N); のように定義する。前者はH行W列, 後者はN行N列。
+// (1)各種演算 : a+b, a-b, a*b, a+=b, a-=b, a*=b などに対応
+// (2)要素アクセス : m[h][w]で要素に直接アクセス可能
+// (3)pow(p) : m.pow(p)でm^pを返す 正方行列であること
+template <typename T>  // 要素の型
+struct Matrix {
+	vector<vector<T>> a;  // a[行][列]
+	Matrix() {}
+	Matrix(size_t h, size_t w) : a(h, vector<T>(w, 0)) {}  // a[h][w]で初期化
+	Matrix(size_t n) : a(n, vector<T>(n, 0)) {}  // 正方行列
+	size_t height(void) const { return a.size(); }
+	size_t width(void) const { return a[0].size(); }
+	static Matrix I(size_t n) {  // 単位行列を返す
+		Matrix r(n);
+		for(size_t i = 0; i < n; i++) r[i][i] = 1;
+		return r;
+	}
+
+	const vector<T>& operator[](int i) const { return a[i]; }  // Read
+	vector<T>& operator[](int i) { return a[i]; }  // write
+	Matrix& operator+=(const Matrix &b) {
+		size_t h = height(), w = width();
+		assert(h == b.height() && w == b.width());
+		for(size_t i = 0; i < h; i++) {
+			for(size_t j = 0; j < w; j++) {
+				a[i][j] += b[i][j];
+			}
+		}
+		return *this;
+	}
+	Matrix& operator-=(const Matrix &b) {
+		size_t h = height(), w = width();
+		assert(h == b.height() && w == b.width());
+		for(size_t i = 0; i < h; i++) {
+			for(size_t j = 0; j < w; j++) {
+				a[i][j] -= b[i][j];
+			}
+		}
+		return *this;
+	}
+	Matrix& operator*=(const Matrix &b) {
+		size_t h = height(), w = b.width(), p = width();
+		assert(p == b.height());
+		Matrix r(h, w);
+		for(size_t i = 0; i < h; i++) {
+			for(size_t j = 0; j < w; j++) {
+				for(size_t k = 0; k < p; k++) {
+					r[i][j] += a[i][k] * b[k][j];
+				}
+			}
+		}
+		// a.swap(r);
+		swap(a, r.a);  // modintを使う場合、こちらでないとビルドエラーになった
+		return *this;
+	}
+
+	Matrix operator+(const Matrix &b) const {
+		return Matrix(*this) += b;
+	}
+	Matrix operator-(const Matrix &b) const {
+		return Matrix(*this) -= b;
+	}
+	Matrix operator*(const Matrix &b) const {
+		return Matrix(*this) *= b;
+	}
+
+	Matrix pow(long long p) {  // p乗した要素を返す
+		assert(height() == width());
+		Matrix r = Matrix::I(height()), b = (*this);
+		while(p > 0) {
+			if(p&1) r *= b;
+			b *= b;
+			p >>= 1LL;
+		}
+		return r;
+	}
+};
+
+int main(void)
+{
+#if 0
+	Matrix<int> a(2,2), b(2,2), c;
+	a[0][0] = 1;
+	a[0][1] = 2;
+	a[1][0] = 3;
+	a[1][1] = 4;
+	b[0][0] = 100;
+	a -= b;
+	a = a-b;
+#endif
+#if 0
+	int N, M, K; cin >> N >> M >> K;
+	using namespace atcoder;
+	using mint = modint998244353;
+	Matrix<mint> a(N, M), b(M, K);
+	int i, j, k;
+	for(i = 0; i < N; i++)
+	{
+		for(j = 0; j < M; j++)
+		{
+			int tmp; cin >> tmp;
+			a[i][j] = tmp;
+		}
+	}
+	for(j = 0; j < M; j++)
+	{
+		for(k = 0; k < K; k++)
+		{
+			int tmp; cin >> tmp;
+			b[j][k] = tmp;
+		}
+	}
+	Matrix<mint> r = a*b;
+	for(i = 0; i < N; i++)
+	{
+		for(k = 0; k < K; k++)
+		{
+			cout << r[i][k].val();
+			if(k != K-1) cout << " ";
+		}
+		cout << endl;
+	}
+#endif
+#if 0
+	ll N, K; cin >> N >> K;
+	using namespace atcoder;
+	using mint = modint998244353;
+	Matrix<mint> a(N);
+	int i, j;
+	for(i = 0; i < N; i++)
+	{
+		for(j = 0; j < N; j++)
+		{
+			int tmp; cin >> tmp;
+			a[i][j] = tmp;
+		}
+	}
+	a = a.pow(K);
+	for(i = 0; i < N; i++)
+	{
+		for(j = 0; j < N; j++)
+		{
+			cout << a[i][j].val();
+			if(j != N-1) cout << " ";
+		}
+		cout << endl;
+	}
+#endif
+	Matrix<int> a(2,2), b(2,2);
+	a[0] = {1,3};
+	a[1] = {5,7};
+	b.a = { {10,100},
+	        {0,0} };  // この形式も可
+	assert((a+b).a == vector<vector<int>>({ {11, 103}, {5, 7} }) );
+	assert((a-b).a == vector<vector<int>>({ {-9, -97}, {5, 7} }) );
+	assert((a*b).a == vector<vector<int>>({ {10, 100}, {50, 500} }) );
+	assert(a.pow(5).a == vector<vector<int>>({ {10816, 17088}, {28480, 44992} }) );
+	
+
+	return 0;
+}
