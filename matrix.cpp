@@ -29,10 +29,6 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   https://ei1333.github.io/luzhiled/snippets/math/matrix.html
  *   https://qiita.com/gnbrganchan/items/47118d45b3af9d5ae9a4
  *   https://github.com/atcoder/live_library/blob/master/mat.cpp
- * 
- * 
- * ToDo
- * rot(回転)
  */
 
 // #include <cassert> が必要
@@ -41,6 +37,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 // (1)各種演算 : a+b, a-b, a*b, a+=b, a-=b, a*=b などに対応
 // (2)要素アクセス : m[h][w]で要素に直接アクセス可能
 // (3)pow(p) : m.pow(p)でm^pを返す 正方行列であること
+// (4)rorate() : m.rotate(deg)で90度単位で回転したものを返す
 template <typename T>  // 要素の型
 struct Matrix {
 	vector<vector<T>> a;  // a[行][列]
@@ -103,13 +100,42 @@ struct Matrix {
 		return Matrix(*this) *= b;
 	}
 
-	Matrix pow(long long p) {  // p乗した要素を返す
+	// p乗した要素を返す
+	Matrix pow(long long p) {
 		assert(height() == width());
 		Matrix r = Matrix::I(height()), b = (*this);
 		while(p > 0) {
 			if(p&1) r *= b;
 			b *= b;
 			p >>= 1LL;
+		}
+		return r;
+	}
+
+	// 時計回りに回転したものを返す (deg=1:90度, 2:180度, 3:270度)
+	Matrix rotate(int deg) {
+		Matrix<T> r;
+		size_t y, x;
+		if(deg == 1 || deg == 3) {
+			r.a.resize(width(), vector<T>(height()));
+			for(y = 0; y < height(); y++)
+			{
+				for(x = 0; x < width(); x++)
+				{
+					if(deg == 1) r[x][height()-y-1] = a[y][x];
+					if(deg == 3) r[width()-x-1][y] = a[y][x];
+				}
+			}
+		}
+		else if(deg == 2) {
+			r.a.resize(height(), vector<T>(width()));
+			for(y = 0; y < height(); y++)
+			{
+				for(x = 0; x < width(); x++)
+				{
+					r[height()-y-1][width()-x-1] = a[y][x];
+				}
+			}
 		}
 		return r;
 	}
@@ -126,6 +152,21 @@ int main(void)
 	assert((a-b).a == vector<vector<int>>({ {-9, -97}, {5, 7} }) );
 	assert((a*b).a == vector<vector<int>>({ {10, 100}, {50, 500} }) );
 	assert(a.pow(5).a == vector<vector<int>>({ {10816, 17088}, {28480, 44992} }) );
-	
+
+	Matrix<int> c(3,4), d(3,4), r, r2;
+	c.a = {{1,2,3,4},
+	       {5,6,7,8},
+	       {9,10,11,12}};
+	d.a = {{12,11,10,9},
+	       {8,7,6,5},
+	       {4,3,2,1}};
+	r = c.rotate(1); r = r.rotate(1);  // 90度を2回
+	assert(r.a == d.a);
+	r = c.rotate(2);  // 一気に180度
+	assert(r.a == d.a);
+	r = r.rotate(1);  // 180+90度
+	r2 = c.rotate(3);  // 一度に270度
+	assert(r.a == r2.a);
+
 	return 0;
 }
