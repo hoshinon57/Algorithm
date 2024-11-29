@@ -484,7 +484,8 @@ int main(void)
 	#include <atcoder/modint>
 	using namespace atcoder;
 	using mint = modint998244353;
-	-> or modint1000000007, modint(modがfixedでない場合)
+	-> or modint1000000007, modint(modがfixedでない場合), static_modint<(MODの値)>
+	   mint=modintとする場合、modint::set_mod(M) にてMODを指定する
 
 	2つのmodint m1,m2の和を出力するときは
 	(m1+m2).val()
