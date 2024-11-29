@@ -1,39 +1,25 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <iomanip>
 #include <cassert>
 using namespace std;
 typedef long long ll;
+// const ll INF64 = 1LL << 60;
 const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-/*
- * 行列計算のライブラリ
- * 
- * [ざっくり概要]
- * ・行列同士の演算 +,-,*, +=,-=,*= が可能。
- * ・pow()にて行列累乗が可能。
- * ・要素の型にatcoder/modintを使用可能。
- *   ただし入力時はいったん別変数を仲介必要。また出力時は .val() が必要。
- * 
- * [関連する問題 / verifyした問題]
- * [Library Checker]Matrix Product https://judge.yosupo.jp/problem/matrix_product
- * [Library Checker]Pow of Matrix  https://judge.yosupo.jp/problem/pow_of_matrix
- * AOJ ITP1_7_D https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_7_D
- * アルゴリズムと数学 054 https://atcoder.jp/contests/math-and-algorithm/tasks/math_and_algorithm_at
- * アルゴリズムと数学 055 https://atcoder.jp/contests/math-and-algorithm/tasks/math_and_algorithm_au
- * アルゴリズムと数学 056 https://atcoder.jp/contests/math-and-algorithm/tasks/math_and_algorithm_av
- * ABC293-E
- * 
- * [参考資料]
- *   https://ei1333.github.io/luzhiled/snippets/math/matrix.html
- *   https://qiita.com/gnbrganchan/items/47118d45b3af9d5ae9a4
- *   https://github.com/atcoder/live_library/blob/master/mat.cpp
- * 
- * 
- * ToDo
- * rot(回転)
- */
+#include <atcoder/modint>
+using namespace atcoder;
+using mint = modint;
+
+// ABC293 https://atcoder.jp/contests/abc293
+
+// 行列累乗で解く版
 
 // #include <cassert> が必要
 // https://ei1333.github.io/luzhiled/snippets/math/matrix.html
@@ -117,15 +103,12 @@ struct Matrix {
 
 int main(void)
 {
-	Matrix<int> a(2,2), b(2,2);
-	a[0] = {1,3};
-	a[1] = {5,7};
-	b.a = { {10,100},
-	        {0,0} };  // この形式も可
-	assert((a+b).a == vector<vector<int>>({ {11, 103}, {5, 7} }) );
-	assert((a-b).a == vector<vector<int>>({ {-9, -97}, {5, 7} }) );
-	assert((a*b).a == vector<vector<int>>({ {10, 100}, {50, 500} }) );
-	assert(a.pow(5).a == vector<vector<int>>({ {10816, 17088}, {28480, 44992} }) );
-	
+	ll A, X, M; cin >> A >> X >> M;
+	mint::set_mod(M);
+	Matrix<mint> m;
+	m.a = {{A,1},{0,1}};
+	m = m.pow(X-1);
+	cout << (m[0][0] + m[0][1]).val() << endl;
+
 	return 0;
 }
