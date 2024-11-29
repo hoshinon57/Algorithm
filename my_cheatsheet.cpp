@@ -563,6 +563,12 @@ void _vector_(void)
 	a.assign(X, vector<int>(Y, 0));  // 0で初期化
 	a.resize(X, vector<int>(Y));
 
+	定義後に、値を直接設定 行列累乗の初期値とかで使えそう
+	vector<vector<int>> a;
+	a = {{1,2},{3,4,5}};  // a[0]={1,2}, a[1]={3,4,5}
+	a.push_back({});  // a[2]を確保
+	a[2] = {4,5,6};
+
 	a[X]
 	a[0], a[1], ... それぞれについてpush_back()していく
 	vector<vector<int>> a(X, vector<int>());
