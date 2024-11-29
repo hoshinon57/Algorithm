@@ -19,6 +19,8 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * [関連する問題 / verifyした問題]
  * [Library Checker]Matrix Product https://judge.yosupo.jp/problem/matrix_product
  * [Library Checker]Pow of Matrix  https://judge.yosupo.jp/problem/pow_of_matrix
+ * AOJ ITP1_7_D https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_7_D
+ * アルゴリズムと数学 054 https://atcoder.jp/contests/math-and-algorithm/tasks/math_and_algorithm_at
  * 
  * [参考資料]
  *   https://ei1333.github.io/luzhiled/snippets/math/matrix.html
