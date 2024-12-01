@@ -228,6 +228,7 @@ int main(void)
 	[参考問題]
 	EDPC-J
 	ABC263-E
+	ABC382-E 難しかったが期待値DPの手前に1手必要なめっちゃ良問
 	
 	[確率DP、参考問題]
 	ABC184-D
