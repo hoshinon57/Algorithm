@@ -534,7 +534,9 @@ bool is_palindrome(string &s, int st = -1, int k = -1)
  * llとINF64を定義しておくこと
  * メインは(1)(2)で、問題によっては(3)以降を使う感じか
  * またはset構造体のsを直接操作する
- * [verify]ABC364-F, "CODE FESTIVAL 2015 予選B"-D
+ * [verify]
+ *   ABC364-F, "CODE FESTIVAL 2015 予選B"-D,
+ *   AOJ 2880
  * 
  * コンストラクタ : interval_set s; or interval_set s(l,r);  後者はl<=i<=rを満たす[i,i]を区間登録
  * (1)get(pos) : 値posが含まれる区間のイテレータを返す。該当区間がなければs.end()を返す。
