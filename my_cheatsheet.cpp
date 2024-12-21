@@ -2002,6 +2002,7 @@ void _zobrist_hash_(void)
 
 	[関連する問題]	
 	ABC367-F
+	AOJ 2876 https://onlinejudge.u-aizu.ac.jp/challenges/sources/VPC/RUPC/2876?year=2018
 	*/
 }
 
