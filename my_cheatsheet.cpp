@@ -1921,6 +1921,7 @@ void _value_with_index_(void)
  * ABC369-C
  * ABC377-D
  * ABC381-D 2個ずつ動く尺取り 勉強になった
+ * ABC384-D
  * ARC022-B
  * AOJ DSL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_C
  */
