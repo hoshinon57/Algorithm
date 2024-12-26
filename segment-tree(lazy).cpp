@@ -77,6 +77,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 // (1)Update(a, b, x) : 区間[a,b)の要素をxを用いて更新する
 // (2)Query(a, b) : 区間[a,b)にある要素にfxを作用させた値を返す
 // [未実装](3)Find_Leftmost(a, b, x) : 区間[a,b)の範囲で、x以下となる最も左側の要素番号を返す
+// (4)debug(step, width, l, r) : デバッグ出力
 // [注意]
 //   0-indexed, および半開区間で処理する。
 // 以下URLをほぼそのまま持ってきている
@@ -240,6 +241,21 @@ public:
 	// 要素iを取得する
 	// ※node[]アクセスに変更しようと考えたが、遅延評価が必要のためQuery()呼び出しが必須のはず
 	X Get(int i) { return Query(i, i+1); }
+
+#if 0
+	// デバッグ出力 [i,i+width)でiはstepごと増加、全体は[l,r)でQueryを呼び出していく
+	// debug(1, (好みの値)) とかで呼び出すのが多そうか
+	// 要素の型によってはcoutできないものもあるため、ビルドエラー防止で#if 0としている
+	void debug(int step, int width, int l = -1, int r = -1)
+	{
+		if(l == -1) { l = 0; r = n; }  // 引数無しは全区間
+		cout << "debug:[" << l << "," << r << ")" << endl;
+		for(int i = l; i < r; i += step)
+		{
+			cout << " [" << i << "," << i+width << "):" << this->Query(i, i+width) << endl;
+		}
+	}
+#endif
 };
 
 void Test(void)
