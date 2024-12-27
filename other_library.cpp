@@ -27,6 +27,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ・N*N配列を回転 rotate
  * ・Y*X配列を回転 rotate_2, rotate_2_rev
  * ・nをbase進法で表したときの値 chg_base
+ * ・b進法で表される文字列sを、10進数へ変換 chg_base_to10
  * ・配列を1つの値にエンコード/デコード enc_VecToNum, dec_ValToVec
  * ・ランレングス圧縮 rle
  * ・2つのsetをマージ(マージテク使用) set_merge
@@ -225,6 +226,18 @@ vector<int> chg_base(ll n, int base)
 		n /= base;
 	}
 	return a;
+}
+
+// [verify]ABC220-B
+// b進法で表される文字列sを、10進数にして返す (b<=10)
+// 例)chg("120",3)=15, chg("120",10)=120
+ll chg_base_to10(string &s, ll b) {
+	ll ret = 0;
+	for(auto &c : s) {
+		ret *= b;
+		ret += c - '0';
+	}
+	return ret;
 }
 
 // vector<int>の配列を1つの値にエンコード/デコードする関数
