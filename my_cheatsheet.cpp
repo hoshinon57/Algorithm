@@ -245,8 +245,17 @@ int main(void)
 	ABC360-E  場合の数を用いて遷移式を考える
 
 	[LIS/最長増加部分列]
-	考え方として、dp[i][j]を "i個目まで見て、長さjであるLISの末尾の値の最小値" というのを覚えておく。
-	ABC237-FのYouTube公式解説にて。
+	・求める方法はlower_bound()とセグメントツリーの2パターンある。
+	・考え方として、dp[i][j]を "i個目まで見て、長さjであるLISの末尾の値の最小値" というのを覚えておく。
+	  ABC237-FのYouTube公式解説にて。
+	・in-placeにてdp[i]で考えたときに、
+	  a[i]がdp[idx]に当てはまる場合、LISにa[i]を使うならば左にidx個ある、となる。
+	・その他参考記事：
+	  https://qiita.com/python_walker/items/d1e2be789f6e7a0851e5 基本
+	  https://ikatakos.com/pot/programming_algorithm/dynamic_programming/longest_common_subsequence 復元や"LISの個数"など 丁寧で高度
+	・参考問題：
+	  ABC354-F
+	  ABC237-F
 
 	[in-place DP(inline DP), 参考問題]
 	ABC203-E
