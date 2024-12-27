@@ -127,6 +127,7 @@ int main(void)
 			}
 			cout.rdbuf(org_buf);
 			cout << "find WA! -> " << tmp << endl;
+			cout << "solve:" << s1 << "naive:" << s2 << endl;
 			break;
 		}
 	}
