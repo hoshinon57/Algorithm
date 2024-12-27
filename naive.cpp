@@ -133,3 +133,57 @@ int main(void)
 
 	return 0;
 }
+
+// 愚直解サンプル
+void naive_ABC336_D(void)
+{
+	int i, j;
+	int N; cin >> N;
+	vector<int> a(N); for(i = 0; i < N; i++) {cin >> a[i];}
+	int ans = 0;
+	for(i = 0; i < N; i++)
+	{
+		for(j = 1; j <= a[i]; j++)  // iを中央に、高さjのピラミッドを生成
+		{
+			// 左側
+			int h = j;
+			int k = i;
+			bool ok = true;
+			while(k >= 0)
+			{
+				if(k == 0 && h > 1)
+				{
+					ok = false;
+					break;
+				}
+				if(a[k] < h)
+				{
+					ok = false;
+					break;
+				}
+				k--;
+				h--;
+			}
+			// 右側
+			h = j;
+			k = i;
+			while(k < N)
+			{
+				if(k == N-1 && h > 1)
+				{
+					ok = false;
+					break;
+				}
+				if(a[k] < h)
+				{
+					ok = false;
+					break;
+				}
+				k++;
+				h--;
+			}
+			if(ok) chmax(ans, j);
+		}
+	}
+	cout << ans << endl;
+}
