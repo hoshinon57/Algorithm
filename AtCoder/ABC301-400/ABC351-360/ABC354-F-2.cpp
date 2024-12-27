@@ -1,68 +1,38 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <iomanip>
 #include <functional>  // function
 #include <limits>  // numeric_limits
-#include <cassert>
 using namespace std;
 typedef long long ll;
-const ll INF64 = 1LL << 60;
+// const ll INF64 = 1LL << 60;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// 抽象化版セグメント木のメモや実装
-// ★注意★ #include <functional> を忘れずに。ローカル環境では無くてもビルドが通るが、AtCoderではCEになる。
+// ABC354 https://atcoder.jp/contests/abc354
 
 /*
- * [ざっくり概要]
- * ・区間上の値を更新する
- * ・任意の区間における最小値や合計値を取得する
- * といった処理をO(logN)でできるデータ構造。
- * 要素には任意のモノイドを用いることができる(抽象化)。
+ * セグメントツリーでLISを求めて解く方法。
+ *   https://atcoder.jp/contests/abc354/editorial/10027
+ *   https://x.com/kyopro_friends/status/1791829441703981096
+ *   https://ikatakos.com/pot/programming_algorithm/dynamic_programming/longest_common_subsequence
  * 
- * SegmentTree:
- *   以下の操作をO(logN)で処理できる。
- *   (1)Update(x, val) : 要素xをvalで更新する
- *   (2)Query(a, b) : 区間[a,b)にある要素のモノイド積を返す
- *   0-indexed, および半開区間で処理する。
- *   コンストラクタには (size:要素数, fx_:二項演算, ex_:単位元) を指定する。
- *   ★代表的なfx,exはmain()に記述している。
+ * まず、Aを座標圧縮しておく。
+ * セグ木の要素iを「LISにてAiまで使ったとき、左から何番目か」として使う。
+ * iの昇順に操作していき、各iについて[0,Ai)の最大値+1が、AiをLISに使うときの長さとなる。
+ * これがセグ木を用いたLISの構築方法。
+ * (セグ木の全区間のQueryがLISの長さ)
  * 
- * [Tips]
- * ・木の最下段のノード数は、問題文にて指定されるsize以上の2のべき乗。
- *   これをNとすると、最下段のノード数はN, それより上の段のノードは全部でN-1.
- *   よって木全体で必要なノード数は 2N-1 となる。
- * ・要素xをnode[]の添字番号に変換する場合：N-1を加算する
- * ・親から子へ行く場合、 k -> 2k+1, 2k+2
- * ・子から親へ行く場合、 k -> (k-1)/2  (切り捨て)
+ * 上記を右側からも操作して、「LISにてAiが右から何番目か」も求めておき、
+ * 左右の和+1がLISの長さであれば条件を満たす。
  * 
- * [参考資料]
- *   https://algo-logic.info/segment-tree/
- *   https://tsutaj.hatenablog.com/entry/2017/03/29/204841
- * 
- * [関連する問題 / verifyした問題]
- * AOJ DSL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
- * ABC125-C
- * ABC140-E
- * ABC157-E
- * ABC186-F
- * ABC223-F
- * ABC231-F
- * ABC254-F GCD
- * ABC276-F
- * ABC283-F セグ木4本
- * ABC285-F
- * ABC306-F
- * ABC331-F
- * ABC334-F
- * ABC339-E
- * ABC341-E
- * ABC343-F
- * ABC351-F 平面走査
- * ABC353-G
- * ABC354-F LIS
- * ABC369-F 平面走査
- * 典型90-37
+ * [どう思考すれば解法にたどり着けるか]
+ * ・セグ木を用いたLISの構築方法、および「それが何を意味しているか」を覚えておく。
  */
 
 // (1)Update(x, val) : 要素xをvalで更新する
@@ -228,6 +198,7 @@ public:
 	// 要素の型によってはcoutできないものもあるため、ビルドエラー防止で#if 0としている
 	void debug(int step, int width, int l = -1, int r = -1)
 	{
+		return;
 		if(l == -1) { l = 0; r = n; }  // 引数無しは全区間
 		cout << "debug:[" << l << "," << r << ")" << endl;
 		for(int i = l; i < r; i += step)
@@ -238,145 +209,77 @@ public:
 #endif
 };
 
-void Test(void)
+// 1次元の座標圧縮
+// a：座標圧縮したい元データ 処理途中で要素が書き換えられる点に注意(保持したい場合は参照を外す)
+// 返り値：圧縮後のデータ
+// 計算量はO(NlogN)
+template <typename T>
+vector<T> compression_one(vector<T> &a)
+{
+	vector<T> a_comp = a;
+
+	// 元データをソートし、重複を削除する
+	sort(a.begin(), a.end());
+	a.erase(unique(a.begin(), a.end()), a.end());  // unique()で隣り合う重複を削除し、erase()で末端までのゴミを削除する
+
+	// それぞれの元データが「何番目に小さいか」をlower_bound()で求める
+	for(int i = 0; i < (int)a_comp.size(); i++)
+	{
+		a_comp[i] = lower_bound(a.begin(), a.end(), a_comp[i]) - a.begin();
+	}
+
+	return a_comp;
+}
+
+void solve(void)
 {
 	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	vector<int> v = {3, 1, 4, 1, 5, 9};
-	SegmentTree<T> seg(v.size(), fx, ex);
-	for(int i = 0; i < (int)v.size(); i++)
-	{
-		seg.Set(i, v[i]);
-	}
-	seg.Build();
+	auto fx = [](T x1, T x2) -> T { return max(x1, x2); };
+	T ex = 0;
 
-	assert(seg.Query(0, 6) == 1);
-	assert(seg.Query(0, 3) == 1);
-	assert(seg.Query(3, 4) == 1);
-	assert(seg.Query(4, 5) == 5);
-	seg.Update(6, -1);
-	seg.Update(2, 0);
-	assert(seg.Query(0, 7) == -1);
-	assert(seg.Query(1, 4) == 0);
-	for(int i = 0; i < (int)v.size(); i++)
+	int i;
+	int N; cin >> N;
+	vector<int> a(N); for(i = 0; i < N; i++) {cin >> a[i];}
+	auto ac = compression_one<int>(a);
+	SegmentTree<T> sl(N, fx, ex), sr(N, fx, ex);
+	vector<int> pl(N), pr(N);
+	// LISでi番目の要素を使うとき、左から何番目か
+	for(i = 0; i < N; i++)
 	{
-		assert(seg.Get(i) ==  seg.Query(i, i+1));
+		int tmp = sl.Query(0, ac[i]) + 1;
+		sl.Update(ac[i], tmp);
+		pl[i] = tmp;
 	}
+	// LISでi番目の要素を使うとき、右から何番目か
+	for(i = N-1; i >= 0; i--)
+	{
+		int tmp = sr.Query(ac[i]+1, N) + 1;  // ac[i]+1にしないと、Aiとして同じ値があったときにNG
+		sr.Update(ac[i], tmp);
+		pr[i] = tmp;
+	}
+	int len = sl.Query(0, N);  // LISの長さ
 
-	// Find_Leftmost(),Find_Rightmost()のテスト
+	vector<int> ans;
+	for(i = 0; i < N; i++)
 	{
-		vector<int> a = {3, 1, 4, 1, 5, 9, 2};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(1, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 7, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 0) == 7);
-		assert(seg2.Find_Leftmost(2, 3, 4) == 2);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 10) == 0);
-		assert(seg2.Find_Rightmost(0, 7, 1) == 3);
-		assert(seg2.Find_Rightmost(0, 4, 1) == 3);
-		assert(seg2.Find_Rightmost(0, 3, 1) == 1);
-		assert(seg2.Find_Rightmost(0, 7, 0) == -1);
-		assert(seg2.Find_Rightmost(0, 7, 10) == 6);
+		if(pl[i] + pr[i] - 1 == len) ans.push_back(i+1);
 	}
-	{
-		vector<int> a = {1, 1, 1};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 3, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 2);
-		assert(seg2.Find_Leftmost(0, 2, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(0, 3, -1) == 3);
-		assert(seg2.Find_Rightmost(0, 3, 1) == 2);
-		assert(seg2.Find_Rightmost(2, 3, 1) == 2);
-		assert(seg2.Find_Rightmost(0, 1, 1) == 0);
-		assert(seg2.Find_Rightmost(0, 3, -1) == -1);
-	}	
+	int sz_ = (int)ans.size();
+	cout << sz_ << endl;
+	for(i = 0; i < sz_; i++) {
+		cout << ans[i];
+		if(i != sz_-1) cout << " ";
+	}
+	cout << endl;
 }
 
 int main(void)
 {
-	/*
-	[代表的なfx,exの例]
-	Range Minimum Query(RMQ)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	---------------
-
-	Range Sum Query(RSQ)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return x1+x2; };
-	T ex = 0;
-	---------------
-
-	Range OR Query(ABC157-E)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return x1|x2; };
-	T ex = 0;
-	---------------
-
-	Range GCD Query(ABC125-C)
-	---------------
-	using T = ll;
-	auto fx = gcd;
-	T ex = 0;  // gcd(a,0)=a のため
-	---------------
-	*/
-	/*
-	特定の要素を加減算したい場合、以下のラムダ式を使うと楽かも
-	ex)seg_add(seg, idx, 1);  // idx番目の要素を+1
-	計算量はO(logN). seg.Get()はO(1)で作ってるのでseg.Update()の分。
-	※T=pairではコンパイルエラーになるのでクラスメソッドには入れられない
-	---------------
-	auto seg_add = [](SegmentTree<T> &seg_, int idx_, T val_) -> void
+	int T; cin >> T;
+	while(T > 0)
 	{
-		seg_.Update(idx_, seg_.Get(idx_)+val_);
-	};
-	---------------
-	*/
-	Test();
-
-	// 以下は AOJ DSL_2_A のもの
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	int n, q;
-	cin >> n >> q;
-	SegmentTree<T> seg(n, fx, ex);
-	for(int i = 0; i < n; i++) seg.Set(i, (1UL<<31)-1);
-	seg.Build();
-
-	int c, x, y;
-	while(q > 0)
-	{
-		cin >> c >> x >> y;
-		if(c == 0)  // update
-		{
-			seg.Update(x, y);
-		}
-		else  // find
-		{
-			cout << seg.Query(x, y+1) << endl;  // 閉区間->半開区間への変換
-		}
-		q--;
+		T--;
+		solve();
 	}
 
 	return 0;
