@@ -343,6 +343,7 @@ long long extgcd(long long a, long long b, long long &x, long long &y) {
  * [関連する問題 / verifyした問題]
  *   AOJ GRL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_3_C&lang=jp
  *   ABC245-F(Endless Walk) SCCしたグループにてグラフを構築する
+ *   ABC296-E(Transition Game) evima氏の解説
  */
 
 using Graph = vector<vector<int>>;
