@@ -143,7 +143,7 @@ int main(void)
 			}
 			cout.rdbuf(org_buf);
 			cout << "find WA! -> " << ren << endl;
-			ofstream file(ren, std::ios::app);  // 追記モード
+			ofstream file(ren, std::ios::app);  // 追記モードにて、エラーとなった出力を入力ファイルへ書き出し
 			file << endl << "solve:" << endl << s1 << endl << "naive:" << endl << s2 << endl;
 			break;
 		}
