@@ -1937,6 +1937,7 @@ void _value_with_index_(void)
  * ABC384-D
  * ARC022-B
  * AOJ DSL_3_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_A
+ * AOJ DSL_3_B https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_B
  * AOJ DSL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_C
  */
 void _shakutori_(void)
