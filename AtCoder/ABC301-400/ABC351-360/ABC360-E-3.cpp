@@ -1,36 +1,38 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <iomanip>
 #include <cassert>
 using namespace std;
 typedef long long ll;
+// const ll INF64 = 1LL << 60;
 const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
+
+#include <atcoder/modint>
+using namespace atcoder;
+using mint = modint998244353;
+
+// ABC360 https://atcoder.jp/contests/abc360
 
 /*
- * 行列計算のライブラリ
+ * 公式解説の
+ * ＞より一般に、線形漸化式の第N項を求める高速な方法として、行列累乗や Fiduccia のアルゴリズムがあります。
+ * を参考に、行列累乗で解いてみた版。
  * 
- * [ざっくり概要]
- * ・行列同士の演算 +,-,*, +=,-=,*= が可能。
- * ・pow()にて行列累乗が可能。
- * ・要素の型にatcoder/modintを使用可能。
- *   ただし入力時はいったん別変数を仲介必要。また出力時は .val() が必要。
+ * DP遷移式を整理すると
+ *   newdp = (N^2-2N)/(N^2)*dp + 2/(N^2)
+ * となる。
+ * 定数部分をa=(N^2-2N)/(N^2), b=2/(N^2)と置くと、ndp=a*dp+bより
+ *   (ndp  = (a 1  (dp
+ *      b)    0 1)   b)
+ * という行列式が出てくる。これは行列累乗で求めることができる。
  * 
- * [関連する問題 / verifyした問題]
- * [Library Checker]Matrix Product https://judge.yosupo.jp/problem/matrix_product
- * [Library Checker]Pow of Matrix  https://judge.yosupo.jp/problem/pow_of_matrix
- * AOJ ITP1_7_D https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_7_D
- * アルゴリズムと数学 054 https://atcoder.jp/contests/math-and-algorithm/tasks/math_and_algorithm_at
- * アルゴリズムと数学 055 https://atcoder.jp/contests/math-and-algorithm/tasks/math_and_algorithm_au
- * アルゴリズムと数学 056 https://atcoder.jp/contests/math-and-algorithm/tasks/math_and_algorithm_av
- * ABC293-E
- * ABC360-E
- * EDPC R(Walk)
- * 
- * [参考資料]
- *   https://ei1333.github.io/luzhiled/snippets/math/matrix.html
- *   https://qiita.com/gnbrganchan/items/47118d45b3af9d5ae9a4
- *   https://github.com/atcoder/live_library/blob/master/mat.cpp
+ * K回操作後のDP値から期待値を求める部分は、ABC360-E-2.cppと同じ。
  */
 
 // #include <cassert> が必要
@@ -145,30 +147,18 @@ struct Matrix {
 
 int main(void)
 {
-	Matrix<int> a(2,2), b(2,2);
-	a[0] = {1,3};
-	a[1] = {5,7};
-	b.a = { {10,100},
-	        {0,0} };  // この形式も可
-	assert((a+b).a == vector<vector<int>>({ {11, 103}, {5, 7} }) );
-	assert((a-b).a == vector<vector<int>>({ {-9, -97}, {5, 7} }) );
-	assert((a*b).a == vector<vector<int>>({ {10, 100}, {50, 500} }) );
-	assert(a.pow(5).a == vector<vector<int>>({ {10816, 17088}, {28480, 44992} }) );
-
-	Matrix<int> c(3,4), d(3,4), r, r2;
-	c.a = {{1,2,3,4},
-	       {5,6,7,8},
-	       {9,10,11,12}};
-	d.a = {{12,11,10,9},
-	       {8,7,6,5},
-	       {4,3,2,1}};
-	r = c.rotate(1); r = r.rotate(1);  // 90度を2回
-	assert(r.a == d.a);
-	r = c.rotate(2);  // 一気に180度
-	assert(r.a == d.a);
-	r = r.rotate(1);  // 180+90度
-	r2 = c.rotate(3);  // 一度に270度
-	assert(r.a == r2.a);
+	ll N, K; cin >> N >> K;
+	Matrix<mint> m(2, 2);
+	mint a = ((mint)N*N-2*N) / (N*N);
+	mint b = (mint)2 / (N*N);
+	m[0][0] = a;
+	m[0][1] = 1;
+	m[1][0] = 0;
+	m[1][1] = 1;
+	m = m.pow(K);
+	mint dp = m[0][0]*1 + m[0][1]*b;  // 最終のDP値
+	mint ans = dp + (1-dp)/2*(N+2);
+	cout << ans.val() << endl;
 
 	return 0;
 }
