@@ -133,17 +133,18 @@ int main(void)
 
 		if(s1 != s2)
 		{
-			string tmp;
+			string ren;
 			for(int i = 0; i < 10; i++)  // 最大10ファイルまで、リネーム先が被らないよう"簡易"チェック
 			{
-				tmp = "wa" + to_string(i) + ".txt";
-				if(filesystem::exists(tmp)) continue;
-				std::rename(inp.c_str(), tmp.c_str());
+				ren = "wa" + to_string(i) + ".txt";
+				if(filesystem::exists(ren)) continue;
+				std::rename(inp.c_str(), ren.c_str());
 				break;
 			}
 			cout.rdbuf(org_buf);
-			cout << "find WA! -> " << tmp << endl;
-			cout << "solve:" << s1 << "naive:" << s2 << endl;
+			cout << "find WA! -> " << ren << endl;
+			ofstream file(ren, std::ios::app);  // 追記モード
+			file << endl << "solve:" << endl << s1 << endl << "naive:" << endl << s2 << endl;
 			break;
 		}
 	}
