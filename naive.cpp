@@ -205,3 +205,45 @@ void naive_ABC336_D(void)
 	}
 	cout << ans << endl;
 }
+
+// 愚直解サンプル
+void naive_ABC382_F(void)
+{
+	// 0-indexed
+	int i, j;
+	int H, W, N; cin >> H >> W >> N;
+	vector<vector<int>> mp(H, vector<int>(W, 0));  // mp[H][W]  ブロックがあれば1
+	vector<int> r(N), c(N), l(N); for(i = 0; i < N; i++) {cin >> r[i] >> c[i] >> l[i]; r[i]--; c[i]--;}
+	for(i = 0; i < N; i++)
+	{
+		for(j = c[i]; j < c[i]+l[i]; j++)
+		{
+			mp[r[i]][j] = 1;
+		}
+	}
+	while(true)
+	{
+		bool chg = false;
+		for(i = 0; i < N; i++)
+		{
+			bool moveok = true;
+			if(r[i] == H-1) continue;  // 最下部
+			for(j = c[i]; j < c[i]+l[i]; j++)
+			{
+				if(mp[r[i]+1][j] == 1) moveok = false;
+			}
+			if(moveok)
+			{
+				for(j = c[i]; j < c[i]+l[i]; j++)
+				{
+					mp[r[i]][j] = 0;
+					mp[r[i]+1][j] = 1;
+				}
+				r[i]++;
+				chg = true;
+			}
+		}
+		if(!chg) break;
+	}
+	for(auto &e : r) cout << e+1 << endl;
+}
