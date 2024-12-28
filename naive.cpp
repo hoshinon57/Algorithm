@@ -24,6 +24,9 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * ・WAになる原因を探したいコードを、solve()に移動させる。
  * ・naive()にて愚直解を書く。
  * ・naive.exeを実行する。不一致になるケースがあれば wa1.txt, wa2.txt,... へ順に出力してくれる。
+ * 
+ * 参考：
+ * https://betrue12.hateblo.jp/entry/2019/09/07/171628
  */
 
 // [lo,hi]の区間の乱数を返す(閉区間)
