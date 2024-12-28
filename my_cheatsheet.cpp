@@ -1936,6 +1936,7 @@ void _value_with_index_(void)
  * ABC381-D 2個ずつ動く尺取り 勉強になった
  * ABC384-D
  * ARC022-B
+ * AOJ DSL_3_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_A
  * AOJ DSL_3_C https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_C
  */
 void _shakutori_(void)
