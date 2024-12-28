@@ -322,6 +322,7 @@ int main(void)
 
 	[その他]
 	ABC182-D 累積和のMAX
+	ABC288-D mod Kごとの累積和
 	*/
 
 	/*
