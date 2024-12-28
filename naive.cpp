@@ -250,3 +250,48 @@ void naive_ABC382_F(void)
 	}
 	for(auto &e : r) cout << e+1 << endl;
 }
+
+// 愚直解サンプル
+void naive_ABC373_E(void)
+{
+	int i, j, k;
+	int N, M, K; cin >> N >> M >> K;
+	int kzan = K;  // 残票
+	vector<int> a(N); for(i = 0; i < N; i++) {cin >> a[i]; kzan -= a[i];}
+	vector<int> ans;
+	for(i = 0; i < N; i++)
+	{
+		auto a_bk = a;
+		for(j = 0; j <= kzan; j++)  // 人iに追加j票でどうか
+		{
+			int cnt = 0;
+			int x = a[i]+j;  // 人iはx票になった
+			int zan = kzan-j;
+			a[i] = INF32;
+			sort(a.begin(), a.end());
+			reverse(a.begin(), a.end());  // 降順
+			for(k = 1; k < N; k++)
+			{
+				if(a[k] <= x)
+				{
+					int use = min(zan, x-a[k]+1);
+					zan -=use;
+					a[k] += use;
+				}
+				if(a[k] > x) cnt++;
+			}
+			a = a_bk;
+			if(cnt < M) break;
+		}
+		if(j == kzan+1) ans.push_back(-1);
+		else ans.push_back(j);
+		a = a_bk;
+	}
+
+	int sz_ = (int)ans.size();
+	for(i = 0; i < sz_; i++) {
+		cout << ans[i];
+		if(i != sz_-1) cout << " ";
+	}
+	cout << endl;
+}
