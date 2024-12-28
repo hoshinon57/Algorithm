@@ -20,7 +20,7 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * 
  * やり方：
  * ・main()の"ランダムデータ生成"部分を書き換えて、入力用データを生成する。
- *   rng_64, rnd_1, rnd_vecなどを活用する。
+ *   rng_64, rnd_out, rnd_vecなどを活用する。
  * ・WAになる原因を探したいコードを、solve()に移動させる。
  * ・naive()にて愚直解を書く。
  * ・naive.exeを実行する。不一致になるケースがあれば wa1.txt, wa2.txt,... へ順に出力してくれる。
@@ -39,9 +39,18 @@ long long rng_64(long long lo, long long hi) {
 	return std::uniform_int_distribution<long long>(lo, hi)(rng);  // [lo,hi]の範囲での乱数を生成
 }
 
-// 値valをoに出力
-void rnd_1(ofstream &o, int val) {
-	o << val <<endl;
+// 可変長引数にて、値argsたちをoに出力
+// args間は半角スペース、最後に改行を入れる
+// 例)rnd_out(o, H, W, N);  // 出力は"H W N"となる。最後に改行
+template<typename... Args>
+void rnd_out(ofstream &o, Args... args) {
+	int len = (int)sizeof...(args);
+	int a[] = {args...};
+	for(int i = 0; i < len; i++) {
+		o << a[i];
+		if(i != len-1) o << " ";
+	}
+	o << endl;
 }
 
 // 要素N個、値の区間[lo,hi]でランダム生成してoに出力
@@ -95,9 +104,16 @@ int main(void)
 	{
 		// ランダムデータ生成
 		ofstream o(inp);
-		int N = rng_64(2, 10);
-		rnd_1(o, N);
-		rnd_vec(o, N, 1, 10, true);
+		int H=6, W=6, N=4;
+		rnd_out(o, H, W, N);
+		for(int i = 0; i < N; i++)
+		{
+			int r = i+1;
+			int c = rng_64(1, W);
+			int l = rng_64(1, W);
+			chmin(l, W-c+1);
+			rnd_out(o, r, c, l);
+		}
 		o.close();
 
 		ifstream in;
