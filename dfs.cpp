@@ -43,6 +43,7 @@ using namespace std;
  * ABC240-E
  * ABC251-F
  * ABC277-C 連想配列 or 座標圧縮
+ * ABC282-D 二部グラフ
  * ABC285-D 連想配列 or 座標圧縮
  * ABC311-C
  * ABC315-E これ解けなかったのは大反省
