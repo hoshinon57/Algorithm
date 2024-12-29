@@ -118,7 +118,7 @@ https://qiita.com/e869120/items/eb50fdaece12be418faa
 78：past-questions-78.cppにて
 79：親フォルダより、ABC106-D.cpp, ABC106-D-2.cppにて
 80：past-questions-80.cppにて
-81：past-questions-81.cpp, past-questions-81-2(eventsort).cppにて
+81：past-questions-81.cpp, past-questions-81-2(eventsort).cpp, past-questions-81-3(compress).cppにて
 82：past-questions-82.cpp, past-questions-82-2(eventsort).cppにて
 83：past-questions-83.cppにて
 84：past-questions-84.cpp, past-questions-84-2.cppにて
