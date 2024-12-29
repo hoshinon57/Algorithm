@@ -13,6 +13,7 @@ using namespace std;
  * [関連する問題]
  * ABC232-C 
  * ABC268-D D問題にしては難易度高めだが、良問だった
+ * ABC276-C prev_permutation
  * ABC302-C 
  * ABC328-E M個の辺からN-1個を選ぶ
  * ABC345-D
@@ -28,7 +29,7 @@ using namespace std;
  * 一方で{1,1,2}という順列だと、
  * {1,1,2},{1,2,1},{2,1,1} の3つが生成される。
  * 
- * 辞書順と逆方向で生成していく prev_permutation() という関数もあるらしい。
+ * 辞書順と逆方向で生成していく prev_permutation() という関数もある。
  */
 /*
  * string型や、vector<string>型でもnext_permutation()に渡すことができる。
