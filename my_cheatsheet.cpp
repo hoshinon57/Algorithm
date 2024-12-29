@@ -2124,6 +2124,8 @@ void _largest_rectangle_histogram_(void)
 
 	[関連する問題]
 	AOJ DSL_3_D https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_3_D
+	CODE FESTIVAL 2016(Struck Out) https://atcoder.jp/contests/cf16-tournament-round3-open/tasks/asaporo_d
+	  O(NK)のスライド最大値 難問だが勉強になった
 
 	[疑似コード]
 	// dequeにa[i]ではなくidxを積む実装
