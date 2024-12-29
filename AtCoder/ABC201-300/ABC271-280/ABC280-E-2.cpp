@@ -1,37 +1,39 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <iomanip>
 #include <cassert>
 using namespace std;
 typedef long long ll;
+// const ll INF64 = 1LL << 60;
 const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
+
+#include <atcoder/modint>
+using namespace atcoder;
+using mint = modint998244353;
+
+// ABC280 https://atcoder.jp/contests/abc280
 
 /*
- * 行列計算のライブラリ
+ * 別解の、行列累乗で解く。
+ *   https://atcoder.jp/contests/abc280/editorial/5343
+ *   https://atcoder.jp/contests/abc280/editorial/5334
  * 
- * [ざっくり概要]
- * ・行列同士の演算 +,-,*, +=,-=,*= が可能。
- * ・pow()にて行列累乗が可能。
- * ・要素の型にatcoder/modintを使用可能。
- *   ただし入力時はいったん別変数を仲介必要。また出力時は .val() が必要。
- * 
- * [関連する問題 / verifyした問題]
- * [Library Checker]Matrix Product https://judge.yosupo.jp/problem/matrix_product
- * [Library Checker]Pow of Matrix  https://judge.yosupo.jp/problem/pow_of_matrix
- * AOJ ITP1_7_D https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_7_D
- * アルゴリズムと数学 054 https://atcoder.jp/contests/math-and-algorithm/tasks/math_and_algorithm_at
- * アルゴリズムと数学 055 https://atcoder.jp/contests/math-and-algorithm/tasks/math_and_algorithm_au
- * アルゴリズムと数学 056 https://atcoder.jp/contests/math-and-algorithm/tasks/math_and_algorithm_av
- * ABC280-E 別解
- * ABC293-E
- * ABC360-E
- * EDPC R(Walk)
- * 
- * [参考資料]
- *   https://ei1333.github.io/luzhiled/snippets/math/matrix.html
- *   https://qiita.com/gnbrganchan/items/47118d45b3af9d5ae9a4
- *   https://github.com/atcoder/live_library/blob/master/mat.cpp
+ * 問題文より、p=P/100, q=1-P/100とすると、
+ * dp[n] = (dp[n-2]+1)*p + (dp[n-1]+1)*q
+ * = q*dp[n-1] + p*dp[n-2] + 1   (p+q=1より)
+ * となるので、行列式にて
+ * (dp[i]      (q p 1    (dp[i-1]
+ *  dp[i-1]  =  1 0 0  *  dp[i-2]
+ *       1 )    0 0 1)         1 )
+ * のように表せる。
+ * 真ん中の正方行列の部分をN乗すると、右側は dp[0],dp[-1],1 となり、dp[0]=dp[-1]=0である。
+ * よって正方行列をN乗し、[0][2]の要素が答となる。
  */
 
 // #include <cassert> が必要
@@ -146,30 +148,15 @@ struct Matrix {
 
 int main(void)
 {
-	Matrix<int> a(2,2), b(2,2);
-	a[0] = {1,3};
-	a[1] = {5,7};
-	b.a = { {10,100},
-	        {0,0} };  // この形式も可
-	assert((a+b).a == vector<vector<int>>({ {11, 103}, {5, 7} }) );
-	assert((a-b).a == vector<vector<int>>({ {-9, -97}, {5, 7} }) );
-	assert((a*b).a == vector<vector<int>>({ {10, 100}, {50, 500} }) );
-	assert(a.pow(5).a == vector<vector<int>>({ {10816, 17088}, {28480, 44992} }) );
-
-	Matrix<int> c(3,4), d(3,4), r, r2;
-	c.a = {{1,2,3,4},
-	       {5,6,7,8},
-	       {9,10,11,12}};
-	d.a = {{12,11,10,9},
-	       {8,7,6,5},
-	       {4,3,2,1}};
-	r = c.rotate(1); r = r.rotate(1);  // 90度を2回
-	assert(r.a == d.a);
-	r = c.rotate(2);  // 一気に180度
-	assert(r.a == d.a);
-	r = r.rotate(1);  // 180+90度
-	r2 = c.rotate(3);  // 一度に270度
-	assert(r.a == r2.a);
+	ll N, P; cin >> N >> P;
+	mint p = (mint)P/100;
+	mint q = (mint)1-p;
+	Matrix<mint> m(3, 3);
+	m[0] = {q, p, 1};
+	m[1] = {1, 0, 0};
+	m[2] = {0, 0, 1};
+	m = m.pow(N);
+	cout << m[0][2].val() << endl;
 
 	return 0;
 }
