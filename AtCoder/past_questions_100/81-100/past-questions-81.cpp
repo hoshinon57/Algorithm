@@ -12,7 +12,7 @@ const ll MOD = 100000;
 // 「分野別 初中級者が解くべき過去問精選 100問」の問題81
 // https://qiita.com/e869120/items/eb50fdaece12be418faa
 // 
-// https://atcoder.jp/contests/joi2011ho/tasks/joi2011ho1
+// https://atcoder.jp/contests/abc014/tasks/abc014_3
 
 /*
  * いもす法で解く。
