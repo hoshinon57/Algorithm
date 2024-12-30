@@ -3,8 +3,6 @@
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
-#include <set>
-#include <array>
 #include <functional>  // function
 #include <limits>  // numeric_limits
 using namespace std;
