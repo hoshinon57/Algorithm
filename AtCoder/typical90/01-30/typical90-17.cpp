@@ -17,6 +17,8 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
 // 競プロ典型90問:17 https://atcoder.jp/contests/typical90/tasks/typical90_q
 
 /*
+ * ★別解のtypical90-17-2.cppの方がずっと分かりやすかった。場合分けの要素も無いので。
+ * 
  * 自力で解けず、解説を見た。
  * 難易度★7の初挑戦。いやーきつかった、これが★7…
  * 余事象を考える点に加え、円環の線分については丸ごと本問を典型として覚えておこう。

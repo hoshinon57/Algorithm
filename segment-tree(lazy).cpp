@@ -58,6 +58,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   AOJ DSL_2_G(RSQ and RAQ) https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_G
  *   AOJ DSL_2_H(RMQ and RAQ) https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_H
  *   AOJ DSL_2_I(RSQ and RUQ) https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_I&lang=ja
+ *   典型90:017 https://atcoder.jp/contests/typical90/tasks/typical90_q
  *   典型90:029 https://atcoder.jp/contests/typical90/tasks/typical90_ac
  *   典型90:081 https://atcoder.jp/contests/typical90/tasks/typical90_cc  ただし想定解法は違った
  *   ABC035-C
