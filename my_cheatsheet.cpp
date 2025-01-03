@@ -372,6 +372,7 @@ int main(void)
 	ABC183-D
 	ABC260-E
 	ABC268-E
+	ABC278-E 別解 二次元いもす法
 	ABC338-D
 	*/
 
