@@ -54,6 +54,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC155-E
  * ABC336-E 難しかった
  * Educational DP Contest S問題 https://atcoder.jp/contests/dp
+ * Typical DP Contest E問題 https://atcoder.jp/contests/tdpc/tasks/tdpc_number
  */
 
 // [実装テンプレート]
