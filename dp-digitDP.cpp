@@ -78,7 +78,7 @@ void solve(void)
 		{
 			const int D = s[i] - '0';  // 配る先(i+1文字目)の値 indexedの関係で[i]アクセスの点に注意
 			int ed = (sm ? 9 : D);  // 配る元が"未満"なら9まで、まだ一致ならDまで
-			for(int d = 0; d <= ed; d++)
+			for(int d = 0; d <= ed; d++)  // 次に使う値
 			{
 				int nsm = (sm || d < D);  // 配る元が"未満", もしくは配り先の値がD以下なら、smaller=1.
 				dp[i+1][nsm] += dp[i][sm];
