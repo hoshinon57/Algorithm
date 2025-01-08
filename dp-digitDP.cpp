@@ -81,7 +81,7 @@ void solve(void)
 			int ed = (sm ? 9 : D);  // 配る元が"未満"なら9まで、まだ一致ならDまで
 			for(int d = 0; d <= ed; d++)  // 次に使う値
 			{
-				int nsm = (sm || d < D);  // 配る元が"未満", もしくは配り先の値がD以下なら、smaller=1.
+				int nsm = (sm || d < D);  // 配る元が"未満", もしくは配り先の値がD未満なら、smaller=1.
 				dp[i+1][nsm] += dp[i][sm];
 			}
 		}
