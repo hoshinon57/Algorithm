@@ -46,7 +46,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * 簡易な実装は
  *   solve() : leading-zero無し
  *   solve_leading_zero() : leading-zero有り
- * を参照のこと。初見では面食らう部分もあるが、慣れると分かりやすい。
+ * を参照のこと。初見では面食らう部分もあるが、慣れると分かりやすいし、かなり機械的に解けるようになった。
  * 桁DPは配るDPの方が書きやすそう。(以下のS問題解説にも言及がある https://kyopro-friends.hatenablog.com/entry/2019/01/12/231035 )
  * よってdp[i][sm][j]のように定義した場合、forループはi,sm,jにて回すべし。
  * 
@@ -76,7 +76,7 @@ void solve(void)
 	//   そこまでの値が、N未満である:smaller=1, Nと等しい:smaller=0 のときに、
 	//   条件を満たす値の種類数
 	vector<vector<ll>> dp(L+1, vector<ll>(2, 0));  // dp[L+1][2]
-	dp[0][0] = 1;  // DP初期値
+	dp[0][0] = 1;  // DP初期値 (入力の先頭に'0'を追加したものをイメージすると良さげ)
 
 	// 配るDP
 	// よって、forはdp[i][sm]のi,smにて回すべし
