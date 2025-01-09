@@ -53,7 +53,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC007-D (禁止された数字)
  * ABC029-D (1)
  * ABC117-D (XXOR) 実装が面倒だった
- * ABC129-E
+ * ABC129-E (Sum Equals Xor)
  * ABC154-E
  * ABC155-E
  * ABC208-E (Digit Products) leading-zero
