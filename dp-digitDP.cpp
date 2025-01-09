@@ -18,6 +18,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * https://torus711.hatenablog.com/entry/20150423/1429794075
  * https://qiita.com/pinokions009/items/1e98252718eeeeb5c9ab
  * https://drken1215.hatenablog.com/entry/2019/02/04/013700
+ * https://zenn.dev/ichinoseac/articles/199cf94ed49926  leading-zero
  * https://algo-logic.info/digit-dp/
  * 
  * 以下のようにdp[]を定義するのが良さそう。
