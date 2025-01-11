@@ -56,7 +56,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC117-D (XXOR) 実装が面倒だった
  * ABC129-E (Sum Equals Xor)
  * ABC154-E (Almost Everywhere Zero)
- * ABC155-E
+ * ABC155-E (Payment) 本ファイルでの桁DPとはちょっと違うかも
  * ABC208-E (Digit Products) leading-zero
  * ABC336-E 難しかった
  * AOJ 2879 (ごちうさ数/Gochiusa-Number) 実力がつく良問 https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2879
@@ -80,13 +80,14 @@ void solve(void)
 
 	// 配るDP
 	// よって、forはdp[i][sm]のi,smにて回すべし
-	for(int i = 0; i < L; i++)
+	int i, sm, d;
+	for(i = 0; i < L; i++)
 	{
-		for(int sm = 0; sm < 2; sm++)  // dp[i][sm]から配る
+		for(sm = 0; sm < 2; sm++)  // dp[i][sm]から配る
 		{
 			const int D = s[i] - '0';  // 配る先(i+1文字目)の値 indexedの関係で[i]アクセスの点に注意
 			int ed = (sm ? 9 : D);  // 配る元が"未満"なら9まで、まだ一致ならDまで
-			for(int d = 0; d <= ed; d++)  // 次に使う値
+			for(d = 0; d <= ed; d++)  // 次に使う値
 			{
 				int nsm = (sm || d < D);  // 配る元が"未満", もしくは配り先の値がD未満なら、smaller=1.
 				dp[i+1][nsm] += dp[i][sm];
@@ -122,18 +123,19 @@ void solve_leading_zero(void)
 
 	// 配るDP
 	// よって、forはdp[i][sm][lz][j]のi,sm,lz,jにて回すべし
-	for(int i = 0; i < L; i++)
+	int i, sm, lz, j, d;
+	for(i = 0; i < L; i++)
 	{
 		vector ndp(2, vector(2, vector<ll>(2)));
-		for(int sm = 0; sm < 2; sm++)
+		for(sm = 0; sm < 2; sm++)
 		{
-			for(int lz = 0; lz < 2; lz++)
+			for(lz = 0; lz < 2; lz++)
 			{
-				for(int j = 0; j < 2; j++)
+				for(j = 0; j < 2; j++)
 				{
 					const int D = s[i] - '0';  // 配る先(i+1文字目)の値 indexedの関係で[i]アクセスの点に注意
 					int ed = (sm ? 9 : D);  // 配る元が"未満"なら9まで、まだ一致ならDまで
-					for(int d = 0; d <= ed; d++)  // 次に使う値
+					for(d = 0; d <= ed; d++)  // 次に使う値
 					{
 						int nsm = (sm || d < D);  // 配る元が"未満", もしくは配り先の値がD未満なら、smaller=1.
 						// nlzはlzを引き継ぐ。ただし次に使う値が0以外ならnlz=0.
@@ -153,7 +155,7 @@ void solve_leading_zero(void)
 	// dp[L][*][0][1]の総和が答
 	// 1以上という条件があるため、leading-zero=0.
 	ll ans = 0;
-	for(int sm = 0; sm < 2; sm++)
+	for(sm = 0; sm < 2; sm++)
 	{
 		ans += dp[sm][0][1];
 	}
