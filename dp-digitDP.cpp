@@ -50,6 +50,11 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * 桁DPは配るDPの方が書きやすそう。(以下のS問題解説にも言及がある https://kyopro-friends.hatenablog.com/entry/2019/01/12/231035 )
  * よってdp[i][sm][j]のように定義した場合、forループはi,sm,jにて回すべし。
  * 
+ * leading-zeroについて、例えばfunc(1234)で呼び出したときに内部で
+ *   cal(99)+cal(999)+cal(1234)
+ * のようにしてleading-zeroの考慮が不要な実装にする、というテクニックもある。(ABC387-C/Snake Numbers にてコンテスト時ACした方針)
+ * 入力がlong longに収まる(10^18)ようなケースなら、案の1つとして覚えておく。
+ * 
  * [関連問題]
  * ABC007-D (禁止された数字)
  * ABC029-D (1)
@@ -59,6 +64,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC155-E (Payment) 本ファイルでの桁DPとはちょっと違うかも
  * ABC208-E (Digit Products) leading-zero
  * ABC336-E 難しかった
+ * ABC387-C (Snake Numbers) leading-zero 難しい
  * AOJ 2879 (ごちうさ数/Gochiusa-Number) 実力がつく良問 https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2879
  * Educational DP Contest S問題 https://atcoder.jp/contests/dp
  * Typical DP Contest E問題 https://atcoder.jp/contests/tdpc/tasks/tdpc_number
