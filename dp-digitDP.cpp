@@ -66,6 +66,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC336-E 難しかった
  * ABC387-C (Snake Numbers) leading-zero 難しい
  * AOJ 2879 (ごちうさ数/Gochiusa-Number) 実力がつく良問 https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2879
+ * CODE FESTIVAL 2014-D (壊れた電卓) smaller,greaterそれぞれ 実力がつく良問 https://atcoder.jp/contests/code-festival-2014-quala/tasks/code_festival_qualA_d
  * Educational DP Contest S問題 https://atcoder.jp/contests/dp
  * Typical DP Contest E問題 https://atcoder.jp/contests/tdpc/tasks/tdpc_number
  */
