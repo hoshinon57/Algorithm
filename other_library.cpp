@@ -32,8 +32,8 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ・ランレングス圧縮 rle
  * ・2つのsetをマージ(マージテク使用) set_merge
  * ・大文字小文字を反転 revLowUp
- * ・extgcd
- * ・SCC
+ * ・一次不定方程式を解く extgcd
+ * ・強連結成分分解 SCC
  * ・グラフにて各頂点の入次数を求める graph_in_deg
  * ・円環上の距離や公差判定 move_on_ring
  * ・文字列が回文かを判定 is_palindrome
