@@ -34,6 +34,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ・大文字小文字を反転 revLowUp
  * ・extgcd
  * ・SCC
+ * ・グラフにて各頂点の入次数を求める graph_in_deg
  * ・円環上の距離や公差判定 move_on_ring
  * ・文字列が回文かを判定 is_palindrome
  * ・区間をsetで管理 interval_set
@@ -466,6 +467,18 @@ void Test_AOJ_GRL_3_C(void)
 		if(idx[u] == idx[v]) ans = 1;
 		cout << ans << endl;
 	}
+}
+
+// gの各頂点について入次数を計算し、返す (in[i]:頂点iの入次数)
+// auto in_deg = graph_in_deg(g); のように呼び出す
+// [verify]ABC387-F
+vector<int> graph_in_deg(Graph &g) {
+	int n = (int)g.size();
+	vector<int> in(n);
+	for(int i = 0; i < n; i++) {
+		for(auto &e : g[i]) in[e]++;
+	}
+	return in;
 }
 
 /*
