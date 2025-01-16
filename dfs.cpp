@@ -58,6 +58,7 @@ using Graph = vector<vector<int>>;
 
 // 実装テンプレートやライブラリ一覧
 void dfs(Graph &graph, int v);  // [実装テンプレート]頂点vから深さ優先探索する
+void dfs_tree_dp(Graph &g, int v, int p);  // [実装テンプレート]木上DPでの実装方針（の一例）
 void dfs_tree(Graph &g, int v, int p);  // [実装テンプレート]木であるグラフにてDFS
 void dfs_tree_depth(Graph &grp, vector<int> &d, int v, int p, int now);  // [ライブラリ]各頂点の深さを計算
 int dfs_tree_subnum(Graph &grp, vector<int> &n, int v, int p);  // [ライブラリ]各頂点vを部分木としたときの頂点数計算
@@ -105,6 +106,24 @@ void dfs_tree(Graph &g, int v, int p = -1)
 		// ★問題に応じて、ここで何らか処理
 		dfs_tree(g, e, v);
 	}
+}
+
+// vector<int> dp(N);
+// [実装テンプレート]
+//   木上のDPにてこの情報を使いたい場合に、まず子へ再帰して子のDP値を確定させ、
+//   親(呼び出し元)にて子のDP値を参照するという実装方法。
+//   これなら再帰関数で戻り値の設定は不要、というのがポイント。dp[]自体もグローバル変数にて実装しやすい(かも)。
+void dfs_tree_dp(Graph &g, int v, int p = -1)
+{
+#if 0
+	for(auto &e : g[v])
+	{
+		if(e == p) continue;
+		dfs_tree_dp(g, e, v);  // まずは子へ再帰してしまう
+		// 子のDP値が確定しているので、親側にて自由に使う
+		dp[v] += dp[e];
+	}
+#endif
 }
 
 // 木であるグラフについて、頂点vを(部分木の)根としてDFS
