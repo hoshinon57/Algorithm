@@ -43,6 +43,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC164-E 難問だが勉強になった
  * ABC143-E ただし想定解はワーシャルフロイド法
  * ABC142-E ただし解説はいずれもbitDPだった
+ * https://atcoder.jp/contests/zone2021/tasks/zone2021_e (Sneaking/潜入) 頂点を増やすダイクストラ
  */
 
 // 頂点を結ぶ辺
