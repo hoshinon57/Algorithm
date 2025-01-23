@@ -24,6 +24,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   以下の操作をO(logN)で処理できる。
  *   (1)Update(x, val) : 要素xをvalで更新する
  *   (2)Query(a, b) : 区間[a,b)にある要素のモノイド積を返す
+ *   (3)max_right(a, b, f) : セグ木上の二分探索 参考実装：Test_ACLPC_J()
  *   0-indexed, および半開区間で処理する。
  *   コンストラクタには (size:要素数, fx_:二項演算, ex_:単位元) を指定する。
  *   ★代表的なfx,exはmain()に記述している。
@@ -42,6 +43,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * 
  * [関連する問題 / verifyした問題]
  * AOJ DSL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
+ * https://atcoder.jp/contests/practice2/tasks/practice2_j  max_rightのverify
  * ABC125-C
  * ABC140-E
  * ABC157-E
@@ -69,7 +71,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 // (2)Query(a, b) : 区間[a,b)にある要素のモノイド積を返す
 // (3)Set(i, val) & Build() : 木の更新を行わず要素iを更新し(Set), まとめて木の構築を行う(Build)
 // (4)Get(i) : 要素iを取得する
-// (5)Find_Leftmost(a, b, x) : 区間[a,b)の範囲で、x以下となる最も左側の要素番号を返す
+// (5)max_right(a, b, f) : [a,b)の範囲で、aを左端としてf(node)=trueとなる最右の要素番号を返す
 // (6)debug(step, width, l, r) : デバッグ出力
 // [注意]
 //   0-indexed, および半開区間で処理する。
@@ -163,6 +165,39 @@ public:
 		else
 		{
 			return Find_Leftmost(a, b, x, 2*k+2, (l+r)/2, r);  // 右側
+		}
+	}
+
+	// [a,b)の範囲で、aを左端としてf(node)=trueとなる最右(ret)を返す。つまり[a,ret)がtrueで、[a,ret+1)がfalse.
+	// b=Nとして呼び出すことが多いはず。
+	// 全区間trueになる場合はret=bを返す。[a,b)=trueなので。
+	// 全区間falseになる場合はret=aを返す。[a,a).
+	// 
+	// 左端からf(node)=falseを探していくイメージ。
+	// 
+	// f:要素(型T)を引数に取り、bool型を返す関数を渡す
+	// k:内部処理用。node[k]としてアクセス
+	// l,r:内部処理用。nodeの[l,r)を対象とする。再帰にて変化する
+	int max_right(int a, int b, function<bool(T)> f, int k = 0, int l = 0, int r = -1)
+	{
+		// r=-1 なら最初の呼び出し
+		if(r < 0) r = n;  // [0,n)を対象とする
+
+		// 今見ている区間[l,r)でf()=trueである、または
+		// クエリ[a,b)と対象[l,r)が交わらない
+		if(f(node[k]) || (r <= a || b <= l)) return b;  // 自身の右隣を返す
+
+		if(k >= n-1) return l;  // 自分が葉なら、その位置を返す
+		// 葉なので、lが位置を表している
+
+		int vl = max_right(a, b, f, 2*k+1, l, (l+r)/2);  // 左側からf(node)=falseを探していく
+		if(vl != b)  // 左側に答(falseとなる点)がある
+		{
+			return vl;
+		}
+		else
+		{
+			return max_right(a, b, f, 2*k+2, (l+r)/2, r);
 		}
 	}
 
@@ -305,7 +340,58 @@ void Test(void)
 		assert(seg2.Find_Rightmost(2, 3, 1) == 2);
 		assert(seg2.Find_Rightmost(0, 1, 1) == 0);
 		assert(seg2.Find_Rightmost(0, 3, -1) == -1);
-	}	
+
+// https://atcoder.jp/contests/practice2/tasks/practice2_j
+// セグメント木上の二分探索
+void Test_ACLPC_J(void)
+{
+	// Range Max Query
+	using T = int;
+	auto fx = [](T x1, T x2) -> T { return max(x1, x2); };
+	T ex = numeric_limits<T>::min();
+	int N, Q; cin >> N >> Q;
+	SegmentTree<T> seg(N+5, fx, ex);
+	for(int i = 0; i < N; i++)
+	{
+		int a; cin >> a;
+		seg.Set(i, a);
+	}
+	seg.Build();
+
+	// クエリ3について、V > (セグ木の要素) ならtrueを返せばよい
+	int vv;
+	auto lmd = [&](T x) -> bool
+	{
+		return vv > x;
+	};
+
+	while(Q > 0)
+	{
+		Q--;
+		int k; cin >> k;
+		if(k == 1)
+		{
+			int x, v; cin >> x >> v;
+			x--;
+			seg.Update(x, v);
+		}
+		else if(k == 2)
+		{
+			int l, r; cin >> l >> r;
+			l--; r--;
+			r++;  // [l,r)
+			cout << seg.Query(l, r) << endl;
+		}
+		else
+		{
+			int x; cin >> x >> vv;
+			x--;
+			int ans = seg.max_right(x, N, lmd);
+			// [x,ans)の区間にてV>A, [x,ans]になるとv<=Aになる。
+			// よってansがそのまま答になるが、1-indexedへ変換するため+1が必要
+			cout << ans+1 << endl;
+		}
+	}
 }
 
 int main(void)
