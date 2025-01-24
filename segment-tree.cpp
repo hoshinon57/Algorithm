@@ -277,6 +277,39 @@ void Test(void)
 	}
 }
 
+void Test_max_right(void)
+{
+	using T = int;
+	auto fx = [](T x1, T x2) -> T { return max(x1, x2); };
+	T ex = numeric_limits<T>::min();
+	vector<int> a = {3, 1, 4, 1, 5, 9, 2};
+	//               0  1  2  3  4  5  6
+	int N = (int)a.size();
+	SegmentTree<T> seg(N, fx, ex);
+	for(int i = 0; i < N; i++)
+	{
+		seg.Set(i, a[i]);
+	}
+	seg.Build();
+
+	auto lmd = [](T x) -> bool
+	{
+		return x <= 4;
+	};
+	// 4以下の最右
+	assert(seg.max_right(0, N, lmd) == 4);  // [0,4)が4以下
+	assert(seg.max_right(1, N, lmd) == 4);
+	assert(seg.max_right(3, N, lmd) == 4);
+	assert(seg.max_right(4, N, lmd) == 4);  // [4,4)が4以下
+	assert(seg.max_right(5, N, lmd) == 5);
+	assert(seg.max_right(6, N, lmd) == 7);  // [6,7)が4以下
+	assert(seg.max_right(2, 2, lmd) == 2);
+	assert(seg.max_right(2, 3, lmd) == 3);  // [2,3)が4以下
+	assert(seg.max_right(2, 4, lmd) == 4);
+	assert(seg.max_right(2, 5, lmd) == 4);  // [2,4)が4以下
+	assert(seg.max_right(2, 6, lmd) == 4);
+}
+
 
 // https://atcoder.jp/contests/practice2/tasks/practice2_j
 // セグメント木上の二分探索
@@ -376,6 +409,7 @@ int main(void)
 	---------------
 	*/
 	Test();
+	Test_max_right();
 
 	// 以下は AOJ DSL_2_A のもの
 	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
