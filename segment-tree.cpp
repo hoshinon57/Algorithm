@@ -24,7 +24,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   以下の操作をO(logN)で処理できる。
  *   (1)Update(x, val) : 要素xをvalで更新する
  *   (2)Query(a, b) : 区間[a,b)にある要素のモノイド積を返す
- *   (3)max_right(a, b, f) : セグ木上の二分探索 参考実装：Test_ACLPC_J()
+ *   (3)max_right(a, b, f), min_left(a, b, f) : セグ木上の二分探索 参考実装：Test_ACLPC_J()
  *   0-indexed, および半開区間で処理する。
  *   コンストラクタには (size:要素数, fx_:二項演算, ex_:単位元) を指定する。
  *   ★代表的なfx,exはmain()に記述している。
@@ -72,7 +72,8 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 // (3)Set(i, val) & Build() : 木の更新を行わず要素iを更新し(Set), まとめて木の構築を行う(Build)
 // (4)Get(i) : 要素iを取得する
 // (5)max_right(a, b, f) : [a,b)の範囲で、aを左端としてf(node)=trueとなる最右の要素番号を返す
-// (6)debug(step, width, l, r) : デバッグ出力
+// (6)min_left(a, b, f)  : [a,b)の範囲で、bを右端としてf(node)=trueとなる最左の要素番号を返す
+// (7)debug(step, width, l, r) : デバッグ出力
 // [注意]
 //   0-indexed, および半開区間で処理する。
 //   要素に配列を乗せる場合、vectorだとなぜか遅い。arrayか生配列(をstructでラップ)を使うこと。
@@ -198,6 +199,40 @@ public:
 		else
 		{
 			return max_right(a, b, f, 2*k+2, (l+r)/2, r);
+		}
+	}
+
+	// [a,b)の範囲で、bを右端としてf(node)=trueとなる最左(ret)を返す。つまり[ret,b)がtrueで、[ret-1,b)がfalse.
+	// a=0として呼び出すことが多いはず。
+	// 全区間trueになる場合はret=aを返す。[a,b)=trueなので。
+	// 全区間falseになる場合はret=bを返す。[b,b).
+	// 
+	// 右端からf(node)=falseを探していくイメージ。
+	// 
+	// f:セグ木の要素(型T)を引数に取り、bool型を返す関数を渡す
+	// k:内部処理用。node[k]としてアクセス
+	// l,r:内部処理用。nodeの[l,r)を対象とする。再帰にて変化する
+	int min_left(int a, int b, function<bool(T)> f, int k = 0, int l = 0, int r = -1)
+	{
+		// r=-1 なら最初の呼び出し
+		if(r < 0) r = n;  // [0,n)を対象とする
+
+		// 今見ている区間[l,r)でf()=trueである、または
+		// クエリ[a,b)と対象[l,r)が交わらない
+		if(f(node[k]) || (r <= a || b <= l)) return a;  // 自身の左端を返す
+
+		if(k >= n-1) return l+1;  // 自分が葉なら、その位置を返す
+		// 葉なので、lが位置を表している
+		// かつ、lがf(node[k])=falseとなる左端なので、l+1が目的の値となる
+
+		int vl = min_left(a, b, f, 2*k+2, (l+r)/2, r);  // 右側からf(node)=falseを探していく
+		if(vl != a)  // 右側に答(falseとなる点)がある
+		{
+			return vl;			
+		}
+		else
+		{
+			return min_left(a, b, f, 2*k+1, l, (l+r)/2);
 		}
 	}
 
