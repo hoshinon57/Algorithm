@@ -134,41 +134,6 @@ public:
 		return fx(vl, vr);
 	}
 
-	// [注意]
-	// 以下のFind_Leftmostは、x以下のものを探すのであれば(現状のソースコード)、Range Minのfx,exを指定すること。
-	// x以上のものを探したい場合、
-	//   Range "MAX"のfx,exを指定
-	//   関数内を1か所修正：node[k] > x を node[k] < x へ変更
-	// とすること。
-
-	// [a,b)の範囲で、x以下となる最も左側の要素番号を返す
-	// 範囲内にx以下が見つからなければ、b(=範囲外)を返す
-	// k:自分がいるnodeのindex
-	// nodeの[l,r)を対象とする
-	int Find_Leftmost(int a, int b, T x, int k = 0, int l = 0, int r = -1)
-	{
-		// r=-1 なら最初の呼び出し
-		if(r < 0) r = n;  // [0,n)を対象とする
-
-		// 自分の値がxより大きい   もしくは
-		// クエリ[a,b)と対象[l,r)が交わらない
-		if(node[k] > x || (r <= a || b <= l)) return b;  // 自身の右隣を返す
-
-//		if(k >= n-1) return k-(n-1);  // 自分が葉なら、その位置を返す
-		if(k >= n-1) return l;  // 自分が葉なら、その位置を返す
-		// 葉なので、lが位置を表している
-
-		int vl = Find_Leftmost(a, b, x, 2*k+1, l, (l+r)/2);  // 左側
-		if(vl != b)  // 左側に答がある
-		{
-			return vl;
-		}
-		else
-		{
-			return Find_Leftmost(a, b, x, 2*k+2, (l+r)/2, r);  // 右側
-		}
-	}
-
 	// セグ木上の二分探索(max_right, min_left)の参考
 	// 以下、セグ木上の要素をAi, クエリの値をvvとする
 	// ・Ai>=vvとなる最左を求めたい、またはAi<vvとなる最右を求めたい
@@ -242,36 +207,6 @@ public:
 		}
 	}
 
-	// [注意]Find_Leftmost()側のコメント参照
-
-	// [a,b)の範囲で、x以下となる最も右側の要素番号を返す
-	// 範囲内にx以下が見つからなければ、a-1(=範囲外)を返す
-	// k:自分がいるnodeのindex
-	// nodeの[l,r)を対象とする
-	int Find_Rightmost(int a, int b, T x, int k = 0, int l = 0, int r = -1)
-	{
-		// r=-1 なら最初の呼び出し
-		if(r < 0) r = n;  // [0,n)を対象とする
-
-		// 自分の値がxより大きい   もしくは
-		// クエリ[a,b)と対象[l,r)が交わらない
-		if(node[k] > x || (r <= a || b <= l)) return a-1;  // 自身の右隣を返す
-
-//		if(k >= n-1) return k-(n-1);  // 自分が葉なら、その位置を返す
-		if(k >= n-1) return l;  // 自分が葉なら、その位置を返す
-		// 葉なので、lが位置を表している
-
-		int vr = Find_Rightmost(a, b, x, 2*k+2, (l+r)/2, r);  // 右側
-		if(vr != a-1)  // 右側に答がある
-		{
-			return vr;
-		}
-		else
-		{
-			return Find_Rightmost(a, b, x, 2*k+1, l, (l+r)/2);  // 左側
-		}
-	}
-
 	// 要素xをvalで更新する
 	// Update()と違い、木全体の更新は行わない。Build()の呼び出しが必要。
 	// 用途：初期化時に全要素を設定し、Build()で木を構築する
@@ -340,47 +275,8 @@ void Test(void)
 	{
 		assert(seg.Get(i) ==  seg.Query(i, i+1));
 	}
+}
 
-	// Find_Leftmost(),Find_Rightmost()のテスト
-	{
-		vector<int> a = {3, 1, 4, 1, 5, 9, 2};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(1, 7, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 7, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 0) == 7);
-		assert(seg2.Find_Leftmost(2, 3, 4) == 2);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 3);
-		assert(seg2.Find_Leftmost(0, 7, 10) == 0);
-		assert(seg2.Find_Rightmost(0, 7, 1) == 3);
-		assert(seg2.Find_Rightmost(0, 4, 1) == 3);
-		assert(seg2.Find_Rightmost(0, 3, 1) == 1);
-		assert(seg2.Find_Rightmost(0, 7, 0) == -1);
-		assert(seg2.Find_Rightmost(0, 7, 10) == 6);
-	}
-	{
-		vector<int> a = {1, 1, 1};
-		SegmentTree<int> seg2(a.size(), fx, ex);
-		for(int i = 0; i < (int)a.size(); i++)
-		{
-			seg2.Set(i, a[i]);
-		}
-		seg2.Build();
-		assert(seg2.Find_Leftmost(0, 3, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(2, 3, 1) == 2);
-		assert(seg2.Find_Leftmost(0, 2, 1) == 0);
-		assert(seg2.Find_Leftmost(1, 3, 1) == 1);
-		assert(seg2.Find_Leftmost(0, 3, -1) == 3);
-		assert(seg2.Find_Rightmost(0, 3, 1) == 2);
-		assert(seg2.Find_Rightmost(2, 3, 1) == 2);
-		assert(seg2.Find_Rightmost(0, 1, 1) == 0);
-		assert(seg2.Find_Rightmost(0, 3, -1) == -1);
 
 // https://atcoder.jp/contests/practice2/tasks/practice2_j
 // セグメント木上の二分探索
