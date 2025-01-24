@@ -176,7 +176,7 @@ public:
 	// 
 	// 左端からf(node)=falseを探していくイメージ。
 	// 
-	// f:要素(型T)を引数に取り、bool型を返す関数を渡す
+	// f:セグ木の要素(型T)を引数に取り、bool型を返す関数を渡す
 	// k:内部処理用。node[k]としてアクセス
 	// l,r:内部処理用。nodeの[l,r)を対象とする。再帰にて変化する
 	int max_right(int a, int b, function<bool(T)> f, int k = 0, int l = 0, int r = -1)
