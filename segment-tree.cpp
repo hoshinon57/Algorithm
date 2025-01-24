@@ -169,6 +169,12 @@ public:
 		}
 	}
 
+	// セグ木上の二分探索(max_right, min_left)の参考
+	// 以下、セグ木上の要素をAi, クエリの値をvvとする
+	// ・Ai>=vvとなる最左を求めたい、またはAi<vvとなる最右を求めたい
+	//   Range Maxにて f(T x) { return x<vv; } としてmax_rightを使う (Ai<vvの間true)
+	//   Range Minにて f(T x) { return x>=vv; } としてmin_leftを使う (Ai>=vvの間true)
+
 	// [a,b)の範囲で、aを左端としてf(node)=trueとなる最右(ret)を返す。つまり[a,ret)がtrueで、[a,ret+1)がfalse.
 	// b=Nとして呼び出すことが多いはず。
 	// 全区間trueになる場合はret=bを返す。[a,b)=trueなので。
