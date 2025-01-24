@@ -310,6 +310,48 @@ void Test_max_right(void)
 	assert(seg.max_right(2, 6, lmd) == 4);
 }
 
+void Test_min_left(void)
+{
+	using T = int;
+	auto fx = [](T x1, T x2) -> T { return max(x1, x2); };
+	T ex = numeric_limits<T>::min();
+	vector<int> a = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+	//               0  1  2  3  4  5  6  7  8  9 10
+	int N = (int)a.size();
+	SegmentTree<T> seg(N, fx, ex);
+	for(int i = 0; i < N; i++)
+	{
+		seg.Set(i, a[i]);
+	}
+	seg.Build();
+
+	T vv;
+	auto lmd= [&](T x) -> bool
+	{
+		return x<=vv;
+	};
+	// vv以下を満たす最左
+	vv = 5;
+	assert(seg.min_left(0, N, lmd) == 8);  // [8,N)がvv以下
+	assert(seg.min_left(0, 8, lmd) == 8);  // [8,8)がvv以下、つまり閉区間
+	assert(seg.min_left(0, 7, lmd) == 6);  // [6,7)
+	assert(seg.min_left(0, 6, lmd) == 6);  // [6,6)
+	assert(seg.min_left(0, 5, lmd) == 0);
+	assert(seg.min_left(0, 4, lmd) == 0);
+	assert(seg.min_left(0, 3, lmd) == 0);
+	assert(seg.min_left(0, 2, lmd) == 0);
+	assert(seg.min_left(0, 1, lmd) == 0);
+	assert(seg.min_left(0, 0, lmd) == 0);
+	vv = 10;
+	assert(seg.min_left(0, N, lmd) == 0);  // [0,N)で10以下の最左 -> 全て10以下なので0
+	assert(seg.min_left(0, 0, lmd) == 0);
+	vv = 1;
+	assert(seg.min_left(0, N, lmd) == N);  // [0,N)で1以下の最左 -> [N,N),つまり空区間
+	assert(seg.min_left(0, 5, lmd) == 5);
+	assert(seg.min_left(0, 4, lmd) == 3);
+	assert(seg.min_left(0, 3, lmd) == 3);
+	assert(seg.min_left(0, 2, lmd) == 1);
+}
 
 // https://atcoder.jp/contests/practice2/tasks/practice2_j
 // セグメント木上の二分探索
@@ -410,6 +452,8 @@ int main(void)
 	*/
 	Test();
 	Test_max_right();
+	Test_min_left();
+	return 0;
 
 	// 以下は AOJ DSL_2_A のもの
 	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
