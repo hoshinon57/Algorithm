@@ -268,37 +268,6 @@ public:
 		}
 	}
 
-#if 1  // [ToDo]実装する
-	// [a,b)の範囲で、x以下となる最も左側の要素番号を返す
-	// 範囲内にx以下が見つからなければ、b(=範囲外)を返す
-	// k:自分がいるnodeのindex
-	// nodeの[l,r)を対象とする
-	int Find_Leftmost(int a, int b, T x, int k = 0, int l = 0, int r = -1)
-	{
-		// r=-1 なら最初の呼び出し
-		if(r < 0) r = n;  // [0,n)を対象とする
-
-		Evaluate(k, l, r);
-
-		// 自分の値がxより大きい   もしくは
-		// クエリ[a,b)と対象[l,r)が交わらない
-		if(node[k] > x || (r <= a || b <= l)) return b;  // 自身の右隣を返す
-
-		if(k >= n-1) return l;  // 自分が葉なら、その位置を返す
-		// 葉なので、lが位置を表している
-
-		int vl = Find_Leftmost(a, b, x, 2*k+1, l, (l+r)/2);  // 左側
-		if(vl != b)  // 左側に答がある
-		{
-			return vl;
-		}
-		else
-		{
-			return Find_Leftmost(a, b, x, 2*k+2, (l+r)/2, r);  // 右側
-		}
-	}
-#endif
-
 	// 要素iをvalで更新する
 	// Update()と違い、木全体の更新は行わない。Build()の呼び出しが必要。
 	// 用途：初期化時に全要素を設定し、Build()で木を構築する
