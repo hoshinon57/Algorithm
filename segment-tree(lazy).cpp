@@ -599,6 +599,4 @@ int main(void)
 		Test_AOJ_DSL_2_I();
 	}
 	return 0;
-
-	return 0;
 }
