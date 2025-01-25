@@ -24,6 +24,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   以下の操作をO(logN)で処理できる。
  *   (1)Update(a, b, x) : 区間[a,b)の要素をxを用いて更新する
  *   (2)Query(a, b) : 区間[a,b)にある要素にfxを作用させた値を返す
+ *   (3)max_right(a, b, f) : セグ木上の二分探索
  *   0-indexed, および半開区間で処理する。
  *   コンストラクタには以下を指定する。
  *     	size:要素数, fx_,fa_,fm_:二項演算,
@@ -77,7 +78,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 
 // (1)Update(a, b, x) : 区間[a,b)の要素をxを用いて更新する
 // (2)Query(a, b) : 区間[a,b)にある要素にfxを作用させた値を返す
-// [未実装](3)Find_Leftmost(a, b, x) : 区間[a,b)の範囲で、x以下となる最も左側の要素番号を返す
+// (3)max_right(a, b, f) : [a,b)の範囲で、aを左端としてf(node)=trueとなる最右の要素番号を返す
 // (4)debug(step, width, l, r) : デバッグ出力
 // [注意]
 //   0-indexed, および半開区間で処理する。
@@ -189,7 +190,42 @@ public:
 		return fx(vl, vr);
 	}
 
-#if 0  // [ToDo]実装する
+	// [a,b)の範囲で、aを左端としてf(node)=trueとなる最右(ret)を返す。つまり[a,ret)がtrueで、[a,ret+1)がfalse.
+	// b=Nとして呼び出すことが多いはず。
+	// 全区間trueになる場合はret=bを返す。[a,b)=trueなので。
+	// 全区間falseになる場合はret=aを返す。[a,a).
+	// 
+	// 左端からf(node)=falseを探していくイメージ。
+	// 
+	// f:セグ木の要素(型T)を引数に取り、bool型を返す関数を渡す
+	// k:内部処理用。node[k]としてアクセス
+	// l,r:内部処理用。nodeの[l,r)を対象とする。再帰にて変化する
+	int max_right(int a, int b, function<bool(X)> f, int k = 0, int l = 0, int r = -1)
+	{
+		// r=-1 なら最初の呼び出し
+		if(r < 0) r = n;  // [0,n)を対象とする
+
+		Evaluate(k, l, r);
+
+		// 今見ている区間[l,r)でf()=trueである、または
+		// クエリ[a,b)と対象[l,r)が交わらない
+		if(f(node[k]) || (r <= a || b <= l)) return b;  // 自身の右隣を返す
+
+		if(k >= n-1) return l;  // 自分が葉なら、その位置を返す
+		// 葉なので、lが位置を表している
+
+		int vl = max_right(a, b, f, 2*k+1, l, (l+r)/2);  // 左側からf(node)=falseを探していく
+		if(vl != b)  // 左側に答(falseとなる点)がある
+		{
+			return vl;
+		}
+		else
+		{
+			return max_right(a, b, f, 2*k+2, (l+r)/2, r);
+		}
+	}
+
+#if 1  // [ToDo]実装する
 	// [a,b)の範囲で、x以下となる最も左側の要素番号を返す
 	// 範囲内にx以下が見つからなければ、b(=範囲外)を返す
 	// k:自分がいるnodeのindex
