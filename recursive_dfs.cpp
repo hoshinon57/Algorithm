@@ -17,6 +17,7 @@ using namespace std;
  * ABC328-E https://atcoder.jp/contests/abc328/tasks/abc328_e (M個の辺からN-1個を選ぶ recursive_dfs_3()が参考)
  * ABC367-C https://atcoder.jp/contests/abc367/tasks/abc367_c
  * ABC382-D https://atcoder.jp/contests/abc382/tasks/abc382_d
+ * ABC390-D https://atcoder.jp/contests/abc390/tasks/abc390_d (ベル数)
  */
 
 const int NUM = 3;
@@ -109,6 +110,45 @@ void recursive_dfs_3(int nxt, vector<int> &use, int cnt)
 	use.pop_back();
 }
 
+const int N4 = 5;
+const vector<int> a4 = {1, 2, 3, 4, 5};
+// a[0],a[1],...a[N-1]のN要素を、重複無しで、グループ分けする
+// グループ数は1～N通りとなる
+// ベル数と呼ぶらしい (N=12で4*10^6ほど)
+// 
+// li[m]:現在のm番目のグループに属する要素のリスト
+// idx:次に見るa[idx]
+void recursive_dfs_4_BellNumber(vector<vector<int>> &li, int idx)
+{
+	if(idx == N4) {  // 最後まで見たので出力
+		cout << "{";
+		for(int i = 0; i < (int)li.size(); i++)
+		{
+			cout << "{";
+			for(int j = 0; j < (int)li[i].size(); j++)
+			{
+				cout << li[i][j];
+				if(j != (int)li[i].size()-1) cout << ",";
+			}
+			cout << "}";
+			if(i != (int)li.size()-1) cout << ",";
+		}
+		cout << "}" << endl;
+		return;
+	}
+	// 既存のグループに入れるパターン
+	for(int i = 0; i < (int)li.size(); i++)
+	{
+		li[i].push_back(a4[idx]);
+		recursive_dfs_4_BellNumber(li, idx+1);
+		li[i].pop_back();
+	}
+	// 新しいグループを作って入れるパターン
+	li.push_back({a4[idx]});
+	recursive_dfs_4_BellNumber(li, idx+1);
+	li.pop_back();
+}
+
 int main(void)
 {
 	vector<int> a;
@@ -123,5 +163,8 @@ int main(void)
 	vector<int> use;
 	recursive_dfs_3(0, use, 0);
 
+	cout << "-----" << endl;
+	vector<vector<int>> li;
+	recursive_dfs_4_BellNumber(li, 0);
 	return 0;
 }
