@@ -18,6 +18,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 /*
  * [関連する問題]
  * AOJ GRL_1_C https://onlinejudge.u-aizu.ac.jp/problems/GRL_1_C
+ * ABC022-C
  * ABC073-D
  * ABC143-E
  * ABC151-D (BFSで解くのが一般的だが、練習として)
