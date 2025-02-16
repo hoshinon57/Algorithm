@@ -168,6 +168,7 @@ long long rng_64(long long lo, long long hi) {
 }
 
 // 要素がN*Nであるaについて、右に90度回転させる
+// ※vector<int>をstringに変えれば文字列に対応可能
 void rotate(vector<vector<int>> &a)
 {
 	int n = a.size();
