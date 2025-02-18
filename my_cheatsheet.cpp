@@ -278,6 +278,7 @@ int main(void)
 
 	[過去いくつかの状態を持ち、スライドさせていくようなDP]
 	ABC359-D
+	ABC122-D
 	JOI Pasta https://atcoder.jp/contests/joi2012yo/tasks/joi2012yo_d
 
 	[部分列DP]
