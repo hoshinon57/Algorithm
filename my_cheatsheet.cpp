@@ -162,6 +162,7 @@ int main(void)
 	}
 	[関連する問題]
 	ABC002-D
+	ABC113-D
 	ABC159-E
 	ABC197-C
 	ABC200-D
