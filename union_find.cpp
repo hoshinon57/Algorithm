@@ -117,7 +117,7 @@ struct UnionFind
 	}
 };
 
-// [verify]ABC328-F,ABC373-D,ABC280-F,AOJ:DSL_1_B
+// [verify]ABC328-F,ABC373-D,ABC280-F,ABC087-D,AOJ:DSL_1_B
 // 重み付きUnionFind
 // けんちょん氏の実装をほぼそのままお借りしている
 // https://drken1215.hatenablog.com/entry/2023/11/12/040700
