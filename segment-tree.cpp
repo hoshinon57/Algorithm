@@ -44,6 +44,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * [関連する問題 / verifyした問題]
  * AOJ DSL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
  * https://atcoder.jp/contests/practice2/tasks/practice2_j  max_rightのverify
+ * ABC038-D inline DP
  * ABC125-C
  * ABC140-E
  * ABC157-E

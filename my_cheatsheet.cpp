@@ -277,6 +277,7 @@ int main(void)
 	  ABC237-F
 
 	[in-place DP(inline DP), 参考問題]
+	ABC038-D
 	ABC203-E
 	ABC372-F
 
