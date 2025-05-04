@@ -12,6 +12,7 @@ using namespace std;
 
 /*
  * [関連する問題]
+ * ABC013-D N個の要素からP個を選ぶ C(N,P)をnext_permutationで実現
  * ABC232-C 
  * ABC268-D D問題にしては難易度高めだが、良問だった
  * ABC276-C prev_permutation
