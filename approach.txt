@@ -572,6 +572,10 @@ g=gcd(a,n)=1のとき、「a,nが互いに素なら両辺をaで割って良い�
   https://detail.chiebukuro.yahoo.co.jp/qa/question_detail/q13182052368
   http://oto-suu.seesaa.net/article/216454231.html
 ------------
+関連する問題：
+  ABC186-E
+  ABC060-B
+------------
 勉強に用いたページ：
   https://manabitimes.jp/math/683
   https://rakustudy.com/modulo-calculation
