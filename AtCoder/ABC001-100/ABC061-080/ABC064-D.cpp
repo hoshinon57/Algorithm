@@ -30,7 +30,7 @@ int main(void)
 	string s; cin >> s;
 
 	int i;
-	int sum = 0, mi = INF32;
+	int sum = 0, mi = 0;
 	for(i = 0; i < N; i++)
 	{
 		if(s[i] == '(') sum++;
