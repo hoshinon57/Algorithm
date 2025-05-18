@@ -66,6 +66,8 @@ void dfs_tree_depth(Graph &grp, vector<int> &d, int v, int p, int now);  // [ラ
 int dfs_tree_subnum(Graph &grp, vector<int> &n, int v, int p);  // [ライブラリ]各頂点vを部分木としたときの頂点数計算
 // [ライブラリ]頂点s,tのパス上の頂点一覧を求める
 bool dfs_tree_path(Graph &grp, int s, int t, vector<int> &path, int rev, int p);
+// [ライブラリ]頂点vを基点にオイラーツアー
+void dfs_tree_euler_tour(Graph &g, int v, vector<int> &path, vector<int> &vin, vector<int> &vout);
 // [ライブラリ]有向グラフにてサイクル検索
 bool dfs_cycle_detection_directed(Graph &g, int v, vector<bool> &seen, vector<bool> &finished, vector<int> &history);
 // [ライブラリ]無向グラフにてサイクル検索
@@ -184,6 +186,50 @@ bool dfs_tree_path(Graph &grp, int s, int t, vector<int> &path, int rev = 1, int
 		}
 	}
 	return false;
+}
+
+// 木gについて、頂点vを基点にオイラーツアーを実施。
+// path, vin, voutは関数内でassign()するので未初期化でよい。(サイズは木の頂点数をNとして、pathは2N-1, vinとvoutはNになる)
+// path:通った頂点の順番
+// vin, vout:各頂点iについて、最初ないし最後に通ったタイミング
+// 参考：
+//   https://maspypy.com/euler-tour-%E3%81%AE%E3%81%8A%E5%8B%89%E5%BC%B7
+//   https://scrapbox.io/ganariya-competitive/%E3%82%AA%E3%82%A4%E3%83%A9%E3%83%BC%E3%83%84%E3%82%A2%E3%83%BC%E3%80%80%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA
+//   https://obsidian.bibliophage.jp/Article/%E3%82%AA%E3%82%A4%E3%83%A9%E3%83%BC%E3%83%84%E3%82%A2%E3%83%BC/
+//   https://drken1215.hatenablog.com/entry/2018/08/14/193500
+void dfs_tree_euler_tour(Graph &g, int s, vector<int> &path, vector<int> &vin, vector<int> &vout)
+{
+	// [memo]
+	// pathのサイズについて：
+	//   辺ごとに行き帰りで2回処理される。
+	//   辺の数は(N-1)なので2(N-1)回処理。それに基点vが1回足されるので、2(N-1)+1=2N-1.
+	// 
+	// 頂点vについてpath[]における区間[vin[v],vout[v]]が、頂点vを根とする部分木を表す区間となる。
+	// つまり、根付き木に対するクエリはオイラーツアーにより「区間に対するクエリ」に変換される。
+	// 
+	// 隣り合った2頂点u,vがあるとき、vin[]が小さい方が根寄り。
+
+	int N = g.size();
+	path.assign(2*N-1, 0);
+	vin.assign(N, 0);
+	vout.assign(N, 0);
+
+	auto dfs = [&](auto &self, int &ord, int v, int p = -1) -> void
+	{
+		path[ord] = v;
+		vin[v] = vout[v] = ord;  // ここでvoutを設定するのは、葉である頂点用
+		ord++;
+		for(auto &e : g[v])
+		{
+			if(e == p) continue;
+			self(self, ord, e, v);
+			path[ord] = v;
+			vout[v] = ord;
+			ord++;
+		}
+	};
+	int o = 0;
+	dfs(dfs, o, s);
 }
 
 // 有向グラフにて、頂点vを起点にDFS.
