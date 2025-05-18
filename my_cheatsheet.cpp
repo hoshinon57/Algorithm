@@ -1436,10 +1436,13 @@ long long limitmul(long long a, long long b, long long limit)
 // ハッシュテーブルを用いた集合
 // 同一要素を複数格納できず、格納順が規定されていない
 // 挿入、削除、検索などの操作が、平均的にO(1)で可能
-// 
 // #include <unordered_set>  が必要
 // 
 // pairとの組み合わせ方法は、本関数の後半にあるコメントを参照のこと。
+// 
+// unordered_setではclear()が遅いらしい。これまでのsizeの最大値に比例してしまう？ 要注意。
+//   https://x.com/eco4kb/status/1923748562204332079
+//   https://x.com/ikoma_3/status/1923769247748206613
 // 
 // 参考：
 // https://cpprefjp.github.io/reference/unordered_set/unordered_set.html
