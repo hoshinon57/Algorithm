@@ -306,6 +306,15 @@ int main(void)
 	[参考問題]
 	ABC214-F
 	Library Checker(Number of Subsequences) https://judge.yosupo.jp/problem/number_of_subsequences
+
+	[DPの添字に負の値があるケースの実装テクニック(ゲタをはかせる)]
+	dp[i]で -100<=i<=100 となるようなケースにて。
+	  const ll geta = 100;
+	  vector<ll> gp(geta*2+1);  // *2や+1を忘れずに
+	としておき、添字には常に +geta を付ける。dp[i+geta]のように。答がdp[0]ならdp[0+geta].
+	添字に使うループは
+	  for(i = -geta; i <= geta; i++)
+	のように問題文の実世界(?)の範囲でループさせる。
 	*/
 
 	/*
