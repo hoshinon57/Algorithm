@@ -1,12 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 #include <cassert>
 using namespace std;
 
 /*
  * 幾何に関するまとめやライブラリ
  * ・2点が同一か isSamePoint
+ * ・(bx,by)を基点としたときの(tx,ty)の偏角 angleTo
  * ・直線に対して点がどちらの位置にあるか point_position
  * ・ベクトルa,bの外積のZ成分 cross_product
  * ・3点が同一直線上にあるか IsColliniar
@@ -22,6 +24,16 @@ using namespace std;
 bool isSamePoint(double x1, double y1, double x2, double y2, double eps_)
 {
 	return (abs(x1-x2) < eps_ && abs(y1-y2) < eps_);
+}
+
+// (bx,by)を基点としたときの、(tx,ty)の偏角を返す。
+// イメージとして、(tx,ty)が右側にあれば0, 上側にあればπ/2(90度), 下側にあれば(-π/2)(270度).
+// 戻り値の単位はラジアンで、[-π, π]の範囲。
+// #include <cmath> が必要
+// [制約]2点が同一座標ではないこと(atan2にて定義域エラーとなることがある)。
+double angleTo(double bx, double by, double tx, double ty)
+{
+	return atan2(ty-by, tx-bx);
 }
 
 /*
@@ -113,6 +125,24 @@ int main(void)
 		assert( isSamePoint(1000, 2000, 1000+1e-9, 2000-(1e-9), eps));  // 基点が原点以外
 		assert(!isSamePoint(1000, 2000, 1000+1e-3,        2000, eps));
 		assert(!isSamePoint(1000, 2000, 1000,        2000+1e-3, eps));
+	}
+	{
+		const double eps = 1e-5;
+		assert(abs(angleTo(0, 0,    1,     0) - 0.0) < eps);
+		assert(abs(angleTo(0, 0,    0,    10) - M_PI_2) < eps);
+		assert(abs(angleTo(0, 0, -100,     0) - M_PI) < eps);
+		assert(abs(angleTo(0, 0,    0, -1000) - (-M_PI_2)) < eps);  // (3/2)π=-(1/2)π 戻り値の範囲は[-π, π]
+
+		// 基点が原点
+		assert(abs(angleTo(0, 0, 10, 50) - 1.373400766) < eps);
+		assert(abs(angleTo(0, 0, 50, 10) - 0.197395560) < eps);
+		assert(abs(angleTo(0, 0, -70, 20) - 2.863292994) < eps);
+		assert(abs(angleTo(0, 0, 70, -20) - (-0.278299659)) < eps);
+		// 基点を移動
+		assert(abs(angleTo(10+0, -500+0, 10+10, -500+50) - 1.373400766) < eps);
+		assert(abs(angleTo(10+0, -500+0, 10+50, -500+10) - 0.197395560) < eps);
+		assert(abs(angleTo(10+0, -500+0, 10+(-70), -500+20) - 2.863292994) < eps);
+		assert(abs(angleTo(10+0, -500+0, 10+70, -500+(-20)) - (-0.278299659)) < eps);
 	}
 	{
 		double x0, y0, x1, y1;
