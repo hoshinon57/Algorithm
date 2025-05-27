@@ -76,6 +76,9 @@ bool IsColliniar(int dx1, int dy1, int dx2, int dy2)
 // (2)|x|,|y|<=10^6程度 途中計算にて3乗まで出るため
 //    それ以上の値を扱いたい場合、引数とローカル変数をdoubleに変更する形か(未検証)
 // [参考]https://qiita.com/tatesuke/items/59133758ec25146766c3
+// [外心とは]
+//   各頂点からの距離が等しく、外接円の中心である
+//   各辺の垂直二等分線の交点である
 pair<double,double> circumcenter(long long x1, long long y1, long long x2, long long y2, long long x3, long long y3)
 {
 	long long x1_2 = x1*x1;
