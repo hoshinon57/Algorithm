@@ -6,6 +6,7 @@ using namespace std;
 
 /*
  * 幾何に関するまとめやライブラリ
+ * ・2点が同一か isSamePoint
  * ・直線に対して点がどちらの位置にあるか point_position
  * ・ベクトルa,bの外積のZ成分 cross_product
  * ・3点が同一直線上にあるか IsColliniar
@@ -14,7 +15,14 @@ using namespace std;
  * [関連する問題]
  * ABC151-F
  * ABC266-C
- */
+**/
+
+// 2点(x1,y1),(x2,y2)が同一ならtrue
+// 同一かどうかは軸ごとにeps未満か否かで判定する
+bool isSamePoint(double x1, double y1, double x2, double y2, double eps_)
+{
+	return (abs(x1-x2) < eps_ && abs(y1-y2) < eps_);
+}
 
 /*
  * 2点(x0,y0),(x1,y1)を通る直線に対して、点(target_x,target_y)がどちら側にあるかを正負で返す。
@@ -97,6 +105,15 @@ pair<double,double> circumcenter(long long x1, long long y1, long long x2, long 
 
 int main(void)
 {
+	{
+		const double eps = 1e-5;
+		assert( isSamePoint(0, 0, 1e-9, -(1e-9), eps));  // 誤差がEPS未満
+		assert(!isSamePoint(0, 0, 1e-3,       0, eps));  // 誤差がEPSより大
+		assert(!isSamePoint(0, 0,    0,    1e-3, eps));  // 誤差がEPSより大
+		assert( isSamePoint(1000, 2000, 1000+1e-9, 2000-(1e-9), eps));  // 基点が原点以外
+		assert(!isSamePoint(1000, 2000, 1000+1e-3,        2000, eps));
+		assert(!isSamePoint(1000, 2000, 1000,        2000+1e-3, eps));
+	}
 	{
 		double x0, y0, x1, y1;
 		double tmp1, tmp2;
