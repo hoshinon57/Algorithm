@@ -9,6 +9,7 @@ using namespace std;
  * 幾何に関するまとめやライブラリ
  * ・2点が同一か isSamePoint
  * ・(bx,by)を基点としたときの(tx,ty)の偏角 angleTo
+ * ・(bx,by)を基点として(tx,ty)を回転 rotatePoint
  * ・直線に対して点がどちらの位置にあるか point_position
  * ・ベクトルa,bの外積のZ成分 cross_product
  * ・3点が同一直線上にあるか IsColliniar
@@ -34,6 +35,24 @@ bool isSamePoint(double x1, double y1, double x2, double y2, double eps_)
 double angleTo(double bx, double by, double tx, double ty)
 {
 	return atan2(ty-by, tx-bx);
+}
+
+// (bx,by)を基点として、(tx,ty)をangleだけ "反時計回りに" 回転させた位置を返す。
+// isSamePoint()とangleTo()が必要。
+// (bx,by)と(tx,ty)が同一座標のとき、(tx,ty)をそのまま返す。
+// eps_:同一座標の判定に用いる
+// angle:単位はラジアン
+pair<double,double> rotatePoint(double bx, double by, double tx, double ty, double angle, double eps_)
+{
+	if(isSamePoint(bx, by, tx, ty, eps_)) return {tx, ty};
+	// (bx,by)基点に移動させ、angleだけ追加で回転し、移動を元に戻す
+	tx -= bx;
+	ty -= by;
+	auto d = sqrtl(tx*tx + ty*ty);
+	double ang = angleTo(0, 0, tx, ty) + angle;
+	tx = cos(ang)*d + bx;
+	ty = sin(ang)*d + by;
+	return {tx, ty};
 }
 
 /*
@@ -143,6 +162,28 @@ int main(void)
 		assert(abs(angleTo(10+0, -500+0, 10+50, -500+10) - 0.197395560) < eps);
 		assert(abs(angleTo(10+0, -500+0, 10+(-70), -500+20) - 2.863292994) < eps);
 		assert(abs(angleTo(10+0, -500+0, 10+70, -500+(-20)) - (-0.278299659)) < eps);
+	}
+	{
+		const double eps = 1e-5;
+		double bx = 0.0, by = 0.0;
+		auto xy = rotatePoint(bx+0, by+0, bx+10, by+20, 1.0471975511966, eps);  // 60度回転
+		assert(isSamePoint(bx+(-12.32050807), by+18.66025404, xy.first, xy.second, eps));
+		// 基点を変更
+		bx = -20; by = -30;
+		xy = rotatePoint(bx+0, by+0, bx+10, by+20, 1.0471975511966, eps);  // 60度回転
+		assert(isSamePoint(bx+(-12.32050807), by+18.66025404, xy.first, xy.second, eps));
+
+		bx = by = 0.0;
+		xy = rotatePoint(bx+0, by+0, bx+20, by+0, -1.5707963267949, eps);  // -90度回転
+		assert(isSamePoint(bx+0, by+(-20), xy.first, xy.second, eps));
+		// 基点を変更
+		bx = 1000; by = -10000;
+		xy = rotatePoint(bx+0, by+0, bx+20, by+0, -1.5707963267949, eps);  // -90度回転
+		assert(isSamePoint(bx+0, by+(-20), xy.first, xy.second, eps));
+
+		// 同一座標
+		xy = rotatePoint(10+eps/100, 100+eps/100, 10, 100, M_PI, eps);
+		assert(isSamePoint(10, 100, xy.first, xy.second, eps));
 	}
 	{
 		double x0, y0, x1, y1;
