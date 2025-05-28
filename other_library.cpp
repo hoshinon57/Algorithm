@@ -29,6 +29,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ・nをbase進法で表したときの値 chg_base
  * ・b進法で表される文字列sを、10進数へ変換 chg_base_to10
  * ・配列を1つの値にエンコード/デコード enc_VecToNum, dec_ValToVec
+ * ・文字列を数値として扱い、mで割った余りを返す str_val_mod
  * ・ランレングス圧縮 rle
  * ・2つのsetをマージ(マージテク使用) set_merge
  * ・大文字小文字を反転 revLowUp
@@ -267,6 +268,17 @@ vector<int> dec_ValToVec(int n, int siz, int base = ENC_VECTONUM_BASE_DEFAULT) {
 	for(int i = 0; i < siz; i++) {
 		ret[i] = n % base;
 		n /= base;
+	}
+	return ret;
+}
+
+// sを数値として見たとき、mで割った余りを返す
+// [制約]sを数値として見たときに合法であること、0以上であること
+// [verify]ABC030-D
+ll str_val_mod(string s, ll m) {
+	ll ret = 0;
+	for(auto &c : s) {
+		ret = (ret*10 + c-'0') % m;
 	}
 	return ret;
 }

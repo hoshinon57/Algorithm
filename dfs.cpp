@@ -243,6 +243,11 @@ void dfs_tree_euler_tour(Graph &g, int s, vector<int> &path, vector<int> &vin, v
 //    サイクル検出は何らか1つなら可能。全てのサイクル検出は不可能。
 // (2)Functional Graphなら連結成分ごとにサイクルは1個なので、
 //    呼び出し元で未探索の頂点からDFSすることで全てのサイクルを検出可能。
+// 
+// サイクルに入る前の頂点数をpre, サイクルのループ数をcycとすると、以下で求められる。
+// pre = find(hist.begin(), hist.end(), hist.back()) - hist.begin();
+// cyc = hist.size() - pre - 1;  // -1は上記例にて末尾の2が2回出てくるため
+// サイクルのc番目(0-indexed)の頂点は hist[pre+c] となる
 bool dfs_cycle_detection_directed(Graph &g, int v, vector<bool> &seen, vector<bool> &finished, vector<int> &history)
 {
 	seen[v] = true;
