@@ -53,6 +53,7 @@ void make_prime_list(long long N, vector<long long> &prime_list)
 }
 
 // Nを素因数分解し、{素因数, 指数}のpairの形でprime_listに入れる
+// 計算量はO(√N)
 // 以下URLをほぼそのまま持ってきている
 // https://qiita.com/drken/items/a14e9af0ca2d857dad23
 // その他、参考URL：
