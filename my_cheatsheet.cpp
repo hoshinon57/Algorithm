@@ -292,6 +292,12 @@ int main(void)
 	ABC122-D
 	JOI Pasta https://atcoder.jp/contests/joi2012yo/tasks/joi2012yo_d
 
+	[耳DP]
+	現在の状態を情報に持つDPの俗称。
+	ABC408-D
+	ABC211-C
+	典型90-008 https://atcoder.jp/contests/typical90/tasks/typical90_h
+
 	[部分列DP]
 	dp[i]:i番目まで見て、i番目の文字を使うときの部分列の総数 として定義すると、dp[*]の総和が答。
 	S="abac"なら"ac"は2通りの方法で作れるが、重複を除外する必要がある点が厄介。
