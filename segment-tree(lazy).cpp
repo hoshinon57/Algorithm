@@ -75,6 +75,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *   ABC382-F 典型90-029とほぼ同じ
  *   ABC389-F セグ木上の二分探索
  *   ABC397-F
+ *   ABC407-F ダブルいもす法 or 遅延セグ木＆いもす法
  *   AtCoder Library Practice Contest-K https://atcoder.jp/contests/practice2/tasks/practice2_k
  */
 
