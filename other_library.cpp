@@ -58,6 +58,17 @@ template<typename T> pair<ll,ll> bi_idxnum_koeru(vector<T> &a, T val) {ll idx=up
 // {val以上の最左のidx, val以上の要素数} 要素が無ければidx=N
 template<typename T> pair<ll,ll> bi_idxnum_ijou(vector<T> &a, T val)  {ll idx=lower_bound(a.begin(),a.end(),val)-a.begin(); return{idx,(ll)a.size()-idx};}
 
+// set<T>s に対して、val(未満,以下,より大きい,以上)となる直近の要素を返す
+// 存在しない場合は引数で指定したnf(Not Found)を返す
+// val未満の最大の要素 nf=-INFが望ましい
+template<typename T> T set_val_miman(set<T> &s, T val, T nf) {auto i=s.lower_bound(val); if(i==s.begin()){return nf;} else{i--; return *i;}}
+// val以下の最大の要素 nf=-INFが望ましい
+template<typename T> T set_val_ika(set<T> &s, T val, T nf)   {auto i=s.upper_bound(val); if(i==s.begin()){return nf;} else{i--; return *i;}}
+// valより大きい最小の要素 nf=INFが望ましい
+template<typename T> T set_val_koeru(set<T> &s, T val, T nf) {auto i=s.upper_bound(val); if(i==s.end()){return nf;} else{return *i;}}
+// val以上の最小の要素 nf=INFが望ましい
+template<typename T> T set_val_ijou(set<T> &s, T val, T nf)  {auto i=s.lower_bound(val); if(i==s.end()){return nf;} else{return *i;}}
+
 // 要素の登場位置を列挙しているposについて、位置st以降でnum個目の登場位置の"次の位置"を返す (num個なければINF)
 // ⇒よって戻り値は"次に見るべき位置"となる
 // 登場位置や個数を扱うので、型はいずれもintにしている
@@ -713,6 +724,28 @@ int main(void)
 		assert(bi_idxnum_ijou(a,4) == make_pair(3LL,2LL));
 		assert(bi_idxnum_ijou(a,0) == make_pair(0LL,5LL));
 		assert(bi_idxnum_ijou(a,10) == make_pair(5LL,0LL));
+	}
+	
+	{
+		set<ll> s{1,3,5};
+		assert(set_val_miman<ll>(s, 0, -INF64) == -INF64);
+		assert(set_val_miman<ll>(s, 1, -INF64) == -INF64);
+		assert(set_val_miman<ll>(s, 2, -INF64) == 1);
+		assert(set_val_miman<ll>(s, 3, -INF64) == 1);
+		assert(set_val_miman<ll>(s, 6, -INF64) == 5);
+		assert(set_val_ika<ll>(s, 0, -INF64) == -INF64);
+		assert(set_val_ika<ll>(s, 2, -INF64) == 1);
+		assert(set_val_ika<ll>(s, 3, -INF64) == 3);
+		assert(set_val_ika<ll>(s, 6, -INF64) == 5);
+		assert(set_val_koeru<ll>(s, 0, INF64) == 1);
+		assert(set_val_koeru<ll>(s, 1, INF64) == 3);
+		assert(set_val_koeru<ll>(s, 4, INF64) == 5);
+		assert(set_val_koeru<ll>(s, 5, INF64) == INF64);
+		assert(set_val_ijou<ll>(s, 0, INF64) == 1);
+		assert(set_val_ijou<ll>(s, 1, INF64) == 1);
+		assert(set_val_ijou<ll>(s, 4, INF64) == 5);
+		assert(set_val_ijou<ll>(s, 5, INF64) == 5);
+		assert(set_val_ijou<ll>(s, 6, INF64) == INF64);
 	}
 
 	{
