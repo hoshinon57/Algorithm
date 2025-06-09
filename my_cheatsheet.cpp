@@ -189,6 +189,7 @@ int main(void)
 	ABC345-D
 	ABC356-C
 	ABC369-E
+	ABC404-D 3^Nのbit全探索
 	典型90-63
 	典型90-86
 	アルゴリズムと数学 068 https://atcoder.jp/contests/math-and-algorithm/
