@@ -1599,7 +1599,7 @@ void _stl_(void)
 	cout << "-----stl-----" << endl;
 
 	// 以下に記載している標準ライブラリ
-	// reverse, find, count, max(min), max_element(min), reduce, merge
+	// reverse, find, count, max(min), max_element(min), numeric_limits, reduce, merge
 
 	/*
 	コンテナ使用時、要素の追加や削除操作には要注意。「イテレータ破壊」が発生する可能性がある。
@@ -1696,7 +1696,15 @@ void _stl_(void)
 	// 計算量はO(r-l).
 	assert(*max_element(a_v.begin(), a_v.end()) == 5);
 	assert(*min_element(a_v.begin(), a_v.end()) == 1);
-	
+
+	// 型の最大値/最小値を返す:numeric_limits の注意点
+	// 何もせず最大/最小が取得できるのは、int,long,doubleなど基本型のみ。正確にはis_specialized=trueの場合のみ、らしい。
+	// pairなどはT()が返るようで、(自分が)期待した動作にはならない点に注意。セグ木では手動で T ex = {INF32, INF32}; と定義必要。
+	// https://cpprefjp.github.io/reference/limits/numeric_limits.html
+	// https://cpprefjp.github.io/reference/limits/numeric_limits/max.html
+	// ＞is_specialized == false の場合は T() が返される。
+	// https://eldesh.hatenablog.com/entry/20110120/1295497346
+
 	// 要素の合計を求める:std::reduce(C++17より)
 	// #include <numeric> が必要
 	// C++17より前の環境ではstd::accumulate()を使う

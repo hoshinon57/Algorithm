@@ -487,6 +487,9 @@ void Test_AOJ_DSL_2_I(void)
 
 int main(void)
 {
+	// pairではnumeric_limitsが使えない点に注意！
+	// T ex = {INF32, INF32}; のように手動で定義必要。
+
 	/*
 	[代表的なfx,ex等の例]
 	RMQ and RUQ(Range Minimum Query and Range Update Query)

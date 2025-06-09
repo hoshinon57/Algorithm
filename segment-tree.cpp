@@ -412,6 +412,9 @@ void Test_ACLPC_J(void)
 
 int main(void)
 {
+	// pairではnumeric_limitsが使えない点に注意！
+	// T ex = {INF32, INF32}; のように手動で定義必要。
+
 	/*
 	[代表的なfx,exの例]
 	Range Minimum Query(RMQ)
