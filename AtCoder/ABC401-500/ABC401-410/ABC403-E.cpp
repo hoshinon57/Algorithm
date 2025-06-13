@@ -1,31 +1,31 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
 #include <cassert>
 using namespace std;
 typedef long long ll;
+// const ll INF64 = 1LL << 60;
 const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
+
+// ABC403 https://atcoder.jp/contests/abc403
 
 /*
- * トライ木のライブラリ
- * 基本的には、問題ごとにsearch()を書き換える必要がありそう
+ * Trie木＆いもす法で解いた。
+ * ※公式解説では同等の方針が無かったが、Twitterで"ABC403 imos"で検索するといくつか出てきた。
  * 
- * [ざっくり概要]
- * ・文字列の接頭辞(prefix)の共通部分を共有して保存することで、文字列の長さをMとしてO(M)での検索が可能。
- * ・1つの頂点が1つの文字を表す。
- * ・ルートには空の文字列が対応する。
+ * クエリ先読みしておく。
+ * その後T=1のクエリについて、クエリ番号と合わせてTrie木に登録する。
+ * するとT=2の各クエリについて、その文字列がいつまでX内に接頭辞が無いか、
+ * ざっくり言い換えると「いつまで生きているか」が分かる。
  * 
- * [参考資料]
- *   https://algo-logic.info/trie-tree/
- *   https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%A9%E3%82%A4_(%E3%83%87%E3%83%BC%E3%82%BF%E6%A7%8B%E9%80%A0)
- *   https://ei1333.github.io/luzhiled/snippets/structure/trie.html
- * 
- * [関連する問題 / verifyした問題]
- * ABC287-E search()にてcommon>=2となるうちの最も深い(depth)頂点を探索
- * ABC353-E insert()にてcommonをansへ加算
- * ABC377-G Nodeにlen_minを追加、insert()にて文字ごとに最小コストを計算
- * ABC403-E
- */
+ * 登場/消滅のタイミングが分かるので、その区間はいもす法。
+**/
 
 // https://algo-logic.info/trie-tree/
 // Trie<26, 'A'> trie; のように定義する
@@ -63,7 +63,6 @@ private:
 			nodes[node_id].common++;
 			node_id = next_id;
 		}
-		// word末尾の文字は、このタイミングでのnode_idである点に注意
 		nodes[node_id].common++;
 		nodes[node_id].accept.push_back(id);
 	}
@@ -76,12 +75,23 @@ public:
 	void insert(const string &word) {
 		insert(word, nodes[0].common);
 	}
+	// ABC403-E用
+	void insert2(const string &word, int id) {
+		insert(word, id);
+	}
 	// wordの探索
 	// prefix=false : wordがTrie木に存在すればtrue
 	// prefix=true : wordそのものでなくとも、wordを接頭辞(prefix)として持つ単語が存在すればtrue
-	bool search(const string &word, bool prefix = false) {
+	bool search(const string &word, int &ed, bool prefix = false) {
 		int node_id = 0;
 		for(int i = 0; i < (int)word.size(); i++) {
+			// for ABC403-E
+			auto &ac = nodes[node_id].accept;
+			if(ac.size() > 0)  // そこで終わる単語があれば
+			{
+				chmin(ed, ac[0]);
+			}
+
 			int c = (int)(word[i] - base);
 			int &next_id = nodes[node_id].next[c];
 			if(next_id == -1) {
@@ -89,7 +99,13 @@ public:
 			}
 			node_id = next_id;
 		}
-		// word末尾の文字は、このタイミングでのnode_idである点に注意
+
+		// for ABC403-E
+		auto &ac = nodes[node_id].accept;
+		if(ac.size() > 0)  // そこで終わる単語があれば
+		{
+			chmin(ed, ac[0]);
+		}
 
 		if(prefix) {
 			return true;  // 接頭辞であれば、ここまで来た時点で確実に存在する
@@ -110,18 +126,38 @@ public:
 
 int main(void)
 {
-	Trie<26, 'A'> trie;
-	trie.insert("FIRE");
-	assert( trie.search("FIRE"));
-	assert(!trie.search("FI"));
-	assert( trie.search("FI", true));  // "FI"をprefixに持つ単語は存在する
-	assert(!trie.search("FIREMAN", true));
-	trie.insert("FIREMAN");
-	assert( trie.search("FIREMAN"));
-	assert(!trie.search("FIREMA"));
-	assert( trie.search("FIREMA", true));
-	assert(trie.word_count() == 2);
-	trie.insert("FILE");
-	assert(trie.size() == 9+1);  // FIREMAN + LE + 1(root)
+	int i;
+	int Q; cin >> Q;
+	Trie<26, 'a'> trie;
+	using dt = pair<int,string>;
+	vector<dt> d(Q);
+	for(i = 0; i < Q; i++) cin >> d[i].first >> d[i].second;
+
+	for(i = 0; i < Q; i++)
+	{
+		// クエリ番号と合わせて登録
+		if(d[i].first == 1) trie.insert2(d[i].second, i);
+	}
+
+	vector<int> imos(Q+5);
+	for(i = 0; i < Q; i++)
+	{
+		if(d[i].first == 2)
+		{
+			int st = i;
+			int ed = INF32;
+			trie.search(d[i].second, ed);
+			if(st > ed) continue;  // 最初からダメ
+			if(ed == INF32) ed = Q;  // 最後まで生き残る
+			imos[st]++;
+			imos[ed]--;
+		}
+	}
+	for(i = 0; i < Q; i++)
+	{
+		if(i != 0) imos[i] += imos[i-1];
+		cout << imos[i] << endl;
+	}
+
 	return 0;
 }
