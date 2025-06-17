@@ -801,6 +801,11 @@ void _string_(void)
 	transform(str.begin(), str.end(), str.begin(), ::tolower);
 	assert(str == "abcyz");
 	// 大文字に変換する場合は ::toupper を指定する
+
+	// 比較の計算量
+	// 空文字列か判定したいとき。S=s.size()として、
+	// if(s != "") はO(S)っぽい。どうもO(1)ではなさそう。
+	// if(s.size() != 0) ならO(1)っぽい。
 }
 
 void settest(set<int> &s, string &&prev)
@@ -1593,6 +1598,10 @@ void _unordered_map_(void)
 	{
 		cout << "aaa does not exist." << endl;
 	}
+
+	// reserveを使って要素数としてありえる最大値ぶん確保しておくと、少し速くなる
+	// um.reserve(x) xはクエリ数とか
+	// https://x.com/maspy_stars/status/1933965084289855876
 }
 
 // STL(コンテナ含む)に関するメモ

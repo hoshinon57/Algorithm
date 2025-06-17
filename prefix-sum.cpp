@@ -20,6 +20,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC331-D (Tile Pattern) ループ部分と端数部分をそれぞれ計算
  * ABC354-D (AtCoder Wallpaper) ループ部分と端数部分をそれぞれ計算
  * ABC366-D 三次元累積和だが、制約より二次元累積和をN回繰り返しても間に合う
+ * ABC410-F
  * 典型90-81 https://atcoder.jp/contests/typical90/tasks/typical90_cc
  */
 
