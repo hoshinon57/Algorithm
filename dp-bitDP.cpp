@@ -57,6 +57,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC338-F
  * 
  * [関連問題 / その他のbitDP]  ★再帰を使わない場合、もらうDPより配るDPの方が解きやすいかも？
+ * ABC402-E 期待値DP&bitDP的な
  * ABC381-F
  * ABC354-E
  * ABC332-E
