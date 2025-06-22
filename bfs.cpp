@@ -110,6 +110,24 @@ void bfs_graph(Graph &G, int s, vector<int> &dist)
 	return;
 }
 
+/*
+ * 木の直径を求めたい場合、bfs_graph()を以下のように変更する。(mostfar)
+ * (1)戻り値をintに変更
+ * (2)return;を以下に差し替え
+	int idx = 0, di = -1;
+	for(int i = 0; i < (int)dist.size(); i++) {
+		if(chmax(di, dist[i])) idx = i;
+	}
+	return idx;
+ * 以下のように呼び出す。
+	vector<int> dist1(N, INF32), dist2(N, INF32);
+	int s = mostfar(g, 0, dist1);
+	int t = mostfar(g, s, dist2);
+ * s-tが直径となる。
+ * dist2にはsから各頂点への距離が設定されている。
+ * tから各頂点への距離は、t基点にもう一度mostfarを呼び出す。(distをINF32に初期化するのを忘れずに)
+**/
+
 vector<string> mp;
 
 // 高さH, 幅Wのグリッドグラフについて、(y,x)=(sy,sx)を起点にBFS.
