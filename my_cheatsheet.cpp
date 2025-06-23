@@ -602,6 +602,9 @@ int main(void)
 	(m1+m2).val()
 	で良い。
 
+	2^Nなどべき乗を求めるには以下で良い。
+	mint(2).pow(N)
+
 	[中国剰余定理]
 	crt()
 	https://atcoder.github.io/ac-library/production/document_ja/math.html

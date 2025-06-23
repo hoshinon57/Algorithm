@@ -82,7 +82,7 @@ int main(void)
 	}
 
 	mint ans = 0;
-	mint pow6 = ((mint)6).pow(N);  // 6^N
+	mint pow6 = mint(6).pow(N);
 	mint pre = 0, now = 1;
 	ll zero_cnt = N;  // まだx以下の値が出ていないサイコロの数
 	vector<ll> cnt(N);  // cnt[i]:サイコロiにてx以下の値が何回出たか
