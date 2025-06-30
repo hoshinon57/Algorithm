@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <cstdint>  // for uint64_t
 using namespace std;
 
 // ローリングハッシュのライブラリ
@@ -30,6 +31,7 @@ using namespace std;
 /*
  * ローリングハッシュのライブラリ
  * [使い方]
+ * ・#include <cstdint> が必要。
  * ・RollingHash rh に対し、rh.build(str) で文字列strのハッシュを返す。
  *   ハッシュは vector<uint64_t> なのでautoで受けることを推奨。
  *   配列vのハッシュを返すbuild(v)もある。ただし値が0の要素が含まれないように注意。
