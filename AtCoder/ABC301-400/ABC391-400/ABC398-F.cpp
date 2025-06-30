@@ -1,31 +1,32 @@
 #include <iostream>
 #include <vector>
-#include <cassert>
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
+#include <cstdint>
 using namespace std;
+typedef long long ll;
+// const ll INF64 = 1LL << 60;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
+const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// ローリングハッシュのライブラリ
+// ABC398 https://atcoder.jp/contests/abc398
 
 /*
- * [参考URL]
- *   https://ei1333.github.io/library/string/rolling-hash.hpp  ほぼこのままの実装
- *   https://kyoroid.github.io/algorithm/string/rolling_hash.html
- *   https://qiita.com/hirominn/items/80464ee381c8d400725f
- *   https://trap.jp/post/1036/
- *   https://tjkendev.github.io/procon-library/python/string/rolling_hash.html
+ * ローリングハッシュで解く。
  * 
- * [ざっくり概要]
- * 文字列や数列のハッシュを計算することで、要素同士の比較をO(1)で可能とする。
+ * Sの末尾x文字が回文なら、先頭の(|S|-x)文字を反転したものを末尾に付けて回文にできる。
+ * x=1は必ず回文とみなせることから、xを|S|～1まで減らしていき、条件を満たした時点で終了としてよい。
  * 
- * [関連する問題 / verifyした問題]
- * AOJ ALDS1_14_B https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_14_B&lang=ja
- * ABC141-E
- * ABC284-F
- * ABC287-E 想定解はTrie木 (Trie木で解けるならローリングハッシュでも解ける、という問題が多そう)
- * ABC331-F このライブラリは使っていないが、ローリングハッシュの考え方
- * ABC353-E 想定解はTrie木
- * ABC377-G 想定解とは異なる
- * ABC398-F
- */
+ * 細かい実装としては、Sを反転した文字列をrSとし、N=|S|として
+ *   Sの [N-x, N)
+ *   rSの [0,x)
+ * が一致すればOK.
+ * このとき、SにrSの末尾(N-x)文字を付与すれば答となる。
+**/
 
 /*
  * ローリングハッシュのライブラリ
@@ -133,59 +134,27 @@ public:
 	}
 };
 
-// 以下はAOJ ALDS1_14_Bを解く内容
-// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_14_B&lang=ja
-void solve_AOJ_ALDS1_14_B(void)
-{
-	string t, p; cin >> t >> p;
-	RollingHash rh;
-	int len1 = (int)t.size();
-	int len2 = (int)p.size();
-	auto h1 = rh.build(t);
-	auto h2 = rh.build(p);
-	auto q2 = rh.query(h2);
-	for(int i = 0; i+len2 <= len1; i++)
-	{
-		auto q1 = rh.query(h1, i, i+len2);
-		if(q1 == q2)
-		{
-			cout << i << endl;
-		}
-	}
-}
-
 int main(void)
 {
+	string s; cin >> s;
+	string rs = s;
+	reverse(rs.begin(), rs.end());
+	RollingHash rh;
+	auto hash1 = rh.build(s);
+	auto hash2 = rh.build(rs);
+
+	int N = (int)s.size();
+	for(int x = N; x >= 1; x--)
 	{
-		using hash_type = vector<uint64_t>;  // buildの戻り値 ただautoで受けた方が楽かな
-		RollingHash rh;
-		string str1 = "abcdefghijklmnabcdefghijklmn";
-		string str2 = "cdefg";
-		int len1 = (int)str1.size();
-		int len2 = (int)str2.size();
-		hash_type h1 = rh.build(str1);
-		hash_type h2 = rh.build(str2);
-		int i;
-		vector<int> ans;
-		for(i = 0; i+len2 <= len1; i++)
+		auto h1 = rh.query(hash1, N-x, N);
+		auto h2 = rh.query(hash2, 0, x);
+		if(h1 == h2)
 		{
-			uint64_t hash1 = rh.query(h1, i, i+len2);
-			uint64_t hash2 = rh.query(h2);  // 全体のハッシュ
-			if(hash1 == hash2) ans.push_back(i);
+			string ans = s + rs.substr(rs.size()-(N-x));  // rsの末尾(N-x)文字を取り出す
+			cout << ans << endl;
+			break;
 		}
-		assert(ans == vector<int>({2, 16}));
 	}
 
-	{
-		// str1,str2の指定区間で、先頭から何文字一致しているか
-	    string str1 = "abcdefghijklmnabcdefghijklmnabcdefghijklmn";
-	    string str2 = "bcdefzzz";
-		RollingHash rh;
-		auto hash1 = rh.build(str1);
-		auto hash2 = rh.build(str2);
-		assert(rh.lcp(hash1, 1, str1.size(), hash2, 0, str2.size()) == 5);
-	}
-	
-	// solve_AOJ_ALDS1_14_B();
 	return 0;
 }
