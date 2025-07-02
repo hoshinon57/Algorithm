@@ -38,6 +38,7 @@ using namespace std;
  * ABC190-F 転倒数
  * ABC261-F 転倒数
  * ABC296-F 転倒数
+ * ABC396-F 転倒数(最初に1回求めるだけ)
  */
 
 // Binary Indexed Treeを用いて以下(1)(2)(4)をO(logN)で計算する
