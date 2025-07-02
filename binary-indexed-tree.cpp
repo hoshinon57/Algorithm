@@ -335,8 +335,8 @@ void Inversion(void)
 	/*
 	配列a[i]が与えられたとき、転倒数は以下のアルゴリズムで求められる。
 
-	Bit<int> bit;
-	for(i = 0; i < n; i++)
+	Bit<int> bit(M+1);  // M:要素a[]の最大値 +1は1-indexedのため
+	for(i = 0; i < n; i++)  // n:a[]の要素数
 	{
  		answer += i - bit.Sum(a[i]);
 		bit.Add(a[i], 1);
