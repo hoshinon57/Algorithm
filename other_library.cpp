@@ -32,6 +32,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ・配列を1つの値にエンコード/デコード enc_VecToNum, dec_ValToVec
  * ・文字列を数値として扱い、mで割った余りを返す str_val_mod
  * ・ランレングス圧縮 rle
+ * ・最頻値ソート {回数,値}で降順のヒストグラムを作成する
  * ・2つのsetをマージ(マージテク使用) set_merge
  * ・大文字小文字を反転 revLowUp
  * ・一次不定方程式を解く extgcd
@@ -335,6 +336,24 @@ template <typename T> vector<pair<T,ll>> rle(string &str) {
 		l = r;
 	}
 	return ret;
+}
+
+// [verify]ABC111-C
+// 最頻値ソート。a[]における値の登場回数をカウントし、{回数,値}で降順のヒストグラムを作成する
+// T:a[]の型。intで十分だが、面倒ならllで良い
+// li:作成したヒストグラム
+// 制約：0<=a[i]<=MX
+// aの要素数をNとして O(MX*log(MX)+N) とかになるので、MXの値には注意 大きすぎる場合は座標圧縮を検討する
+template <typename T>
+void hist(vector<T> &a, vector<pair<ll,T>> &li, ll MX)
+{
+	vector<ll> cnt(MX+1); for(auto &e : a) {cnt[e]++;}
+	li.resize(MX+1);
+	for(ll i = 0; i <= MX; i++) {
+		li[i] = {cnt[i], i};
+	}
+	sort(li.begin(), li.end());
+	reverse(li.begin(), li.end());
 }
 
 // [verify]ABC372-E,ABC329-F
