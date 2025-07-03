@@ -32,51 +32,50 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * これの実装が面倒だった。
 **/
 
-int N;
-vector<int> v;
-
-// li[idx][*]  {個数,数値}のpairを個数大きい方から
-void f(int idx, vector<vector<pair<int,int>>> &li)
+// [verify]ABC111-C
+// a[]における値の登場回数をカウントし、{回数,値}で降順のヒストグラムを作成する
+// T:a[]の型。intで十分だが、面倒ならllで良い
+// li:作成したヒストグラム
+// 制約：0<=a[i]<=MX
+// aの要素数をNとして O(MX*log(MX)+N) とかになるので、MXの値には注意 大きすぎる場合は座標圧縮を検討する
+template <typename T>
+void hist(vector<T> &a, vector<pair<ll,T>> &li, ll MX)
 {
-	int i;
-	const int MX = 100000;
-	vector<int> cnt(MX+1);
-	li[idx].resize(MX+1);
-	for(i = 0; i < N; i++)
-	{
-		if(i%2 != idx) continue;
-		cnt[v[i]]++;
+	vector<ll> cnt(MX+1); for(auto &e : a) {cnt[e]++;}
+	li.resize(MX+1);
+	for(ll i = 0; i <= MX; i++) {
+		li[i] = {cnt[i], i};
 	}
-
-	for(i = 0; i <= MX; i++)
-	{
-		li[idx][i] = {cnt[i], i};
-	}
-	sort(li[idx].begin(), li[idx].end());
-	reverse(li[idx].begin(), li[idx].end());  // 降順
+	sort(li.begin(), li.end());
+	reverse(li.begin(), li.end());
 }
 
 int main(void)
 {
 	int i;
-	cin >> N;
-	v.resize(N);
-	for(i = 0; i < N; i++) cin >> v[i];
+	ll N; cin >> N;
+	vector<ll> vo, ve;
+	for(i = 0; i < N; i++) {
+		ll v; cin >> v;
+		if(i%2 == 0) vo.push_back(v);
+		else ve.push_back(v);
+	}
 
-	vector<vector<pair<int,int>>> li(2);
-	f(0, li);
-	f(1, li);
+	using pll = pair<ll,ll>;
+	vector<pll> odd, even;
+	hist(vo, odd, 100000);
+	hist(ve, even, 100000);
 
-	int t;  // 残す数
-	if(li[0][0].second != li[1][0].second)
+	ll t;  // 残す数
+	if(odd[0].second != even[0].second)
 	{
-		t = li[0][0].first + li[1][0].first;
+		t = odd[0].first + even[0].first;
 	}
 	else
 	{
 		// 「2番目に頻出の値」を偶数/奇数番目どちらの要素で使うかを両方試す
-		t = li[0][0].first + li[1][1].first;
-		chmax(t, li[0][1].first + li[1][0].first);
+		t = odd[0].first + even[1].first;
+		chmax(t, odd[1].first + even[0].first);
 	}
 	cout << N-t << endl;
 
