@@ -289,10 +289,21 @@ int main(void)
 	  ABC237-FのYouTube公式解説にて。
 	・in-placeにてdp[i]で考えたときに、
 	  a[i]がdp[idx]に当てはまる場合、LISにa[i]を使うならば左にidx個ある、となる。
+	・[疑似コード]
+	// 狭義単調増加の場合
+	vector<ll> lis(N, INF64);
+	for(i = 0; i < N; i++)
+	{
+		ll idx = lower_bound(lis.begin(), lis.end(), a[i]) - lis.begin();  // idx番目を書き換え
+		lis[idx] = a[i];
+	}
+	// lis[]でINF64が出てくるまでの数列がLISとなる。
+	// LISの長さはlisをINF64で二分探索するなど。
 	・その他参考記事：
 	  https://qiita.com/python_walker/items/d1e2be789f6e7a0851e5 基本
 	  https://ikatakos.com/pot/programming_algorithm/dynamic_programming/longest_common_subsequence 復元や"LISの個数"など 丁寧で高度
 	・参考問題：
+	  ABC393-F
 	  ABC354-F
 	  ABC237-F
 
