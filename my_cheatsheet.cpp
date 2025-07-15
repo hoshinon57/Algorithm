@@ -808,8 +808,9 @@ void _string_(void)
 	assert(to_string(1234) == "1234");
 
 	// 文字列を数値に変換:stoi(), stol(), stoll(), stoull()など
-	// [注意]longは"32bit以上"という規格であり、2^30≒10^9より大きな値は例外(std::out_of_range)を投げられる可能性が高い。
-	//       競プロではstollの一択で良さそう。
+	// [注意]longは"32bit以上"という規格であり、
+	//       stol()を使ったとき、2^30≒10^9より大きな値は例外(out_of_range)を投げられる可能性が高い。
+	//       競プロではstoll()の一択で良さそう。
 	assert(stoi("1234") == 1234);
 	assert(stol("12345") == 12345);  // long
 	assert(stoll("12345678901") == 12345678901LL);  // long long
