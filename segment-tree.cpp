@@ -75,7 +75,9 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 // (2)Query(a, b) : 区間[a,b)にある要素のモノイド積を返す
 // (3)Set(i, val) & Build() : 木の更新を行わず要素iを更新し(Set), まとめて木の構築を行う(Build)
 // (4)Get(i) : 要素iを取得する
-// (5)max_right(a, b, f) : [a,b)の範囲で、aを左端としてf(node)=trueとなる最右の要素番号を返す
+// (5)max_right(a, b, f), max_right_2(a, b, f) :
+//    [a,b)の範囲で、aを左端としてf(node)=trueとなる最右の要素番号を返す
+//    max_right()はRange Max/Minぐらいにしか使えない実装になっており、注意
 // (6)min_left(a, b, f)  : [a,b)の範囲で、bを右端としてf(node)=trueとなる最左の要素番号を返す
 // (7)debug(step, width, l, r) : デバッグ出力
 // [注意]
@@ -151,6 +153,9 @@ public:
 	// 
 	// 左端からf(node)=falseを探していくイメージ。
 	// 
+	// [注意]実装が悪く、二項演算fxがRange Max/Minぐらいしか使えない。
+	// Range Sumなどはmax_right_2()の方を使うこと。
+	// 
 	// f:セグ木の要素(型T)を引数に取り、bool型を返す関数を渡す
 	// k:内部処理用。node[k]としてアクセス
 	// l,r:内部処理用。nodeの[l,r)を対象とする。再帰にて変化する
@@ -209,6 +214,40 @@ public:
 		{
 			return min_left(a, b, f, 2*k+1, l, (l+r)/2);
 		}
+	}
+
+	// max_right()の非再帰版。
+	// 機能説明はそちらのコメントを参照。呼び出し時の引数も同じ。
+	// 
+	// max_right()と違ってRange Sum Queryにも対応でき、また非再帰なので高速。
+	// ただし色々な二項演算に対する動作確認は不十分であり、使用時は注意。
+	// (range max/minならばmax_right()の方が安心かも)
+	// [verify]ACLPC_J, ABC392-F
+	int max_right_2(int a, int b, function<bool(T)> f) {
+		int l = a, r = a;  // [l,r)は条件を満たす、とする
+		int w = 1;  // 今アクセスしているnode[k]のサイズ
+		int k = l+(n-1);  // node[k]
+		T now = ex;  // 現在の評価値
+		while(r < b && w > 0) {  // r=bになったら右端に到達したので終了
+			T tmp = fx(now, node[k]);
+			if(f(tmp) && r+w <= b) {  // 今見ているnode[k]を入れても条件を満たす、かつはみ出さない
+				now = tmp;
+				r += w;  // OKとなる区間が伸びる
+				if(k%2 == 1) {  // 左側の子にいるとき
+					k++;  // 右のnode[k]へ
+				}
+				else {  // 右側の子にいるとき
+					k /= 2;  // 親の、右へ k=((k-1)/2)+1 から変形できる
+					w *= 2;  // 親なのでnode[k]のサイズは倍になる
+				}
+			}
+			else {  // 今見ているnode[k]を入れたらダメ
+				// kを左の子へ rは更新しない
+				k = k*2+1;
+				w /= 2;  // 子なのでnode[k]のサイズは半分になる
+			}
+		}
+		return r;
 	}
 
 	// 要素xをvalで更新する
@@ -312,6 +351,19 @@ void Test_max_right(void)
 	assert(seg.max_right(2, 4, lmd) == 4);
 	assert(seg.max_right(2, 5, lmd) == 4);  // [2,4)が4以下
 	assert(seg.max_right(2, 6, lmd) == 4);
+
+	// 2も同じ引数で使える
+	assert(seg.max_right_2(0, N, lmd) == 4);  // [0,4)が4以下
+	assert(seg.max_right_2(1, N, lmd) == 4);
+	assert(seg.max_right_2(3, N, lmd) == 4);
+	assert(seg.max_right_2(4, N, lmd) == 4);  // [4,4)が4以下
+	assert(seg.max_right_2(5, N, lmd) == 5);
+	assert(seg.max_right_2(6, N, lmd) == 7);  // [6,7)が4以下
+	assert(seg.max_right_2(2, 2, lmd) == 2);
+	assert(seg.max_right_2(2, 3, lmd) == 3);  // [2,3)が4以下
+	assert(seg.max_right_2(2, 4, lmd) == 4);
+	assert(seg.max_right_2(2, 5, lmd) == 4);  // [2,4)が4以下
+	assert(seg.max_right_2(2, 6, lmd) == 4);
 }
 
 void Test_min_left(void)
@@ -355,6 +407,49 @@ void Test_min_left(void)
 	assert(seg.min_left(0, 4, lmd) == 3);
 	assert(seg.min_left(0, 3, lmd) == 3);
 	assert(seg.min_left(0, 2, lmd) == 1);
+}
+
+void Test_max_right_2(void)
+{
+	// Range Sum Query(RSQ)
+	using T = int;
+	auto fx = [](T x1, T x2) -> T { return x1+x2; };
+	T ex = 0;
+	vector<int> a = {3, 1, 4, 1, 5, 9, 2, 10, 0, 0, 0, 0};
+	//               0  1  2  3  4  5  6  7   8  9  10 11
+	int N = (int)a.size();
+	SegmentTree<T> seg(N, fx, ex);
+	for(int i = 0; i < N; i++)
+	{
+		seg.Set(i, a[i]);
+	}
+	seg.Build();
+
+	auto lmd = [](T x) -> bool
+	{
+		return x < 10;
+	};
+	// 和が10未満の最右
+	assert(seg.max_right_2(0, N, lmd) == 4);  // [0,4)が10未満
+	assert(seg.max_right_2(1, N, lmd) == 4);
+	assert(seg.max_right_2(2, N, lmd) == 4);
+	assert(seg.max_right_2(3, N, lmd) == 5);
+	assert(seg.max_right_2(4, N, lmd) == 5);
+	assert(seg.max_right_2(5, N, lmd) == 6);
+	assert(seg.max_right_2(6, N, lmd) == 7);
+	assert(seg.max_right_2(7, N, lmd) == 7);  // 1つもダメなので[7,7)まで
+	assert(seg.max_right_2(8, N, lmd) == N);
+
+	assert(seg.max_right_2(1, 3, lmd) == 3);  // [1,4)までOKだが、右端が3まで
+	assert(seg.max_right_2(8, 9, lmd) == 9);
+	assert(seg.max_right_2(8, 10, lmd) == 10);
+	assert(seg.max_right_2(8, 11, lmd) == 11);
+	assert(seg.max_right_2(3, 7, lmd) == 5);
+	assert(seg.max_right_2(0, 4, lmd) == 4);
+	assert(seg.max_right_2(0, 3, lmd) == 3);
+	assert(seg.max_right_2(0, 2, lmd) == 2);
+	assert(seg.max_right_2(0, 1, lmd) == 1);
+	assert(seg.max_right_2(0, 0, lmd) == 0);
 }
 
 // https://atcoder.jp/contests/practice2/tasks/practice2_j
@@ -460,6 +555,7 @@ int main(void)
 	Test();
 	Test_max_right();
 	Test_min_left();
+	Test_max_right_2();
 	return 0;
 
 	// 以下は AOJ DSL_2_A のもの
