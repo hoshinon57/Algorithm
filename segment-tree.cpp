@@ -221,10 +221,14 @@ public:
 	// max_right()の非再帰版。
 	// 機能説明はそちらのコメントを参照。呼び出し時の引数も同じ。
 	// 
-	// max_right()と違ってRange Sum Queryにも対応でき、また非再帰なので高速。
+	// max_right()と違ってRange Sum Queryにも対応できる。
 	// ただし色々な二項演算に対する動作確認は不十分であり、使用時は注意。
 	// (range max/minならばmax_right()の方が安心かも)
 	// [verify]ACLPC_J, ABC392-F
+	// 
+	// 参考：
+	//   https://qiita.com/daris755/items/82e48e42e4f6cbc65a79
+	//   https://rsk0315.hatenablog.com/entry/2020/11/25/193834
 	int max_right_2(int a, int b, function<bool(T)> f) {
 		int l = a, r = a;  // [l,r)は条件を満たす、とする
 		int w = 1;  // 今アクセスしているnode[k]のサイズ
