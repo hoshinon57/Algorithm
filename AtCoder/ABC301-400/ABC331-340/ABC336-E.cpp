@@ -11,6 +11,10 @@ template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true;
 template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
+#pragma GCC target("avx2")
+#pragma GCC optimize("O3")
+#pragma GCC optimize("unroll-loops")
+
 // ABC336 https://atcoder.jp/contests/abc336
 
 /*
@@ -39,60 +43,56 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  *   ・桁和で割り切れるかを知りたい⇒そこまでの値を桁和で割った余り
  *   ・そこまでの値がNと等しいかNより小さいか(桁DP)
  *   を区別すれば状態は網羅できそう。これをdp[]にて表現する。
- */
+**/
+
+// (2025/7/24)実装を更新。
+// dp/ndp形式にし、dp[sm][i][j]を
+// sm:smaller, i:そこまでの桁和, j:そこまでの値を(桁和)で割った余り
+// とした。
 
 int main(void)
 {
-	string N; cin >> N;
-	int Nlen = (int)N.size();
-	const int kmax = 14*9;
-	ll ans = 0;
-	int i, j, k, h;
-	for(int s = 1; s <= kmax; s++)  // 桁和
-	{
-		vector dp(Nlen+1, vector(s+1, vector(s, vector<ll>(2, 0))));
-		dp[0][0][0][0] = 1;
-		for(i = 0; i < Nlen; i++)  // i->i+1へ配るDP
-		{
-			int d = (int)(N[i]-'0');  // 次の桁の値
-			for(j = 0; j <= s; j++)  // これまでの桁和j
-			{
-				for(k = 0; k < s; k++)  // これまでの値をsで割った余りk
-				{
-					int nj, nk;
-					// smaller 0->0
-					// dp[i][j][k][0] -> dp[i+1][nj][nk][0]
-					nj = j+d;
-					if(nj > s) {;}
-					else
-					{
-						nk = (k*10+d)%s;
-						dp[i+1][nj][nk][0] += dp[i][j][k][0];
-					}
-					
-					// smaller 0->1
-					// dp[i][j][k][0] -> dp[i+1][nj][nk][1]
-					for(h = 0; h < d; h++)  // 次の桁h d未満までしか使えない
-					{
-						nj = j+h;
-						if(nj > s) continue;
-						nk = (k*10+h)%s;
-						dp[i+1][nj][nk][1] += dp[i][j][k][0];
-					}
+	string s; cin >> s;
+	int L = (int)s.size();
+	const ll mxk = 9*14;  // 桁和の最大値
 
-					// smmaller 1->1
-					// dp[i][j][k][1] -> dp[i+1][nj][nk][1]
-					for(h = 0; h < 10; h++)  // 次の桁h
+	// 桁和=kについて解く
+	auto solve = [&](ll k) -> ll
+	{
+		vector dp(2, vector(k+1, vector<ll>(k, 0)));
+		dp[0][0][0] = 1;
+		ll sm, i, j, d;
+		for(ll _ = 0; _ < L; _++)
+		{
+			vector ndp(2, vector(k+1, vector<ll>(k, 0)));
+			for(sm = 0; sm < 2; sm++)
+			{
+				for(i = 0; i <= k; i++)
+				{
+					for(j = 0; j < k; j++)  // dp[sm][i][j]から配る
 					{
-						nj = j+h;
-						if(nj > s) continue;
-						nk = (k*10+h)%s;
-						dp[i+1][nj][nk][1] += dp[i][j][k][1];
+						const ll D = s[_] - '0';
+						ll ed = (sm ? 9 : D);
+						for(d = 0; d <= ed; d++)
+						{
+							ll nsm = (sm || d < D);
+							ll ni = i+d;
+							ll nj = (j*10+d) % k;
+							if(ni > k) continue;  
+							ndp[nsm][ni][nj] += dp[sm][i][j];
+						}
 					}
 				}
 			}
+			swap(dp, ndp);
 		}
-		ans += dp[Nlen][s][0][0] + dp[Nlen][s][0][1];
+		return dp[0][k][0] + dp[1][k][0];
+	};
+
+	ll ans = 0;
+	for(ll k = 1; k <= mxk; k++)  // 桁和kを固定
+	{
+		ans += solve(k);
 	}
 	cout << ans << endl;
 
