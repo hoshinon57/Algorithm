@@ -1,77 +1,37 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <iomanip>
 #include <functional>  // function
 #include <limits>  // numeric_limits
-#include <cassert>
+#include <array>
 using namespace std;
 typedef long long ll;
-const ll INF64 = 1LL << 60;
+// const ll INF64 = 1LL << 60;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// 抽象化版セグメント木のメモや実装
-// ★注意★ #include <functional> を忘れずに。ローカル環境では無くてもビルドが通るが、AtCoderではCEになる。
+// ABC245 https://atcoder.jp/contests/abc245
 
 /*
- * [ざっくり概要]
- * ・区間上の値を更新する
- * ・任意の区間における最小値や合計値を取得する
- * といった処理をO(logN)でできるデータ構造。
- * 要素には任意のモノイドを用いることができる(抽象化)。
+ * 以下を参考に、セグ木の二分探索＆座標圧縮で解いてみた版。
+ *   https://qiita.com/recuraki/items/248b416266337e45af3f
  * 
- * SegmentTree:
- *   以下の操作をO(logN)で処理できる。
- *   (1)Update(x, val) : 要素xをvalで更新する
- *   (2)Query(a, b) : 区間[a,b)にある要素のモノイド積を返す
- *   (3)max_right(a, b, f), min_left(a, b, f) : セグ木上の二分探索 参考実装：Test_ACLPC_J()
- *   0-indexed, および半開区間で処理する。
- *   コンストラクタには (size:要素数, fx_:二項演算, ex_:単位元) を指定する。
- *   ★代表的なfx,exはmain()に記述している。
+ * まず、縦横まとめて、チョコ/箱まとめて座標圧縮しておく。
+ * そして {縦, kind(チョコ=0, 箱=1), 横} でチョコと箱を合わせて登録し、昇順ソートしておく。
+ * これにより縦順、縦が同じならチョコが優先でソートされることになり、
+ * ある箱を見るとき、すでに出たチョコは縦方向については箱に入る条件を満たすことになる。[典型]
  * 
- * [Tips]
- * ・木の最下段のノード数は、問題文にて指定されるsize以上の2のべき乗。
- *   これをNとすると、最下段のノード数はN, それより上の段のノードは全部でN-1.
- *   よって木全体で必要なノード数は 2N-1 となる。
- * ・要素xをnode[]の添字番号に変換する場合：N-1を加算する
- * ・親から子へ行く場合、 k -> 2k+1, 2k+2
- * ・子から親へ行く場合、 k -> (k-1)/2  (切り捨て)
- * 
- * [参考資料]
- *   https://algo-logic.info/segment-tree/
- *   https://tsutaj.hatenablog.com/entry/2017/03/29/204841
- * 
- * [関連する問題 / verifyした問題]
- * AOJ DSL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
- * https://atcoder.jp/contests/practice2/tasks/practice2_j  max_rightのverify
- * ABC038-D inline DP
- * ABC125-C
- * ABC140-E
- * ABC157-E
- * ABC186-F
- * ABC223-F
- * ABC231-F
- * ABC254-F GCD
- * ABC276-F
- * ABC283-F セグ木4本
- * ABC285-F
- * ABC306-F
- * ABC331-F
- * ABC334-F
- * ABC339-E
- * ABC341-E
- * ABC343-F
- * ABC351-F 平面走査
- * ABC353-G
- * ABC354-F LIS
- * ABC369-F 平面走査
- * ABC392-F 二分探索
- * ABC405-F 平面走査
- * ABC406-F オイラーツアー
- * ABC408-F 平面走査
- * ABC415-F ABC322-F(Vacation Query)に近い
- * 典型90-37
- */
+ * 区間和のセグ木にて、要素に横座標を割り当て、「この横幅のチョコの数」を管理する。
+ * ある箱を見るとき、箱の横幅以下でなるべく横幅が大きいチョコを選ぶのが最善なので、
+ * 箱の横幅=xとすると、[0,x+1)で右端を固定し、sum=0を満たす最左を求めて、その1つ左の要素となる。
+ * ([l,x+1)がsum=0を満たす最左のlとすると、(l-1)にチョコがある)
+ * これはセグ木の二分探索で解ける。
+**/
 
 // (1)Update(x, val) : 要素xをvalで更新する
 // (2)Query(a, b) : 区間[a,b)にある要素のモノイド積を返す
@@ -265,7 +225,7 @@ public:
 	// min_left()と違ってRange Sum Queryにも対応できる。
 	// ただし色々な二項演算に対する動作確認は不十分であり、使用時は注意。
 	// (range max/minならばmin_left()の方が安心かも)
-	// [verify]ABC245-E
+	// [verify] まだ
 	// 
 	// 参考：
 	//   https://qiita.com/daris755/items/82e48e42e4f6cbc65a79
@@ -340,334 +300,91 @@ public:
 #endif
 };
 
-void Test(void)
+// 1次元の座標圧縮
+// a：座標圧縮したい元データ 処理途中で要素が書き換えられる点に注意(保持したい場合は参照を外す)
+// 返り値：圧縮後のデータ
+// 計算量はO(NlogN)
+template <typename T>
+vector<T> compression_one(vector<T> &a)
 {
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	vector<int> v = {3, 1, 4, 1, 5, 9};
-	SegmentTree<T> seg(v.size(), fx, ex);
-	for(int i = 0; i < (int)v.size(); i++)
+	vector<T> a_comp = a;
+
+	// 元データをソートし、重複を削除する
+	sort(a.begin(), a.end());
+	a.erase(unique(a.begin(), a.end()), a.end());  // unique()で隣り合う重複を削除し、erase()で末端までのゴミを削除する
+
+	// それぞれの元データが「何番目に小さいか」をlower_bound()で求める
+	for(int i = 0; i < (int)a_comp.size(); i++)
 	{
-		seg.Set(i, v[i]);
+		a_comp[i] = lower_bound(a.begin(), a.end(), a_comp[i]) - a.begin();
 	}
-	seg.Build();
 
-	assert(seg.Query(0, 6) == 1);
-	assert(seg.Query(0, 3) == 1);
-	assert(seg.Query(3, 4) == 1);
-	assert(seg.Query(4, 5) == 5);
-	seg.Update(6, -1);
-	seg.Update(2, 0);
-	assert(seg.Query(0, 7) == -1);
-	assert(seg.Query(1, 4) == 0);
-	for(int i = 0; i < (int)v.size(); i++)
-	{
-		assert(seg.Get(i) ==  seg.Query(i, i+1));
-	}
-}
-
-void Test_max_right(void)
-{
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return max(x1, x2); };
-	T ex = numeric_limits<T>::min();
-	vector<int> a = {3, 1, 4, 1, 5, 9, 2};
-	//               0  1  2  3  4  5  6
-	int N = (int)a.size();
-	SegmentTree<T> seg(N, fx, ex);
-	for(int i = 0; i < N; i++)
-	{
-		seg.Set(i, a[i]);
-	}
-	seg.Build();
-
-	auto lmd = [](T x) -> bool
-	{
-		return x <= 4;
-	};
-	// 4以下の最右
-	assert(seg.max_right(0, N, lmd) == 4);  // [0,4)が4以下
-	assert(seg.max_right(1, N, lmd) == 4);
-	assert(seg.max_right(3, N, lmd) == 4);
-	assert(seg.max_right(4, N, lmd) == 4);  // [4,4)が4以下
-	assert(seg.max_right(5, N, lmd) == 5);
-	assert(seg.max_right(6, N, lmd) == 7);  // [6,7)が4以下
-	assert(seg.max_right(2, 2, lmd) == 2);
-	assert(seg.max_right(2, 3, lmd) == 3);  // [2,3)が4以下
-	assert(seg.max_right(2, 4, lmd) == 4);
-	assert(seg.max_right(2, 5, lmd) == 4);  // [2,4)が4以下
-	assert(seg.max_right(2, 6, lmd) == 4);
-
-	// 2も同じ引数で使える
-	assert(seg.max_right_2(0, N, lmd) == 4);  // [0,4)が4以下
-	assert(seg.max_right_2(1, N, lmd) == 4);
-	assert(seg.max_right_2(3, N, lmd) == 4);
-	assert(seg.max_right_2(4, N, lmd) == 4);  // [4,4)が4以下
-	assert(seg.max_right_2(5, N, lmd) == 5);
-	assert(seg.max_right_2(6, N, lmd) == 7);  // [6,7)が4以下
-	assert(seg.max_right_2(2, 2, lmd) == 2);
-	assert(seg.max_right_2(2, 3, lmd) == 3);  // [2,3)が4以下
-	assert(seg.max_right_2(2, 4, lmd) == 4);
-	assert(seg.max_right_2(2, 5, lmd) == 4);  // [2,4)が4以下
-	assert(seg.max_right_2(2, 6, lmd) == 4);
-}
-
-void Test_min_left(void)
-{
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return max(x1, x2); };
-	T ex = numeric_limits<T>::min();
-	vector<int> a = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
-	//               0  1  2  3  4  5  6  7  8  9 10
-	int N = (int)a.size();
-	SegmentTree<T> seg(N, fx, ex);
-	for(int i = 0; i < N; i++)
-	{
-		seg.Set(i, a[i]);
-	}
-	seg.Build();
-
-	T vv;
-	auto lmd= [&](T x) -> bool
-	{
-		return x<=vv;
-	};
-	// vv以下を満たす最左
-	vv = 5;
-	assert(seg.min_left(0, N, lmd) == 8);  // [8,N)がvv以下
-	assert(seg.min_left(0, 8, lmd) == 8);  // [8,8)がvv以下、つまり閉区間
-	assert(seg.min_left(0, 7, lmd) == 6);  // [6,7)
-	assert(seg.min_left(0, 6, lmd) == 6);  // [6,6)
-	assert(seg.min_left(0, 5, lmd) == 0);
-	assert(seg.min_left(0, 4, lmd) == 0);
-	assert(seg.min_left(0, 3, lmd) == 0);
-	assert(seg.min_left(0, 2, lmd) == 0);
-	assert(seg.min_left(0, 1, lmd) == 0);
-	assert(seg.min_left(0, 0, lmd) == 0);
-	vv = 10;
-	assert(seg.min_left(0, N, lmd) == 0);  // [0,N)で10以下の最左 -> 全て10以下なので0
-	assert(seg.min_left(0, 0, lmd) == 0);
-	vv = 1;
-	assert(seg.min_left(0, N, lmd) == N);  // [0,N)で1以下の最左 -> [N,N),つまり空区間
-	assert(seg.min_left(0, 5, lmd) == 5);
-	assert(seg.min_left(0, 4, lmd) == 3);
-	assert(seg.min_left(0, 3, lmd) == 3);
-	assert(seg.min_left(0, 2, lmd) == 1);
-}
-
-void Test_max_right_2(void)
-{
-	// Range Sum Query(RSQ)
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return x1+x2; };
-	T ex = 0;
-	vector<int> a = {3, 1, 4, 1, 5, 9, 2, 10, 0, 0, 0, 0};
-	//               0  1  2  3  4  5  6  7   8  9  10 11
-	int N = (int)a.size();
-	SegmentTree<T> seg(N, fx, ex);
-	for(int i = 0; i < N; i++)
-	{
-		seg.Set(i, a[i]);
-	}
-	seg.Build();
-
-	auto lmd = [](T x) -> bool
-	{
-		return x < 10;
-	};
-	// 和が10未満の最右
-	assert(seg.max_right_2(0, N, lmd) == 4);  // [0,4)が10未満
-	assert(seg.max_right_2(1, N, lmd) == 4);
-	assert(seg.max_right_2(2, N, lmd) == 4);
-	assert(seg.max_right_2(3, N, lmd) == 5);
-	assert(seg.max_right_2(4, N, lmd) == 5);
-	assert(seg.max_right_2(5, N, lmd) == 6);
-	assert(seg.max_right_2(6, N, lmd) == 7);
-	assert(seg.max_right_2(7, N, lmd) == 7);  // 1つもダメなので[7,7)まで
-	assert(seg.max_right_2(8, N, lmd) == N);
-
-	assert(seg.max_right_2(1, 3, lmd) == 3);  // [1,4)までOKだが、右端が3まで
-	assert(seg.max_right_2(8, 9, lmd) == 9);
-	assert(seg.max_right_2(8, 10, lmd) == 10);
-	assert(seg.max_right_2(8, 11, lmd) == 11);
-	assert(seg.max_right_2(3, 7, lmd) == 5);
-	assert(seg.max_right_2(0, 4, lmd) == 4);
-	assert(seg.max_right_2(0, 3, lmd) == 3);
-	assert(seg.max_right_2(0, 2, lmd) == 2);
-	assert(seg.max_right_2(0, 1, lmd) == 1);
-	assert(seg.max_right_2(0, 0, lmd) == 0);
-}
-
-void Test_min_left_2(void)
-{
-	// Range Sum Query(RSQ)
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return x1+x2; };
-	T ex = 0;
-	vector<int> a = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3};
-	//               0  1  2  3  4  5  6  7  8  9  N=10
-	int N = (int)a.size();
-	SegmentTree<T> seg(N, fx, ex);
-	for(int i = 0; i < N; i++)
-	{
-		seg.Set(i, a[i]);
-	}
-	seg.Build();
-
-	auto lmd = [](T x) -> bool
-	{
-		return x < 8;
-	};
-	// 和が8未満の最左
-	assert(seg.min_left_2(0, N, lmd) == 9);  // [9,10)が8未満
-	assert(seg.min_left_2(0, 9, lmd) == 8);
-	assert(seg.min_left_2(0, 8, lmd) == 7);
-	assert(seg.min_left_2(0, 7, lmd) == 6);
-	assert(seg.min_left_2(0, 6, lmd) == 6);  // 1つもダメなので[6,6)まで
-	assert(seg.min_left_2(0, 5, lmd) == 3);  // [3,5)が8未満
-	assert(seg.min_left_2(0, 4, lmd) == 1);  // [1,4)が8未満
-	assert(seg.min_left_2(0, 3, lmd) == 1);
-	assert(seg.min_left_2(0, 2, lmd) == 0);
-	assert(seg.min_left_2(0, 1, lmd) == 0);
-	assert(seg.min_left_2(0, 0, lmd) == 0);
-	assert(seg.min_left_2(2, 4, lmd) == 2);  // [1,4)までOKだが、左端が2まで
-	assert(seg.min_left_2(3, 4, lmd) == 3);
-	assert(seg.min_left_2(4, 4, lmd) == 4);
-}
-
-// https://atcoder.jp/contests/practice2/tasks/practice2_j
-// セグメント木上の二分探索
-void Test_ACLPC_J(void)
-{
-	// Range Max Query
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return max(x1, x2); };
-	T ex = numeric_limits<T>::min();
-	int N, Q; cin >> N >> Q;
-	SegmentTree<T> seg(N+5, fx, ex);
-	for(int i = 0; i < N; i++)
-	{
-		int a; cin >> a;
-		seg.Set(i, a);
-	}
-	seg.Build();
-
-	// クエリ3について、V > (セグ木の要素) ならtrueを返せばよい
-	int vv;
-	auto lmd = [&](T x) -> bool
-	{
-		return vv > x;
-	};
-
-	while(Q > 0)
-	{
-		Q--;
-		int k; cin >> k;
-		if(k == 1)
-		{
-			int x, v; cin >> x >> v;
-			x--;
-			seg.Update(x, v);
-		}
-		else if(k == 2)
-		{
-			int l, r; cin >> l >> r;
-			l--; r--;
-			r++;  // [l,r)
-			cout << seg.Query(l, r) << endl;
-		}
-		else
-		{
-			int x; cin >> x >> vv;
-			x--;
-			int ans = seg.max_right(x, N, lmd);
-			// [x,ans)の区間にてV>A, [x,ans]になるとv<=Aになる。
-			// よってansがそのまま答になるが、1-indexedへ変換するため+1が必要
-			cout << ans+1 << endl;
-		}
-	}
+	return a_comp;
 }
 
 int main(void)
 {
-	// pairではnumeric_limitsが使えない点に注意！
-	// T ex = {INF32, INF32}; のように手動で定義必要。
+	ll i;
+	ll N, M; cin >> N >> M;
+	vector<ll> ald;
+	vector<ll> a(N); for(i = 0; i < N; i++) {cin >> a[i]; ald.push_back(a[i]);}
+	vector<ll> b(N); for(i = 0; i < N; i++) {cin >> b[i]; ald.push_back(b[i]);}
+	vector<ll> c(M); for(i = 0; i < M; i++) {cin >> c[i]; ald.push_back(c[i]);}
+	vector<ll> d(M); for(i = 0; i < M; i++) {cin >> d[i]; ald.push_back(d[i]);}
+	auto ald_comp = compression_one(ald);
+	ll mx = -1;  // 座圧後の最大値
+	vector<array<ll,3>> dt;  // {横, kind, 縦}
+	// 座圧した値を元の配列に戻し、またdtを構築していく
+	for(i = 0; i < N; i++)
+	{
+		a[i] = ald_comp[i];
+		b[i] = ald_comp[i+N];
+		chmax(mx, a[i]);
+		chmax(mx, b[i]);
+		dt.push_back({a[i], 0, b[i]});
+	}
+	for(i = 0; i < M; i++)
+	{
+		c[i] = ald_comp[i+N+N];
+		d[i] = ald_comp[i+N+N+M];
+		chmax(mx, c[i]);
+		chmax(mx, d[i]);
+		dt.push_back({c[i], 1, d[i]});
+	}
+	sort(dt.begin(), dt.end());  // 縦、縦が同じならチョコ優先でソート
 
-	/*
-	[代表的なfx,exの例]
-	Range Minimum Query(RMQ)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	---------------
-
-	Range Sum Query(RSQ)
-	---------------
-	using T = int;
+	// Range Sum Query(RSQ)
+	using T = ll;
 	auto fx = [](T x1, T x2) -> T { return x1+x2; };
 	T ex = 0;
-	---------------
-
-	Range OR Query(ABC157-E)
-	---------------
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return x1|x2; };
-	T ex = 0;
-	---------------
-
-	Range GCD Query(ABC125-C)
-	---------------
-	using T = ll;
-	auto fx = gcd;
-	T ex = 0;  // gcd(a,0)=a のため
-	---------------
-	*/
-	/*
-	特定の要素を加減算したい場合、以下のラムダ式を使うと楽かも
-	ex)seg_add(seg, idx, 1);  // idx番目の要素を+1
-	計算量はO(logN). seg.Get()はO(1)で作ってるのでseg.Update()の分。
-	※T=pairではコンパイルエラーになるのでクラスメソッドには入れられない
-	---------------
+	SegmentTree<T> seg(mx+5, fx, ex);
 	auto seg_add = [](SegmentTree<T> &seg_, int idx_, T val_) -> void
 	{
 		seg_.Update(idx_, seg_.Get(idx_)+val_);
 	};
-	---------------
-	*/
-	Test();
-	Test_max_right();
-	Test_min_left();
-	Test_max_right_2();
-	Test_min_left_2();
-	return 0;
-
-	// 以下は AOJ DSL_2_A のもの
-	// https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DSL_2_A&lang=ja
-	using T = int;
-	auto fx = [](T x1, T x2) -> T { return min(x1, x2); };
-	T ex = numeric_limits<T>::max();
-	int n, q;
-	cin >> n >> q;
-	SegmentTree<T> seg(n, fx, ex);
-	for(int i = 0; i < n; i++) seg.Set(i, (1UL<<31)-1);
-	seg.Build();
-
-	int c, x, y;
-	while(q > 0)
+	auto lmd = [](T sum) -> bool
 	{
-		cin >> c >> x >> y;
-		if(c == 0)  // update
+		return sum == 0;
+	};
+	
+	ll cnt = 0;
+	for(auto [y, ki, x] : dt)
+	{
+		if(ki == 0)  // チョコ
 		{
-			seg.Update(x, y);
+			seg_add(seg, x, 1);
 		}
-		else  // find
+		if(ki == 1)
 		{
-			cout << seg.Query(x, y+1) << endl;  // 閉区間->半開区間への変換
+			// [0,x+1) にて右端を固定し、sum=0を満たす最左を返す
+			// [l,x+1) が最左とすると、segの要素(l-1)が1以上である
+			auto l = seg.min_left_2(0, x+1, lmd);
+			if(l == 0) continue;  // 箱に入れられるチョコが無かった
+			cnt++;
+			seg_add(seg, l-1, -1);
 		}
-		q--;
 	}
+	YesNo(cnt == N);
 
 	return 0;
 }
