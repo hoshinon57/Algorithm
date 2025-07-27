@@ -1,32 +1,40 @@
 #include <iostream>
 #include <vector>
-#include <cassert>
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
 using namespace std;
 typedef long long ll;
+// const ll INF64 = 1LL << 60;
 const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
+
+// https://atcoder.jp/contests/joisc2010/tasks/joisc2010_dna
 
 /*
- * トライ木のライブラリ
- * 基本的には、問題ごとにsearch()を書き換える必要がありそう
+ * Trie木で解いた。
+ * 以下、0-indexedで記載する。
  * 
- * [ざっくり概要]
- * ・文字列の接頭辞(prefix)の共通部分を共有して保存することで、文字列の長さをMとしてO(M)での検索が可能。
- * ・1つの頂点が1つの文字を表す。
- * ・ルートには空の文字列が対応する。
+ * 先頭からi文字目まで作れるとする。
+ * ＞素DNA鎖の長さは20以下である．
+ * という制約より、i文字目から20文字分探索して、ヒットする文字列長をTrie木で探す。
+ * これをmlenとすると、[0,i]から[0,i+(mlen-1)]まではいずれも作れる、としてよい。文字列の合成があるので。
+ * 合成したい長さは最大で1.5*10^5, 各DNAの長さは最大20なので、間に合う。
  * 
- * [参考資料]
- *   https://algo-logic.info/trie-tree/
- *   https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%A9%E3%82%A4_(%E3%83%87%E3%83%BC%E3%82%BF%E6%A7%8B%E9%80%A0)
- *   https://ei1333.github.io/luzhiled/snippets/structure/trie.html
+ * 上記を実装するため、dp[i]を以下のように定義する。
+ *   [0,i] まで作るのに必要な操作回数
+ *   作れない場合はINF.
+ * 初期値としてdp[0]=0で良い。
+ * 「必ず合成できる」的な制約より、dp[0]も適切に更新される。
  * 
- * [関連する問題 / verifyした問題]
- * ABC287-E search()にてcommon>=2となるうちの最も深い(depth)頂点を探索
- * ABC353-E insert()にてcommonをansへ加算
- * ABC377-G Nodeにlen_minを追加、insert()にて文字ごとに最小コストを計算
- * ABC403-E
- * JOI DNA synthesizer https://atcoder.jp/contests/joisc2010/tasks/joisc2010_dna
- */
+ * メモリ制限が厳しく、当初MLE.
+ * Trie<26, 'A'> tr; ⇒ Trie<20, 'A'> tr; に変更してAC.
+ * ※出現する文字はATGCの4種類なので、最も後ろの文字までにしたという意図。
+ *   これでもダメだったら、ATDC⇒ABDCとかに変換する形か。
+**/
 
 // https://algo-logic.info/trie-tree/
 // Trie<26, 'A'> trie; のように定義する
@@ -80,10 +88,18 @@ public:
 	// wordの探索
 	// prefix=false : wordがTrie木に存在すればtrue
 	// prefix=true : wordそのものでなくとも、wordを接頭辞(prefix)として持つ単語が存在すればtrue
-	bool search(const string &word, bool prefix = false) {
+	bool search(const string &word, int &mlen, bool prefix = false) {
 		int node_id = 0;
-		for(int i = 0; i < (int)word.size(); i++) {
+		int i;
+		for(i = 0; i < (int)word.size(); i++) {
 			int c = (int)(word[i] - base);
+
+			// 本問用にadd
+			if(nodes[node_id].accept.size() > 0)
+			{
+				chmax(mlen, i);
+			}
+
 			int &next_id = nodes[node_id].next[c];
 			if(next_id == -1) {
 				return false;  // 次の頂点が存在しない
@@ -91,6 +107,11 @@ public:
 			node_id = next_id;
 		}
 		// word末尾の文字は、このタイミングでのnode_idである点に注意
+		// 本問用にadd
+		if(nodes[node_id].accept.size() > 0)
+		{
+			chmax(mlen, i);
+		}
 
 		if(prefix) {
 			return true;  // 接頭辞であれば、ここまで来た時点で確実に存在する
@@ -111,18 +132,32 @@ public:
 
 int main(void)
 {
-	Trie<26, 'A'> trie;
-	trie.insert("FIRE");
-	assert( trie.search("FIRE"));
-	assert(!trie.search("FI"));
-	assert( trie.search("FI", true));  // "FI"をprefixに持つ単語は存在する
-	assert(!trie.search("FIREMAN", true));
-	trie.insert("FIREMAN");
-	assert( trie.search("FIREMAN"));
-	assert(!trie.search("FIREMA"));
-	assert( trie.search("FIREMA", true));
-	assert(trie.word_count() == 2);
-	trie.insert("FILE");
-	assert(trie.size() == 9+1);  // FIREMAN + LE + 1(root)
+	int i, j;
+	int N; cin >> N;
+	string td; cin >> td;
+	int tdlen = (int)td.size();
+//	Trie<26, 'A'> tr;
+	Trie<20, 'A'> tr;
+	for(i = 0; i < N; i++)
+	{
+		string s; cin >> s;
+		tr.insert(s);
+	}
+
+	vector<int> dp(tdlen+1, INF32);
+	dp[0] = 0;
+	// 配るDP
+	for(i = 0; i < tdlen; i++)
+	{
+		auto subs = td.substr(i, 21);  // tdの末尾を超える分はカットしてくれる
+		int mlen = 0;
+		tr.search(subs, mlen);
+		for(j = 0; j < mlen; j++)
+		{
+			chmin(dp[i+j], dp[i]+1);
+		}
+	}
+	cout << dp[tdlen-1] << endl;
+
 	return 0;
 }
