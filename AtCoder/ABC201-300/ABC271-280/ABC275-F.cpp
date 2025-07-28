@@ -14,6 +14,8 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
 
 // ABC275 https://atcoder.jp/contests/abc275
 
+// 後に実装したABC275-F-2.cppの方がやりやすい。
+
 /*
  * ナップザックDPにて、Aを先頭から見ていったときに「これまでに削除操作が何回必要か？」と、
  * 次Aを選ぶ際に削除操作の要不要を知るために、「最後に選んだAは何番目か？」の情報が欲しい。

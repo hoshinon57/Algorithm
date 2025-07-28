@@ -327,6 +327,7 @@ int main(void)
 	現在の状態を情報に持つDPの俗称。
 	ABC408-D
 	ABC211-C
+	ABC275-F
 	典型90-008 https://atcoder.jp/contests/typical90/tasks/typical90_h
 
 	[部分列DP]
