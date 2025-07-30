@@ -14,6 +14,8 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
 
 // ABC297 https://atcoder.jp/contests/abc297
 
+// 再解き時にソースコード差し替えた
+
 /*
  * 自力で解けず、解説を見た。
  * 主客転倒、期待値の線形性などを用いて解く。
@@ -40,10 +42,14 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * [どう思考すれば解法にたどり着けるか]
  * ・期待値は「全ての事象に対する答の総和 ÷ 事象の場合の数」で求められる。
  *   本問では、全ての塗り方に対するスコアの総和を、塗り方の場合の数で割るという意味になる。
- */
+**/
+
+#include <atcoder/modint>
+using namespace atcoder;
+using mint = modint998244353;
 
 const ll MOD = 998244353;
-const ll NCK_SIZE = 1000005;  // N<=2*10^5 など、問題文の制約に合わせる
+const ll NCK_SIZE = 2000001;  // N<=2*10^5 など、問題文の制約に合わせる
 ll fact[NCK_SIZE], inv_fact[NCK_SIZE], inv[NCK_SIZE];
 
 // Combination用の事前計算
@@ -77,49 +83,37 @@ ll nCk(ll n, ll k)
 	return x * ((y * z) % MOD) % MOD;  //nCkの計算
 }
 
-// mod mの世界におけるaの逆元を返す
-// 以下URLのコードをそのまま持ってきている
-//   https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
-long long modinv(long long a, long long m)
-{
-	long long b = m, u = 1, v = 0;
-	while (b) {
-        long long t = a / b;
-        a -= t * b; swap(a, b);
-        u -= t * v; swap(u, v);
-    }
-    u %= m; 
-    if (u < 0) u += m;
-    return u;
-}
-
 int main(void)
 {
 	nCk_init();
+	ll y, x;
 	ll H, W, K; cin >> H >> W >> K;
-	ll nck_HW_K = nCk(H*W, K);  // 塗り方の場合の数  各所で使うので事前計算
-	ll ans = 0;
-	for(ll x = 0; x < W; x++)
+	mint ans = 0;
+	mint tot = nCk(H*W, K);  // Kマス選ぶ全パターン数
+	auto cal = [&](ll yy, ll xx) -> mint
 	{
-		for(ll y = 0; y < H; y++)  // マス(x,y)について
+		return nCk(yy*xx, K);
+	};
+	for(y = 0; y < H; y++)
+	{
+		for(x = 0; x < W; x++)  // マス(y,x)について計算
 		{
-			// m1～m4:(x,y)の左側のみ、右側のみ、上側のみ、下側のみ
-			ll m1 = nCk(x*H, K);
-			ll m2 = nCk((W-(x+1))*H, K);
-			ll m3 = nCk(W*y, K);
-			ll m4 = nCk(W*(H-(y+1)), K);
-			// m5～m8:(x,y)の左上側のみ、右上側、左下側、右下側
-			ll m5 = nCk(x*y, K);
-			ll m6 = nCk((W-(x+1))*y, K);
-			ll m7 = nCk(x*(H-(y+1)), K);
-			ll m8 = nCk((W-(x+1))*(H-(y+1)), K);
-			ll tmp = ((m1+m2+m3+m4-m5-m6-m7-m8) + (MOD*4)) % MOD;  // この値を全体から除外する
-			tmp = (nck_HW_K - tmp + MOD) % MOD;
-			ans = (ans+tmp) % MOD;
+			mint t = tot;
+			// (x,y)の上側のみ、下側のみ、左側のみ、右側のみ
+			t -= cal(y, W);
+			t -= cal(H-y-1, W);
+			t -= cal(H, x);
+			t -= cal(H, W-x-1);
+			// (x,y)の左上側のみ、右上側、左下側、右下側
+			t += cal(y, x);
+			t += cal(y, W-x-1);
+			t += cal(H-y-1, x);
+			t += cal(H-y-1, W-x-1);
+			ans += t;
 		}
 	}
-	ans = ans * modinv(nck_HW_K, MOD) % MOD;
-	cout << ans << endl;
+	ans /= tot;
+	cout << ans.val() << endl;
 
 	return 0;
 }
