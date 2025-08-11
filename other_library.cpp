@@ -322,7 +322,7 @@ ll str_val_mod(string s, ll m) {
 }
 
 // 文字列strをランレングス圧縮して {文字,長さ} のpairの列挙で返す
-// [補足]配列に対して扱いたい場合、引数をstring->vectorに変えるだけで良い
+// [補足]配列に対して扱いたい場合、引数をstring->vector<T>に変えるだけで良い
 //       "長さ"は呼び出し元で乗算する可能性があるため、オーバーフロー防止でll型としている (ABC369-C)
 // auto enc = rle<char>(s); といった形で呼び出す
 // for(auto [c,len] : enc) が使い方の一例
