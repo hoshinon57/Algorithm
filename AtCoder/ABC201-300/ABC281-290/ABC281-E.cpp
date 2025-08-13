@@ -11,6 +11,12 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 
 // ABC281 https://atcoder.jp/contests/abc281
 
+// 実装を、2025/8に再解きしたソースコードに置き換えた。
+// この類の問題では、以下の方針で実装するとやりやすい。
+//   (1)着目するM個の範囲から外れた値を削除する
+//   (2)(1)で削除した側「でない方」の集合に、値を追加する
+//   (3)(2)で追加した集合から1つ最大(最小)を取り出し、もう片方に移す
+
 /*
  * コンテスト中に解けず、解説を見て実装した。
  * KoD氏の公式解説、および以下ツイートを元にした実装。
@@ -35,81 +41,68 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
 
 int main(void)
 {
-	int i;
-	int N, M, K;
-	cin >> N >> M >> K;
-	vector<ll> a(N), a_2;  // a_2:最初のM個
-	for(i = 0; i < N; i++)
+	ll i;
+	ll N, M, K; cin >> N >> M >> K;
+	vector<ll> a(N); for(i = 0; i < N; i++) {cin >> a[i];}
+	multiset<ll> ms1, ms2;
+	ll tot = 0;
+	vector<ll> ans;
+
+	// 初回は愚直
 	{
-		cin >> a[i];
-		if(i < M) a_2.push_back(a[i]);
+		vector<ll> tmp;
+		for(i = 0; i < M; i++) tmp.push_back(a[i]);
+		sort(tmp.begin(), tmp.end());
+
+		for(i = 0; i < K; i++)
+		{
+			ms1.insert(tmp[i]);
+			tot += tmp[i];
+		}
+		for(i = K; i < M; i++)
+		{
+			ms2.insert(tmp[i]);
+		}
 	}
-
-	multiset<ll> ms1, ms2;  // M個の整数を昇順に並べたときの、先頭K個がms1, 残りM-K個がms2
-	ll sum = 0;
-	// 1つ目は手作業で構築する
-	sort(a_2.begin(), a_2.end());  // 最初のM個を昇順ソート
-	for(i = 0; i < K; i++)  // 先頭K個:ms1
+	ans.push_back(tot);
+	
+	for(i = 1; i <= N-M; i++)
 	{
-		ms1.insert(a_2[i]);
-		sum += a_2[i];  // 和の計算対象
-	}
-	for(i = K; i < M; i++)  // 残りM-K個:ms2
-	{
-		ms2.insert(a_2[i]);
-		// 和の計算からは対象外
-	}
-	cout << sum;
+		// a[i-1]を外す
+		// a[i+M-1]を追加
+		if(ms1.find(a[i-1]) != ms1.end())  // ms1側にa[i-1]がある
+		{
+			ms1.erase(ms1.find(a[i-1]));
+			tot -= a[i-1];
+			ms2.insert(a[i+M-1]);
 
-	// 2個目以降
-	for(i = M; i < N; i++)  // a[i-M]を取り除き、a[i]を追加する
-	{
-		// 取り除くa[i-M]がms1, ms2のどちらにあるか
-		if(ms1.find(a[i-M]) != ms1.end())  // ms1側にある
-		{
-			ms1.erase(ms1.find(a[i-M]));
-			sum -= a[i-M];
-		}
-		else  // ms2側にある
-		{
-			ms2.erase(ms2.find(a[i-M]));
-		}
-
-		// a[i]<ms2.begin()の値 ならばms1へ、そうでなければms2へ、とりあえず入れる
-		if(a[i] < *(ms2.begin()))
-		{
-			ms1.insert(a[i]);
-			sum += a[i];
-		}
-		else
-		{
-			ms2.insert(a[i]);
-		}
-
-		// ms1, ms2の個数調整
-		// ms1の個数がK個になるようにする
-		if((int)ms1.size() > K)
-		{
-			// ms1終端をms2へ1つ移動
-			auto itr = ms1.end();
-			itr--;
-			int num = *itr;
-			ms1.erase(itr);
-			ms2.insert(num);
-			sum -= num;
-		}
-		else if((int)ms1.size() < K)
-		{
-			// ms2先頭をms1へ1つ移動
 			auto itr = ms2.begin();
-			int num = *itr;
+			auto num = *itr;
 			ms2.erase(itr);
 			ms1.insert(num);
-			sum += num;
+			tot += num;
 		}
-		// ==K なら処置不要
+		else  // ms2側にa[i-1]がある
+		{
+			ms2.erase(ms2.find(a[i-1]));
+			ms1.insert(a[i+M-1]);
+			tot += a[i+M-1];
 
-		cout << " " << sum;
+			auto itr = ms1.end();
+			itr--;
+			auto num = *itr;
+			ms1.erase(itr);
+			tot -= num;
+			ms2.insert(num);
+		}
+		ans.push_back(tot);
+	}
+
+	int sz_ = (int)ans.size();
+	// cout << sz_ << endl;
+	for(i = 0; i < sz_; i++) {
+		cout << ans[i];
+		if(i != sz_-1) cout << " ";
 	}
 	cout << endl;
 
