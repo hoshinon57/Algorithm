@@ -5,13 +5,20 @@
 #include <iomanip>
 using namespace std;
 typedef long long ll;
-const ll INF64 = 1LL << 60;
+// const ll INF64 = 1LL << 60;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
 template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
 template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
 // ABC278 https://atcoder.jp/contests/abc278
+
+// 先頭の解説はそのままで、ソースコードを2025/8に再解きしたものに置き換えた。
+// 元のソースコードは呼び出し元で初回の単語を全探索していたが、
+// 再帰関数内で「初回か否か」を判定するようにして、呼び出し元では1回にした。
+// 
+// 先頭の解説はそのまま。細かい実装は異なるので注意だが、おおよその方針は同じ。
 
 /*
  * bitDP,メモ化再帰で解く。
@@ -33,59 +40,54 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  * 各単語を選んだときに後手が負けるケースが1つでもあれば、先手の勝ち。1つも無ければ後手の勝ち。
  */
 
+// 以下、bは0-indexed
 bool isbiton(ll x, int b) { return ((x>>b)&1); }  // xのbビット目が立っていればtrue (bは0-indexed)
 void setbit(ll &x, int b) { x |= ((ll)1<<b); }  // xのbビット目を立てる
 void unbit(ll &x, int b) { x &= (~((ll)1<<b)); }  // xのbビット目を落とす
 
-int N;
-const int MAX_N = 16;
-bool dist[MAX_N][MAX_N];  // dist[i][j]:単語i->jが可能ならtrue
-// dp[S][v]:
-//   使用済みの単語ならbitが1, 未使用は0
-//   最後に使った単語がv
-//   の状態で手番が来たときに、勝てるなら1, 負けるなら2. (未計算は0)
-int dp[1<<MAX_N][MAX_N];
+ll N;
+vector<string> s;
+vector<vector<ll>> dp;  // 勝ち1, 負け0, 未探索-1
 
-int bitDP(int S, int v)
+// dp[b][pr]を返す
+int f(ll b, ll pr)
 {
-	if(dp[S][v] != 0) return dp[S][v];  // メモ化済み
+	auto &d = dp[b][pr];
+	if(d != -1) return d;
 
-	int i;
+	bool first = false;
+	if(__builtin_popcountll(b) == N) first = true;  // 初回
+
+	ll i;
 	bool win = false;
-	for(i = 0; i < N; i++)  // i番目の単語
+	for(i = 0; i < N; i++)
 	{
-		if(isbiton(S, i)) continue;  // 単語使用済み
-		if(!dist[v][i]) continue;  // 単語v->iへは遷移できない
-		ll nxtS = S;
-		setbit(nxtS, i);
-		if(bitDP(nxtS, i) == 2) win = true;  // 次の手番が負け、つまり自分が勝ち
+		// Siが使用済みならスルー
+		// 「初回ではない」 かつ Spr -> Si が繋がらないならスルー
+		if(!isbiton(b, i)) continue;
+		if(!first && s[pr].back() != s[i][0]) continue;
+		ll bb = b;
+		unbit(bb, i);
+		if(!f(bb, i)) win = true;  // 1つでも負けパターンがあれば、勝ち
 	}
-	int &d = dp[S][v];
 	if(win) d = 1;
-	else d = 2;
+	else d = 0;
+
 	return d;
 }
 
 int main(void)
 {
-	int i, j;
+	ll i;
 	cin >> N;
-	vector<string> s(N); for(i = 0; i < N; i++) {cin >> s[i];}
+	s.resize(N);
+	dp.resize(1LL<<N, vector<ll>(N, -1));
 	for(i = 0; i < N; i++)
 	{
-		for(j = 0; j < N; j++)  // dist[i][j], 単語i->j
-		{
-			if(s[i].back() == s[j][0]) dist[i][j] = true;
-			else dist[i][j] = false;
-		}
+		cin >> s[i];
 	}
-
-	bool win = false;
-	for(i = 0; i < N; i++)  // 先手が各単語を使うケースを調べる
-	{
-		if(bitDP(1<<i, i) == 2) win = true;  // 後手が負ける単語が1つでもあれば、勝ち
-	}
-	if(win) cout << "First" << endl;
+	auto ans = f((1LL<<N)-1, 0);
+	if(ans == 1) cout << "First" << endl;
 	else cout << "Second" << endl;
 
 	return 0;

@@ -56,6 +56,18 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  *     (処理)
  *   }
  * 
+ * [ゲームのDPについて]
+ * ある状態からの遷移を全て試して、
+ *   「相手が負け」のケースが1つでもあれば、自分の勝ち。
+ *   「相手が負け」のケースが1つも無ければ、相手の勝ち。
+ * となる。
+ * 実装イメージは以下。
+ *   bool win = false;  // 自分が勝ちならtrue
+ *   for( (全ての遷移) )
+ *   {
+ *     if(func(次の状態) = lose) win = true;  // この遷移で相手が負けるなら、自分はそれを選べばよいので、自分の勝ち
+ *   }
+ * 
  * [関連問題 / 巡回セールスマン問題]
  * AOJ DPL_2_A https://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=DPL_2_A&lang=ja
  * ABC180-E
