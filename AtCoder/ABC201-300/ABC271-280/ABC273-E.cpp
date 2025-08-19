@@ -44,7 +44,7 @@ int main(void)
 		}
 		if(ki == "DELETE")
 		{
-			now = d[now].pid;
+			now = d[now].pid;  // 根の親は根になるよう初期値設定済み
 		}
 		if(ki == "SAVE")
 		{
