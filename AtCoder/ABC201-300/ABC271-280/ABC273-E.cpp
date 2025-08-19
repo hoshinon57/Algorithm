@@ -1,98 +1,69 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <map>
 #include <cmath>
 #include <iomanip>
+#include <unordered_map>
 using namespace std;
 typedef long long ll;
-const ll INF64 = 1LL << 60;
+// const ll INF64 = 1LL << 60;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
 
-// ABC273 https://atcoder.jp/contests/abc273
+// 2025/8に再解きしたソースコードに置き換えた。
 
-/*
- * コンテスト中に解けず、解説を見て実装した。
- * 
- * 永続データ構造…というデータ構造を用いて解く。
- * 参考：
- *   https://atcoder.jp/contests/abc273/editorial/5059
- *   https://noshi91.hatenablog.com/entry/2019/02/04/175100
- *   https://noshi91.hatenablog.com/entry/2019/02/04/175100
- * 
- * 値と次の要素を持つNodeと、先頭の要素を指すheadを用意する。
- * すると4種の操作はそれぞれ以下のように実装できる。
- *   ADD:新たなNodeを作成し、現headの手前に追加する。新たにheadはここを指す。
- *   DELETE:headが指す要素を次へ動かす。
- *   SAVE:ページ番号とheadのアドレスの組を保存する。
- *   LOAD:ページ番号を元にheadのアドレスを再設定する。
- * 各操作ごとにheadが指す要素の値を出力すればよい。
- */
-
-struct Node {
-	int num;
-	Node *next;
-	Node(int num_ = -1, Node *next_ = nullptr) : num(num_), next(next_) {}
+struct dt
+{
+	ll pid;  // parent
+	ll val;
 };
-Node *head;
-
-// num=nであるNodeを作成し、これをheadに設定する
-void Push(int n)
-{
-	Node *node = new Node(n, head);  // 作成したNodeは先頭へ、つまりnextをheadに設定する
-	head = node;
-}
-
-// headが指す要素を、headの次の要素に変更する
-void Pop()
-{
-	if(head->num == -1) return;
-	head = head->next;
-}
 
 int main(void)
 {
-	int Q;
-	cin >> Q;
-	map<int, Node*> notebook;
+	vector<dt> d;
+	d.push_back({0, -1});
+	ll now = 0;  // d[now]
 
-	head = new Node(-1, nullptr);
-	for(int i = 0; i < Q; i++)
+	ll i;
+	ll Q; cin >> Q;
+	vector<ll> ans;
+	unordered_map<ll,ll> idx;
+
+	while(Q > 0)
 	{
-		string que;
-		cin >> que;
-		if(que == "ADD")
+		Q--;
+		string ki; cin >> ki;
+		if(ki == "ADD")
 		{
-			int x;
-			cin >> x;
-			Push(x);
+			ll x; cin >> x;
+			d.push_back({now, x});
+			now = d.size()-1;
 		}
-		if(que == "DELETE")
+		if(ki == "DELETE")
 		{
-			Pop();
+			now = d[now].pid;
 		}
-		if(que == "SAVE")
+		if(ki == "SAVE")
 		{
-			int y;
-			cin >> y;
-			notebook[y] = head;
+			ll y; cin >> y;
+			idx[y] = now;
 		}
-		if(que == "LOAD")
+		if(ki == "LOAD")
 		{
-			int z;
-			cin >> z;
-			if(notebook.count(z) > 0)
-			{
-				head = notebook[z];
-			}
-			else
-			{
-				head = new Node(-1, nullptr);  // 空ページ
-			}
+			ll z; cin >> z;
+			now = idx[z];
 		}
+		ans.push_back(d[now].val);
+	}
 
-		cout << head->num;
-		if(i != Q-1) cout << " ";
+	int sz_ = (int)ans.size();
+	// cout << sz_ << endl;
+	for(i = 0; i < sz_; i++) {
+		cout << ans[i];
+		if(i != sz_-1) cout << " ";
 	}
 	cout << endl;
 
