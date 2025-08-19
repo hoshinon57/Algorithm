@@ -2,13 +2,22 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
-#include <unordered_map>
 #include <iomanip>
 using namespace std;
 typedef long long ll;
-const ll INF64 = 1LL << 60;
+// const ll INF64 = 1LL << 60;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
-const ll MOD = 998244353;
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
+
+#include <atcoder/modint>
+using namespace atcoder;
+using mint = modint998244353;
+
+// ソースコードを2025/8に再解きしたものに置き換えた。
+// 先頭の解説は当時のまま。
 
 // ABC275 https://atcoder.jp/contests/abc275
 
@@ -34,67 +43,35 @@ const ll MOD = 998244353;
  * 答はdp[*][N]の総和となる。
  */
 
-// mod mの世界におけるaの逆元を返す
-// 以下URLのコードをそのまま持ってきている
-//   https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a
-long long modinv(long long a, long long m)
-{
-	long long b = m, u = 1, v = 0;
-	while (b) {
-        long long t = a / b;
-        a -= t * b; swap(a, b);
-        u -= t * v; swap(u, v);
-    }
-    u %= m; 
-    if (u < 0) u += m;
-    return u;
-}
-
 int main(void)
 {
-	int N, M, K;
-	cin >> N >> M >> K;
-	// dp[i][j]:
-	//   i回目までルーレットを回したときに、 (i=0～K)
-	//   マスjにいる (j=0～N)
-	// 確率 (mod 998244353)
-	vector<vector<ll>> dp(K+1, vector<ll>(N+1, 0));
-	dp[0][0] = 1;  // 初期値 ゲームを始める前はマス0
+	ll i, j;
+	ll N, M, K; cin >> N >> M >> K;
 
-	int i, j, m;
-	ll m_inv = modinv(M, MOD);  // Mで割るため、Mの逆元を求めておく
-	// 配るDP
-	for(i = 0; i < K; i++)  // i回目のルーレット 配るDPのためi=0～K-1まで
+	vector<mint> dp(N+1, 0);
+	dp[0] = 1;
+	mint m_inv = (mint)1/M;
+	for(ll k = 1; k <= K; k++)  // k回目
 	{
-		for(j = 0; j < N; j++)  // マスj  マスNに到達したらゲーム終了のため、マスNからはDP遷移させない
+		vector<mint> ndp(N+1, 0);
+		for(i = 0; i <= N; i++)  // マスiにいる状態  
 		{
-			for(m = 1; m <= M; m++)  // m:ルーレットの目
+			if(i == N)
 			{
-				int next_j;  // 移動先のマス
-				if(j+m <= N)  // 折り返さない場合
-				{
-					next_j = j + m;
-				}
-				else  // 折り返す場合
-				{
-					// j+m-Nマスぶん余るので、
-					// その数だけNマス目から戻る
-					next_j = N - ((j+m)-N);
-				}
-				dp[i+1][next_j] += (dp[i][j] * m_inv) % MOD;
-				dp[i+1][next_j] %= MOD;
+				ndp[N] += dp[N];  // マスNにいたら何もしない
+				continue;
+			}
+			for(j = 1; j <= M; j++)  // 出目j
+			{
+				ll nxt = i+j;
+				if(i+j > N) nxt = 2*N-i-j;
+				//ndp[nxt] += dp[i]/M;
+				ndp[nxt] += dp[i] * m_inv;  // 毎回除算は時間がかかる
 			}
 		}
+		swap(dp, ndp);
 	}
-
-	// ルーレットの1回目～K回目でそれぞれゴールする確率の、総和が答となる
-	ll answer = 0;
-	for(i = 1; i <= K; i++)
-	{
-		answer += dp[i][N];  // dp[i][N]:ルーレットのi回目でゴール
-		answer %= MOD;
-	}
-	cout << answer << endl;
+	cout << dp[N].val() << endl;
 
 	return 0;
 }
