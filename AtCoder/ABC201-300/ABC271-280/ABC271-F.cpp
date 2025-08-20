@@ -3,14 +3,22 @@
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
-#include <map>
+#include <unordered_map>
 using namespace std;
 typedef long long ll;
-const ll INF64 = 1LL << 60;
+// const ll INF64 = 1LL << 60;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
 const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
 template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
 template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
 #define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
+
+// 2025/8に再解きしたものに置き換えた。
+// 先頭の解説はそのまま。
+// 主なソースコードの変化点は、
+// ・前から、後ろからをそれぞれのDFS関数を用意した。
+//   盤面を回転しながら関数を1つで流用するより、2つ書いちゃう方が楽な気がする。
+// ・前から、はvectorで、後ろから、はunordered_mapで管理した。
 
 // ABC271 https://atcoder.jp/contests/abc271
 
@@ -42,70 +50,53 @@ template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true;
  *   メタだが、40に近いので半分全列挙を考えてみる。
  */
 
-// 0-indexed
-int N;
-vector<vector<int>> a;
-map<int,ll> mp[20], mp_rv[20];  // mp[i][xor]:上からi行目のゴールについて、そこまでのxor値の組み合わせ
-
-void dfs(int y, int x, int num, int k)
-{
-	num ^= a[y][x];
-	if(y+x == N-1)  // 終点
-	{
-		// 終点は2回計算されてしまうので、k=1のときは無かったことにする
-		if(k == 1) num ^= a[y][x];  // もう1回xorすると取り消しになる
-
-		if(k == 0) mp[y][num]++;  // 上からy行目のxor値(num)を+1
-		else mp_rv[y][num]++;
-		return;
-	}
-	// 終点ではないので、右および下は必ず行ける
-	dfs(y+1, x, num, k);
-	dfs(y, x+1, num, k);
-}
-
-// 要素がN*Nであるaについて、右に90度回転させる
-void rotate(vector<vector<int>> &a_)
-{
-	int n = a_.size();
-	auto a_bk = a_;
-	for(int i = 0; i < n; i++)
-	{
-		for(int j = 0; j < n; j++)
-		{
-			a_[i][j] = a_bk[n-1-j][i];
-		}
-	}
-}
-
 int main(void)
 {
-	int i, j;
-	cin >> N;
-	a.resize(N, vector<int>(N, 0));
+	ll i, j;
+	ll N; cin >> N;
+	vector<vector<ll>> a(N, vector<ll>(N, 0));  // a[N][N]
 	for(i = 0; i < N; i++)
 	{
 		for(j = 0; j < N; j++) cin >> a[i][j];
 	}
 
-	dfs(0, 0, 0, 0);
-	// 盤面を反転
-	rotate(a);
-	rotate(a);
-	dfs(0, 0, 0, 1);
-
-	// mp[i]とmp_rv[N-i-1]を比較
-	ll ans = 0;
-	for(i = 0; i < N; i++)
+	vector<vector<ll>> fr(N);  // fr[y] = {xor, xor, ...}
+	auto dfs_front = [&](auto &self, ll y, ll x, ll val) -> void
 	{
-		for(auto &[key, val] : mp[i])
+		val ^= a[y][x];
+		if(y+x+1 == N)
 		{
-			if(mp_rv[N-i-1].count(key) == 0) continue;
-			int val2 = mp_rv[N-i-1][key];
-			ans += (ll)val * val2;
+			fr[y].push_back(val);
+			return;
+		}
+		self(self, y+1, x, val);
+		self(self, y, x+1, val);
+	};
+	dfs_front(dfs_front, 0, 0, 0);
+
+	vector<unordered_map<ll,ll>> bk(N);  // bk[y][xor] = xorとなる数
+	auto dfs_back = [&](auto &self, ll y, ll x, ll val) -> void
+	{
+		if(y+x+1 == N)
+		{
+			bk[y][val]++;
+			return;
+		}
+		val ^= a[y][x];  // bk側は終端でxorさせないようにする
+		self(self, y-1, x, val);
+		self(self, y, x-1, val);
+	};
+	dfs_back(dfs_back, N-1, N-1, 0);
+
+	ll ans = 0;
+	for(ll y = 0; y < N; y++)  // fr[y]とbk[y]を組み合わせる
+	{
+		for(auto &e : fr[y])
+		{
+			if(bk[y].count(e) > 0) ans += bk[y][e];
 		}
 	}
-	std::cout << ans << endl;
+	cout << ans << endl;
 
 	return 0;
 }
