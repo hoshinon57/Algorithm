@@ -14,6 +14,7 @@ using namespace std;
  * ・ベクトルa,bの外積のZ成分 cross_product
  * ・3点が同一直線上にあるか IsColliniar
  * ・3点の外心の位置 circumcenter
+ * ・2点(x1,y1),(x2,y2)を通る直線ax+by+c=0を返す calcLineFromPoints
  * 
  * [関連する問題]
  * ABC151-F
@@ -135,6 +136,28 @@ pair<double,double> circumcenter(long long x1, long long y1, long long x2, long 
 	return {x, y};
 }
 
+// 2点(x1,y1),(x2,y2)を通る直線 ax+by+c=0 を計算し、参照渡しの引数a,b,cに設定する
+// x=5やy=1といった軸と平行な直線でも正しく計算できる
+// [制約]
+// (1)2点は異なる位置にあること (呼び出し元でチェックすること)
+// (2)|x|,|y|<=10^9程度 途中計算にて乗算するため
+// [verify]ABC422-E
+void calcLineFromPoints(long long x1, long long y1, long long x2, long long y2,
+	long long &a, long long &b, long long &c) {
+	a = y2 - y1;
+	b = x1 - x2;
+#if 0  // a>=0に正規化 必要な場合は有効化してgcd()をmy_cheatsheet.cppから持ってくる
+	if(a == 0) b = 1;
+	else {
+		long long g = gcd(abs(a), abs(b));
+		if(a < 0) g = -g;
+		a /= g;
+		b /= g;
+	}
+#endif
+	c = -(a*x1 + b*y1);
+}
+
 int main(void)
 {
 	{
@@ -254,6 +277,22 @@ int main(void)
 		circumcenter_test(0, 0, -1, 0, 1, 1, -0.5, 1.5);
 		circumcenter_test(5, 0, 1, 3, 1, 0, 3.0, 1.5);
 		circumcenter_test(1000000, 999999, -500000, -999999, 12345, 54321, 2949515.1865181730, -2024638.4145270443);
+	}
+
+	{
+		// 以下、関数内の#ifを有効化していること
+		using ll = long long;
+		ll a, b, c;
+		calcLineFromPoints(0, 1, 2, 5, a, b, c);  // (0,1),(2,5)
+		assert(a == 2 && b == -1 && c == 1);
+		calcLineFromPoints(2, 5, 0, 1, a, b, c);  // (2,5),(0,1) 2点が逆でも同じ直線
+		assert(a == 2 && b == -1 && c == 1);
+		calcLineFromPoints(-1, 100, 7, -10, a, b, c);  // (-1,100),(7,-10)
+		assert(a == 55 && b == 4 && c == -345);
+		calcLineFromPoints(500000000, -100000000, 500000000, 99999999, a, b, c);  // (500000000,-100000000),(500000000,99999999) x=500000000
+		assert(a == 1 && b == 0 && c == -500000000);
+		calcLineFromPoints(500000000, 99999999, 500000000, 99999999, a, b, c);  // (1234567,99999999),(-98765432,99999999) y=99999999
+		assert(a == 0 && b == 1 && c == -99999999);
 	}
 
 	return 0;
