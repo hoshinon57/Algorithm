@@ -5,8 +5,17 @@
 #include <iomanip>
 using namespace std;
 typedef long long ll;
-const ll INF64 = 1LL << 60;
-const int INF32 = 1 << 30;
+// const ll INF64 = 1LL << 60;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
+const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
+
+// a/b以上の最小の整数(天井関数) ceil(5,2)=3, ceil(-5,2)=-2
+template <typename T> T ceil_div(T a, T b){ if(b<0) {a=-a; b=-b;} if(a>0){return (a+b-1)/b;} else {return a/b;}}
+
+// 解説はそのままで、実装は2025/9に再解きしたものに置き換えた。
 
 // ABC272 https://atcoder.jp/contests/abc272
 
@@ -35,55 +44,41 @@ const int INF32 = 1 << 30;
  *   vectorでの実装：498ms
  *   setでの実装：1109ms
  */
+
 int main(void)
 {
 	// 1-indexed
-	int i, j;
-	int N, M;
-	cin >> N >> M;
-	vector<vector<int>> num_list(M+1, vector<int>());  // num_list[i]:i回目の操作後にて、0～Nの範囲で含まれる数を列挙
+	ll i, t;
+	ll N, M; cin >> N >> M;
+	vector<ll> a(N+1); for(i = 1; i <= N; i++) {cin >> a[i];}
+
+	vector<vector<ll>> k(M);  // k[t]: tターン目のMEX候補
 	for(i = 1; i <= N; i++)
 	{
-		int a;
-		cin >> a;
-		// A[i]について、0～Nの範囲になる操作回を計算し、num_listに追加する
-		// (初期値が0以上か0未満かで処理を分けたが、まとめることも可能だった)
-		if(a >= 0)  // 1回目からリストに入れる
+		t = 0;
+		if(a[i] < 0)
 		{
-			a += i;  // 1回目の操作
-			for(j = 1; j <= M; j++)
-			{
-				if(a > N) break;  // Nを超えたら終了
-				num_list[j].push_back(a);
-				a += i;
-			}
+			t = ceil_div(-a[i], i) - 1;  // tターン目の操作からAi>=0になる
+			a[i] += t*i;  // tは0始まりなので、事前のaddはt*i
 		}
-		else  // 初期値が負の場合、0以上になる回からリストに入れる
+		for( ; t < M; t++)  // tターン目
 		{
-			int start = (-a+(i-1)) / i;  // 0以上の数になるのは何回目か
-			a += i*start;  // (start)回目の操作
-			for(j = start; j <= M; j++)
-			{
-				if(a > N) break;
-				num_list[j].push_back(a);
-				a += i;
-			}
+			a[i] += i;
+			if(a[i] > N) break;
+			k[t].push_back(a[i]);
 		}
 	}
 
-	for(i = 1; i <= M; i++)
+	for(t = 0; t < M; t++)
 	{
-		vector<bool> exist(N+1, false);  // exist[x]:i回目の操作後、xは数列の中に存在するか 添字は0～Nの範囲
-		for(auto e : num_list[i])
+		// 元データをソートし、重複を削除する
+		sort(k[t].begin(), k[t].end());
+		k[t].erase(unique(k[t].begin(), k[t].end()), k[t].end());  // unique()で隣り合う重複を削除し、erase()で末端までのゴミを削除する
+		for(i = 0; i <= N; i++)
 		{
-			exist[e] = true;
-		}
-
-		for(j = 0; j <= N; j++)
-		{
-			if(!exist[j])
+			if(i >= (int)k[t].size() || k[t][i] != i)
 			{
-				cout << j << endl;
+				cout << i << endl;
 				break;
 			}
 		}
