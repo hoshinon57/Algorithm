@@ -5,8 +5,14 @@
 #include <iomanip>
 using namespace std;
 typedef long long ll;
-const ll INF64 = 1LL << 60;
-const int INF32 = 1 << 30;
+// const ll INF64 = 1LL << 60;
+const ll INF64 = ((1LL<<62)-(1LL<<31));  // 10^18より大きく、かつ2倍しても負にならない数
+const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍しても負にならない数
+template<class T> inline bool chmin(T &a, T b) { if(a > b) { a = b; return true; } return false; }
+template<class T> inline bool chmax(T &a, T b) { if(a < b) { a = b; return true; } return false; }
+#define YesNo(T) cout << ((T) ? "Yes" : "No") << endl;  // T:bool
+
+// 解説はそのままで、実装を2025/9に再解きしたものに置き換えた
 
 // ABC271 https://atcoder.jp/contests/abc271
 
@@ -32,55 +38,26 @@ const int INF32 = 1 << 30;
  * 以下のコードでは、一次元配列であるdist[N]を用意して実装している。
  */
 
-struct Edge  // 1つの辺を表す
-{
-	int a, b, c;  // 都市a->bへ、距離c
-	Edge() {}
-	Edge(int a_, int b_, int c_) : a(a_), b(b_), c(c_) {}
-};
-
 int main(void)
 {
 	// 0-indexed
-	int i;
-	int N, M, K;
-	cin >> N >> M >> K;
-	vector<Edge> edge;
-	for(i = 0; i < M; i++)
-	{
-		int a, b, c;
-		cin >> a >> b >> c;
-		a--;  // 0-indexedに変換
-		b--;
-		edge.push_back(Edge(a, b, c));
-	}
-	vector<int> e(K);
-	for(i = 0; i < K; i++)
-	{
-		cin >> e[i];
-		e[i]--;
-	}
-	// ここまで入力
+	ll i, k;
+	ll N, M, K; cin >> N >> M >> K;
+	vector<ll> a(M), b(M), c(M); for(i = 0; i < M; i++) {cin >> a[i] >> b[i] >> c[i]; a[i]--; b[i]--;}
+	vector<ll> e(K); for(i = 0; i < K; i++) {cin >> e[i]; e[i]--; }
 
-	vector<ll> dist(N, INF64);  // dist[i]:始点から頂点iへの距離
-	dist[0] = 0;  // 始点
-	for(auto &m : e)  // 数列Eの先頭から順に、対応する辺を見ていく
+	vector<ll> dist(N, INF64);  // dist[i]: 頂点0⇒iへの最短距離
+	dist[0] = 0;
+	for(k = 0; k < K; k++)
 	{
-		int a, b, c;
-		a = edge[m].a;
-		b = edge[m].b;
-		c = edge[m].c;
-		dist[b] = min(dist[b], dist[a]+c);   // 都市bへの距離を更新できるか
+		ll aa = a[e[k]];
+		ll bb = b[e[k]];  // aa->bb
+		chmin(dist[bb], dist[aa]+c[e[k]]);
 	}
-
-	if(dist[N-1] != INF64)
-	{
-		cout << dist[N-1] << endl;
-	}
-	else
-	{
-		cout << -1 << endl;
-	}
+	
+	ll ans = dist[N-1];
+	if(ans == INF64) ans = -1;
+	cout << ans << endl;
 
 	return 0;
 }
