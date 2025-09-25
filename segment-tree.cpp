@@ -70,6 +70,7 @@ const int INF32 = 0x3FFFFFFF;  // =(2^30)-1 10^9より大きく、かつ2倍し�
  * ABC406-F オイラーツアー
  * ABC408-F 平面走査
  * ABC415-F ABC322-F(Vacation Query)に近い
+ * ABC424-F
  * 典型90-37
  */
 
