@@ -1651,6 +1651,7 @@ void _unordered_map_(void)
 	// reserveを使って要素数としてありえる最大値ぶん確保しておくと、少し速くなる
 	// um.reserve(x) xはクエリ数とか
 	// https://x.com/maspy_stars/status/1933965084289855876
+	// https://x.com/kyopro_hiyoko/status/1720371819654615544
 }
 
 // STL(コンテナ含む)に関するメモ
